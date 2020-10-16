@@ -1,0 +1,151 @@
+---
+title: "Nielsen Secondary Data Analysis"
+author: "Daniel O'Leary"
+date: "10/15/2020"
+output: html_document
+---
+
+```{r}
+lm.beta.lmer <- function(mod) {
+   b <- fixef(mod)[-1]
+   sd.x <- apply(getME(mod,"X")[,-1],2,sd)
+   sd.y <- sd(getME(mod,"y"))
+   b*sd.x/sd.y
+}
+```
+
+
+```{r}
+lm1 <-
+  lmer(
+    sug_per ~
+      inc_mid +
+      median_income + 
+      Household_Size +
+      median_monthly_housing_cost + 
+      # as.factor(Male_Head_Education) +
+      # as.factor(Female_Head_Education) +
+      # as.factor(Race) +
+      # as.factor(Marital_Status) +
+      # as.factor(Male_Head_Employment) +
+      # as.factor(Female_Head_Employment) +
+      # Male_Head_Age +
+      # Female_Head_Age +
+      (1|zip), 
+    data = nps_2017
+  )
+  
+summary(lm1)
+
+lm.beta.lmer(lm1)
+```
+
+
+```{r}
+lm1 <-
+  lmer(
+    sug_per ~
+      inc_mid +     
+      inc_diff + 
+      Household_Size +
+      median_monthly_housing_cost + 
+      as.factor(Male_Head_Education) +
+      as.factor(Female_Head_Education) +
+      as.factor(Race) +
+      as.factor(Marital_Status) +
+      as.factor(Male_Head_Employment) +
+      as.factor(Female_Head_Employment) +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2017
+  )
+  
+summary(lm1)
+
+lm.beta.lmer(lm1)
+```
+
+```{r}
+plot_model(lm1, type = "pred", term = c("inc_diff"))
+```
+
+
+
+```{r}
+lm1 <-
+  lmer(
+    sug_per ~
+      inc_mid * inc_diff + 
+      Household_Size +
+      median_monthly_housing_cost + 
+      # as.factor(Male_Head_Education) +
+      # as.factor(Female_Head_Education) +
+      # as.factor(Race) +
+      # as.factor(Marital_Status) +
+      # as.factor(Male_Head_Employment) +
+      # as.factor(Female_Head_Employment) +
+      # Male_Head_Age +
+      # Female_Head_Age +
+      (1|zip), 
+    data = nps_2017
+  )
+  
+summary(lm1)
+
+lm.beta.lmer(lm1)
+```
+
+```{r}
+plot_model(lm1, type = "int")
+plot_model(lm1, type = "pred", terms = c("inc_mid", "inc_diff"))
+
+```
+
+```{r}
+lm1 <- 
+  lmer(
+    scale(sug_per) ~ 
+      inc_mid * gini +
+      median_income + 
+      median_monthly_housing_cost +
+      as.factor(Male_Head_Education) +
+      as.factor(Female_Head_Education) +
+      (1|zip), 
+    data = nps_2017 
+  )
+
+summary(lm1)
+
+lm.beta.lmer(lm1)
+```
+
+```{r}
+plot_model(lm1, type = "pred", terms = c("inc_mid", "gini[0.0398, 0.3982, 0.4262, 0.7338]"))
+```
+
+```{r}
+
+lm1 <- 
+  lmer(
+    scale(sug_per) ~ 
+      inc_mid * mob25_all * gini + 
+      Household_Size + 
+      as.factor(Male_Head_Education) +
+      as.factor(Female_Head_Education) +
+      (1|zip), 
+    data = nps_2017 
+  )
+
+summary(lm1)
+
+lm.beta.lmer(lm1)
+```
+
+```{r}
+plot_model(lm1, type = "int")
+plot_model(lm1, type = "pred", terms = c("inc_mid", "gini", "mob25_all"))
+```
+
+
+
