@@ -193,6 +193,15 @@ nutrition_per_spend_fn <- function(year){
       total_saturated_fat %>% dplyr::select(-total_spend)
     )
   
+  nutr_per_spend <-
+    nutr_per_spend %>% 
+    mutate(
+      across(.cols = c(Race:Female_Head_Employment), .fns = as.factor)
+    ) %>% 
+    mutate(
+      across(.cols = c(Male_Head_Education:Female_Head_Education), .fns = as.numeric)
+    )
+  
   #rm(df)
   
   return(nutr_per_spend)
