@@ -46,7 +46,7 @@ bind_zip_code_census_data_function <- function(nps) {
   nps <-
     nps %>% 
     left_join(
-      census_ses_zip_2017_wide,
+      census_ses_zip_wide,
       by = "zip"
     )
   

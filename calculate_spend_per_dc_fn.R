@@ -184,7 +184,8 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
   spend_per_dc <-
     spend_per_dc %>% 
     left_join(
-      panelists %>% mutate(household_code = Household_Cd) %>% 
+      panelists %>% 
+        mutate(household_code = Household_Cd) %>% 
         dplyr::select(
           household_code,
           Household_Income,
@@ -194,9 +195,25 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
           Panelist_ZipCd,
           Fips_State_Cd,
           Fips_County_Cd,
-          Panelist_ZipCd,
-          inc_mid
-        )
+          zip = Panelist_ZipCd,
+          inc_mid,
+          Race,
+          Marital_Status,
+          Male_Head_Employment,
+          Female_Head_Employment,
+          Male_Head_Age,
+          Female_Head_Age
+        )        
+    )
+
+  
+  spend_per_dc <-
+    spend_per_dc %>% 
+    mutate(
+      across(.cols = c(Race:Female_Head_Employment), .fns = as.factor)
+    ) %>% 
+    mutate(
+      across(.cols = c(Male_Head_Education:Female_Head_Education), .fns = as.numeric)
     )
   
   spend_per_dc <-

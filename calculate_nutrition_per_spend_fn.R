@@ -156,7 +156,29 @@ nutrition_per_spend_fn <- function(year){
   panelists <-
     readr::read_tsv(paste0("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/", year, "/Annual_Files/panelists_", year, ".tsv"))
   
-  source(paste0(machine_path, "research/projects/niel/nielsen_analysis/create_raw_income.R"))
+  panelists <-
+    panelists %>% 
+    mutate(
+      inc_mid = 
+        case_when(
+          Household_Income == 3 ~ 2500,
+          Household_Income == 4 ~ 6500,
+          Household_Income == 6 ~ 9000,
+          Household_Income == 8 ~ 11000,
+          Household_Income == 10 ~ 13500,
+          Household_Income == 11 ~ 17500,
+          Household_Income == 13 ~ 22500,
+          Household_Income == 15 ~ 27500,
+          Household_Income == 16 ~ 32500,
+          Household_Income == 17 ~ 37500,
+          Household_Income == 18 ~ 42500,
+          Household_Income == 19 ~ 47500,
+          Household_Income == 21 ~ 55000,
+          Household_Income == 23 ~ 65500,
+          Household_Income == 26 ~ 85000,
+          Household_Income == 27 ~ 100000
+        )
+    )
   
   
   total_calories <- calories_per_spend_fn(df)
@@ -164,7 +186,8 @@ nutrition_per_spend_fn <- function(year){
   total_saturated_fat <- saturated_fat_per_spend_fn(df)
   
   nutr_per_spend <-
-    panelists %>% mutate(household_code = Household_Cd) %>% 
+    panelists %>% 
+    mutate(household_code = Household_Cd) %>% 
     dplyr::select(
       household_code,
       Household_Income,

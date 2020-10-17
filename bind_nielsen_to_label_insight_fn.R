@@ -105,8 +105,6 @@ bind_labels_to_purchases_fn <- function(year) {
     )
 
   
-  rm(purchase, trips)
-  
   return(niel_df)
   
 }

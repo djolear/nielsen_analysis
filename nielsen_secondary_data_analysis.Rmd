@@ -20,7 +20,11 @@ pacman::p_load(
   tidyverse, 
   haven,
   lubridate,
-  readr
+  readr,
+  lme4,
+  sjPlot,
+  effects,
+  stargazer
 )
 ```
 
@@ -296,6 +300,7 @@ summary(lm_inc_diff)
 
 lm.beta.lmer(lm_inc_diff)
 ```
+
 
 ### Regression table
 
