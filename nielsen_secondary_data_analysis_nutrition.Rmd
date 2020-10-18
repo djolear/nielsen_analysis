@@ -1,5 +1,5 @@
 ---
-title: "Nielsen Secondary Data Analysis"
+title: "Nielsen Secondary Data Analysis - Nutrition"
 author: "Daniel O'Leary"
 date: "10/15/2020"
 output:
@@ -62,13 +62,13 @@ lm.beta.lmer <- function(mod) {
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/calculate_nutrition_per_spend_fn.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nps_to_zip_code_census_fn.R"))
 
-year = "2017"
+year = "2014"
 
-nps_2017 <- 
+nps_2014 <- 
   nutrition_per_spend_fn(year)
 
-nps_2017 <-
-  bind_zip_code_census_data_function(nps_2017)  
+nps_2014 <-
+  bind_zip_code_census_data_function(nps_2014, year)  
 ```
 
 
@@ -93,7 +93,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc)
@@ -122,7 +122,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_med_inc)
@@ -151,7 +151,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc_diff)
@@ -185,9 +185,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) + sd(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) - sd(nps_2017$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "calories per $1 spent"
@@ -205,9 +205,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) + sd(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) - sd(nps_2017$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "calories per $1 spent"
@@ -235,7 +235,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc)
@@ -264,7 +264,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_med_inc)
@@ -293,7 +293,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc_diff)
@@ -327,9 +327,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) + sd(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) - sd(nps_2017$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of sugar per $1 spent"
@@ -347,9 +347,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) + sd(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) - sd(nps_2017$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of sugar per $1 spent"
@@ -378,7 +378,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc)
@@ -407,7 +407,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_med_inc)
@@ -436,7 +436,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2017
+    data = nps_2014
   )
   
 summary(lm_inc_diff)
@@ -469,9 +469,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) + sd(nps_2017$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_mid, na.rm = TRUE) - sd(nps_2017$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of saturated fat per $1 spent"
@@ -489,9 +489,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) + sd(nps_2017$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2017$inc_diff, na.rm = TRUE) - sd(nps_2017$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of saturated fat per $1 spent"

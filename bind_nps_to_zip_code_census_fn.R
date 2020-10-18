@@ -22,7 +22,7 @@ machine_path <-
 
 
 
-bind_zip_code_census_data_function <- function(nps) {
+bind_zip_code_census_data_function <- function(nps, year) {
 
   ########################
   ## Zipcode City Names ##

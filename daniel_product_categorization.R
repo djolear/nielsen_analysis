@@ -93,9 +93,4 @@ products_master <-
   )
 
 
-##
-
-year = "2017"
-
-spend_per_dc_17 <- calculate_spend_per_module_fn(year, products_master)
 

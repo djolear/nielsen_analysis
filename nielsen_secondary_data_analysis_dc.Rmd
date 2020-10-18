@@ -1,0 +1,217 @@
+---
+title: "Nielsen Secondary Data Analysis - Daniel Categories"
+author: "Daniel O'Leary"
+date: "10/16/2020"
+output:
+  github_document:
+    toc: true
+    toc_depth: 5
+---
+
+
+# Setup
+
+## Load packages
+
+```{r}
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(
+  tidyverse, 
+  haven,
+  lubridate,
+  readr
+)
+```
+
+
+## Set path
+
+```{r}
+sinfo <- data.frame(Sys.info())
+machine <- sinfo$Sys.info..[4]
+
+machine_path <- 
+  ifelse(
+    machine %in% c("sussman-rp-mbpro.local", "sussman-rp-mbpro.lan"), 
+    "/Users/djolear/Google Drive/", 
+    "G:/My Drive/"
+  )
+```
+
+
+## Load functions
+
+```{r}
+lm.beta.lmer <- function(mod) {
+   b <- fixef(mod)[-1]
+   sd.x <- apply(getME(mod,"X")[,-1],2,sd)
+   sd.y <- sd(getME(mod,"y"))
+   b*sd.x/sd.y
+}
+```
+
+
+## Load data
+
+```{r}
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/calculate_spend_per_dc_fn.R"))
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nps_to_zip_code_census_fn.R"))
+
+year = "2017"
+
+spend_per_dc_17 <- 
+  calculate_spend_per_dc_fn(year)
+
+spend_per_dc_17 <-
+  bind_zip_code_census_data_function(spend_per_dc_17)  
+```
+
+
+# Analysis
+
+### Income
+
+```{r}
+lm_inc <-
+  lmer(
+    spend_per_dc_per ~
+      inc_mid +
+      Household_Size +
+      # Male_Head_Education +
+      # Female_Head_Education +
+      # Race +
+      # Marital_Status +
+      # Male_Head_Employment +
+      # Female_Head_Employment +
+      # Male_Head_Age +
+      # Female_Head_Age +
+      (1|zip), 
+    data = 
+      spend_per_dc_17 %>% 
+      filter(dc == "vegetable")
+  )
+  
+summary(lm_inc)
+
+lm.beta.lmer(lm_inc)
+```
+
+
+### Income and median income
+
+```{r}
+lm_med_inc <-
+  lmer(
+    spend_per_dc_per ~
+      median_income + 
+      inc_mid + 
+      median_monthly_housing_cost + 
+      pov_status_below_per +
+      Household_Size +
+      # Male_Head_Education +
+      # Female_Head_Education +
+      # Race +
+      # Marital_Status +
+      # Male_Head_Employment +
+      # Female_Head_Employment +
+      # Male_Head_Age +
+      # Female_Head_Age +
+      (1|zip), 
+    data = 
+      spend_per_dc_17 %>% 
+      filter(dc == "vegetable")
+  )
+  
+summary(lm_med_inc)
+
+lm.beta.lmer(lm_med_inc)
+```
+
+
+### Income difference score
+
+```{r}
+lm_inc_diff <-
+  lmer(
+    spend_per_dc_per ~
+      inc_mid +     
+      inc_diff + 
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      # Male_Head_Education +
+      # Female_Head_Education +
+      # Race +
+      # Marital_Status +
+      # Male_Head_Employment +
+      # Female_Head_Employment +
+      # Male_Head_Age +
+      # Female_Head_Age +
+      (1|zip), 
+    data = 
+      spend_per_dc_17 %>% 
+      filter(dc == "vegetable")
+  )
+  
+summary(lm_inc_diff)
+
+lm.beta.lmer(lm_inc_diff)
+```
+
+
+
+### Regression table
+
+```{r message = FALSE, results = 'asis'}
+stargazer(
+  lm_inc, lm_med_inc, lm_inc_diff,
+  coef = 
+    list(
+      lm.beta.lmer(lm_inc), 
+      lm.beta.lmer(lm_med_inc), 
+      lm.beta.lmer(lm_inc_diff)
+    ),
+  type = "html"
+)
+```
+
+
+### Own income
+
+```{r}
+effect("inc_mid", lm_inc) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_mid, fit)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_mid, na.rm = TRUE) + sd(spend_per_dc_17$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_mid, na.rm = TRUE) - sd(spend_per_dc_17$inc_mid, na.rm = TRUE)) +
+  labs(
+    x = "own income",
+    y = "grams of sugar per $1 spent"
+  ) +
+  theme_bw()
+```
+
+
+### Own income minus median income in your zip code
+
+```{r}
+effect("inc_diff", lm_inc_diff) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_diff, na.rm = TRUE) + sd(spend_per_dc_17$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(spend_per_dc_17$inc_diff, na.rm = TRUE) - sd(spend_per_dc_17$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of sugar per $1 spent"
+  ) + 
+  theme_bw()
+```

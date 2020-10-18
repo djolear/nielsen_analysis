@@ -78,7 +78,13 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
   products <-
     readr::read_tsv(paste0("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/", year, "/Annual_Files/products_extra_", year, ".tsv"))
   
+  products_master <-
+    readr::read_tsv("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/Master_Files/Latest/products.tsv")
   
+  
+  source(paste0(machine_path, "research/projects/niel/nielsen_analysis/daniel_product_categorization_fn.R"))
+  
+  products_master <- daniel_product_categorication_fn(products_master)
   
   trips <-
     trips %>% 
@@ -216,16 +222,16 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
       across(.cols = c(Male_Head_Education:Female_Head_Education), .fns = as.numeric)
     )
   
-  spend_per_dc <-
-    spend_per_dc %>% 
-    ungroup %>% 
-    mutate(
-      state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
-      county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
-      fips_code = paste0(state_fips, county_fips)
-    )
+  # spend_per_dc <-
+  #   spend_per_dc %>% 
+  #   ungroup %>% 
+  #   mutate(
+  #     state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
+  #     county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
+  #     fips_code = paste0(state_fips, county_fips)
+  #   )
   
-  #rm(niel_df, trips, panelists, purchase, trips)
+  # rm(niel_df, trips, panelists, purchase, trips)
   
   
   return(spend_per_dc)
