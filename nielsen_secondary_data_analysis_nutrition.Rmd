@@ -62,13 +62,13 @@ lm.beta.lmer <- function(mod) {
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/calculate_nutrition_per_spend_fn.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nps_to_zip_code_census_fn.R"))
 
-year = "2014"
+year = "2015"
 
-nps_2014 <- 
+nps_2015 <- 
   nutrition_per_spend_fn(year)
 
-nps_2014 <-
-  bind_zip_code_census_data_function(nps_2014, year)  
+nps_2015 <-
+  bind_zip_code_census_data_function(nps_2015, year)  
 ```
 
 
@@ -93,7 +93,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc)
@@ -122,7 +122,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_med_inc)
@@ -151,7 +151,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc_diff)
@@ -160,16 +160,46 @@ lm.beta.lmer(lm_inc_diff)
 ```
 
 
+### Income difference score x gini
+
+```{r}
+lm_inc_diff_g <-
+  lmer(
+    cal_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+  
+summary(lm_inc_diff_g)
+
+lm.beta.lmer(lm_inc_diff_g)
+```
+
+
 ### Regression table
 
 ```{r message = FALSE, results = 'asis'}
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -185,9 +215,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "calories per $1 spent"
@@ -205,12 +235,32 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "calories per $1 spent"
+  ) + 
+  theme_bw()
+```
+
+
+### Own income minus median income x gini in your zip code
+
+```{r}
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
   ) + 
   theme_bw()
 ```
@@ -235,7 +285,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc)
@@ -264,7 +314,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_med_inc)
@@ -293,7 +343,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc_diff)
@@ -302,16 +352,46 @@ lm.beta.lmer(lm_inc_diff)
 ```
 
 
+### Income difference score x gini
+
+```{r}
+lm_inc_diff_g <-
+  lmer(
+    sug_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+  
+summary(lm_inc_diff_g)
+
+lm.beta.lmer(lm_inc_diff_g)
+```
+
+
 ### Regression table
 
 ```{r message = FALSE, results = 'asis'}
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -327,9 +407,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of sugar per $1 spent"
@@ -347,9 +427,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of sugar per $1 spent"
@@ -357,6 +437,25 @@ effect("inc_diff", lm_inc_diff) %>%
   theme_bw()
 ```
 
+
+### Own income minus median income x gini in your zip code
+
+```{r}
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
+  ) + 
+  theme_bw()
+```
 
 
 ## Saturated fat content
@@ -378,7 +477,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc)
@@ -407,7 +506,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_med_inc)
@@ -436,7 +535,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
   
 summary(lm_inc_diff)
@@ -444,16 +543,46 @@ summary(lm_inc_diff)
 lm.beta.lmer(lm_inc_diff)
 ```
 
+
+### Income difference score x gini
+
+```{r}
+lm_inc_diff_g <-
+  lmer(
+    sf_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+  
+summary(lm_inc_diff_g)
+
+lm.beta.lmer(lm_inc_diff_g)
+```
+
 ### Regression table
 
 ```{r message = FALSE, results = 'asis'}
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -469,9 +598,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of saturated fat per $1 spent"
@@ -489,9 +618,29 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
+  ) + 
+  theme_bw()
+```
+
+
+### Own income minus median income x gini in your zip code
+
+```{r}
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of saturated fat per $1 spent"

@@ -13,26 +13,38 @@ Daniel O’Leary
           - [Income](#income)
           - [Income and median income](#income-and-median-income)
           - [Income difference score](#income-difference-score)
+          - [Income difference score x
+            gini](#income-difference-score-x-gini)
           - [Regression table](#regression-table)
           - [Own income](#own-income)
           - [Own income minus median income in your zip
             code](#own-income-minus-median-income-in-your-zip-code)
+          - [Own income minus median income x gini in your zip
+            code](#own-income-minus-median-income-x-gini-in-your-zip-code)
       - [Sugar content](#sugar-content)
           - [Income](#income-1)
           - [Income and median income](#income-and-median-income-1)
           - [Income difference score](#income-difference-score-1)
+          - [Income difference score x
+            gini](#income-difference-score-x-gini-1)
           - [Regression table](#regression-table-1)
           - [Own income](#own-income-1)
           - [Own income minus median income in your zip
             code](#own-income-minus-median-income-in-your-zip-code-1)
+          - [Own income minus median income x gini in your zip
+            code](#own-income-minus-median-income-x-gini-in-your-zip-code-1)
       - [Saturated fat content](#saturated-fat-content)
           - [Income](#income-2)
           - [Income and median income](#income-and-median-income-2)
           - [Income difference score](#income-difference-score-2)
+          - [Income difference score x
+            gini](#income-difference-score-x-gini-2)
           - [Regression table](#regression-table-2)
           - [Own income](#own-income-2)
           - [Own income minus median income in your zip
             code](#own-income-minus-median-income-in-your-zip-code-2)
+          - [Own income minus median income x gini in your zip
+            code](#own-income-minus-median-income-x-gini-in-your-zip-code-2)
 
 # Setup
 
@@ -129,9 +141,9 @@ source(paste0(machine_path, "research/projects/niel/nielsen_analysis/calculate_n
 ``` r
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nps_to_zip_code_census_fn.R"))
 
-year = "2014"
+year = "2015"
 
-nps_2014 <- 
+nps_2015 <- 
   nutrition_per_spend_fn(year)
 ```
 
@@ -168,27 +180,12 @@ nps_2014 <-
     ##   Fips_State_Desc = col_character(),
     ##   Fips_County_Desc = col_character(),
     ##   Scantrack_Market_Identifier_Desc = col_character(),
-    ##   DMA_Name = col_character(),
-    ##   Member_6_Employment = col_logical(),
-    ##   Member_7_Birth = col_logical(),
-    ##   Member_7_Relationship_Sex = col_logical(),
-    ##   Member_7_Employment = col_logical()
+    ##   DMA_Name = col_character()
     ## )
 
     ## See spec(...) for full column specifications.
 
-    ## Warning: 117 parsing failures.
-    ##  row                       col           expected actual                                                                                                                                                 file
-    ## 1241 Member_7_Birth            1/0/T/F/TRUE/FALSE   2006 'G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/2014/Annual_Files/panelists_2014.tsv'
-    ## 1241 Member_7_Relationship_Sex 1/0/T/F/TRUE/FALSE   2    'G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/2014/Annual_Files/panelists_2014.tsv'
-    ## 2027 Member_7_Birth            1/0/T/F/TRUE/FALSE   2006 'G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/2014/Annual_Files/panelists_2014.tsv'
-    ## 2027 Member_7_Relationship_Sex 1/0/T/F/TRUE/FALSE   3    'G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/2014/Annual_Files/panelists_2014.tsv'
-    ## 2200 Member_7_Birth            1/0/T/F/TRUE/FALSE   1990 'G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/2014/Annual_Files/panelists_2014.tsv'
-    ## .... ......................... .................. ...... ....................................................................................................................................................
-    ## See problems(...) for more details.
-
     ## `summarise()` ungrouping output (override with `.groups` argument)
-
     ## `summarise()` ungrouping output (override with `.groups` argument)
 
     ## Joining, by = "household_code"
@@ -207,8 +204,8 @@ nps_2014 <-
     ## Joining, by = "household_code"
 
 ``` r
-nps_2014 <-
-  bind_zip_code_census_data_function(nps_2014, year)  
+nps_2015 <-
+  bind_zip_code_census_data_function(nps_2015, year)  
 ```
 
     ## Joining, by = "zip"
@@ -286,7 +283,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -302,43 +299,43 @@ summary(lm_inc)
     ## cal_per ~ inc_mid + Household_Size + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 480139
+    ## REML criterion at convergence: 477529.3
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.6347 -0.6498 -0.0996  0.5295 18.1608 
+    ## -3.5447 -0.6525 -0.0963  0.5345 18.7182 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept)   5.315   2.305  
-    ##  Residual             138.568  11.772  
-    ## Number of obs: 61524, groups:  zip, 15970
+    ##  zip      (Intercept)   5.641   2.375  
+    ##  Residual             135.465  11.639  
+    ## Number of obs: 61347, groups:  zip, 15891
     ## 
     ## Fixed effects:
     ##                           Estimate Std. Error t value
-    ## (Intercept)              4.154e+01  4.519e-01  91.925
-    ## inc_mid                 -9.150e-05  2.132e-06 -42.924
-    ## Household_Size          -5.224e-02  4.923e-02  -1.061
-    ## Male_Head_Education     -5.398e-01  5.553e-02  -9.719
-    ## Female_Head_Education   -7.682e-01  5.529e-02 -13.893
-    ## Race2                    1.595e+00  1.664e-01   9.585
-    ## Race3                   -2.824e+00  2.843e-01  -9.932
-    ## Race4                   -9.765e-01  2.379e-01  -4.105
-    ## Marital_Status2          2.817e+00  2.831e-01   9.948
-    ## Marital_Status3          2.205e+00  2.470e-01   8.928
-    ## Marital_Status4          2.596e+00  2.495e-01  10.407
-    ## Male_Head_Employment1    3.932e+00  5.193e-01   7.572
-    ## Male_Head_Employment2    4.515e+00  5.515e-01   8.187
-    ## Male_Head_Employment3    5.012e+00  4.584e-01  10.934
-    ## Male_Head_Employment9    3.601e+00  4.894e-01   7.358
-    ## Female_Head_Employment1  4.105e+00  4.841e-01   8.480
-    ## Female_Head_Employment2  4.433e+00  5.131e-01   8.641
-    ## Female_Head_Employment3  4.895e+00  4.657e-01  10.510
-    ## Female_Head_Employment9  3.442e+00  4.726e-01   7.283
-    ## Male_Head_Age           -2.129e-01  4.619e-02  -4.610
-    ## Female_Head_Age         -2.253e-01  4.141e-02  -5.439
+    ## (Intercept)              4.225e+01  4.390e-01  96.244
+    ## inc_mid                 -9.110e-05  2.096e-06 -43.469
+    ## Household_Size          -1.075e-02  4.762e-02  -0.226
+    ## Male_Head_Education     -5.892e-01  5.499e-02 -10.715
+    ## Female_Head_Education   -7.612e-01  5.454e-02 -13.958
+    ## Race2                    1.341e+00  1.623e-01   8.262
+    ## Race3                   -3.024e+00  2.749e-01 -10.998
+    ## Race4                   -1.339e+00  2.314e-01  -5.787
+    ## Marital_Status2          1.857e+00  2.778e-01   6.686
+    ## Marital_Status3          1.506e+00  2.420e-01   6.224
+    ## Marital_Status4          2.036e+00  2.423e-01   8.402
+    ## Male_Head_Employment1    4.262e+00  5.073e-01   8.401
+    ## Male_Head_Employment2    4.382e+00  5.406e-01   8.105
+    ## Male_Head_Employment3    4.985e+00  4.462e-01  11.173
+    ## Male_Head_Employment9    3.773e+00  4.781e-01   7.893
+    ## Female_Head_Employment1  2.919e+00  4.734e-01   6.166
+    ## Female_Head_Employment2  3.136e+00  4.996e-01   6.277
+    ## Female_Head_Employment3  3.807e+00  4.536e-01   8.393
+    ## Female_Head_Employment9  2.501e+00  4.616e-01   5.418
+    ## Male_Head_Age           -2.739e-01  4.485e-02  -6.106
+    ## Female_Head_Age         -1.602e-01  4.036e-02  -3.970
 
     ## 
     ## Correlation matrix not shown by default, as p = 21 > 12.
@@ -353,19 +350,19 @@ lm.beta.lmer(lm_inc)
 ```
 
     ##                 inc_mid          Household_Size     Male_Head_Education 
-    ##            -0.213583630            -0.005294853            -0.088731461 
+    ##            -0.215382724            -0.001123928            -0.097935508 
     ##   Female_Head_Education                   Race2                   Race3 
-    ##            -0.099686591             0.038489952            -0.038946748 
+    ##            -0.100120039             0.033245240            -0.043228143 
     ##                   Race4         Marital_Status2         Marital_Status3 
-    ##            -0.015923962             0.059416271             0.062646982 
+    ##            -0.022494327             0.039307202             0.042987700 
     ##         Marital_Status4   Male_Head_Employment1   Male_Head_Employment2 
-    ##             0.070531951             0.066030270             0.055807733 
+    ##             0.055969423             0.072816662             0.054293811 
     ##   Male_Head_Employment3   Male_Head_Employment9 Female_Head_Employment1 
-    ##             0.196927070             0.124184833             0.107256814 
+    ##             0.197962420             0.130459373             0.076471577 
     ## Female_Head_Employment2 Female_Head_Employment3 Female_Head_Employment9 
-    ##             0.072421065             0.182707734             0.134407889 
+    ##             0.052497701             0.144101649             0.098374590 
     ##           Male_Head_Age         Female_Head_Age 
-    ##            -0.059627705            -0.050380347
+    ##            -0.077573696            -0.036493823
 
 ### Income and median income
 
@@ -387,7 +384,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -403,46 +400,46 @@ summary(lm_med_inc)
     ##     pov_status_below_per + Household_Size + Male_Head_Education +  
     ##     Female_Head_Education + Race + Marital_Status + Male_Head_Employment +  
     ##     Female_Head_Employment + Male_Head_Age + Female_Head_Age +      (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 477032.4
+    ## REML criterion at convergence: 473697.5
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.6646 -0.6524 -0.0992  0.5277 18.2167 
+    ## -3.6589 -0.6524 -0.0970  0.5348 18.8854 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept)   3.852   1.963  
-    ##  Residual             138.430  11.766  
-    ## Number of obs: 61197, groups:  zip, 15673
+    ##  zip      (Intercept)   3.885   1.971  
+    ##  Residual             135.069  11.622  
+    ## Number of obs: 60955, groups:  zip, 15533
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  4.151e+01  5.641e-01  73.586
-    ## median_income                6.810e-05  6.946e-06   9.805
-    ## inc_mid                     -8.133e-05  2.186e-06 -37.203
-    ## median_monthly_housing_cost -5.060e-03  2.839e-04 -17.825
-    ## pov_status_below_per         7.169e+00  1.015e+00   7.063
-    ## Household_Size              -2.857e-02  4.916e-02  -0.581
-    ## Male_Head_Education         -4.810e-01  5.562e-02  -8.647
-    ## Female_Head_Education       -7.293e-01  5.526e-02 -13.198
-    ## Race2                        1.601e+00  1.704e-01   9.394
-    ## Race3                       -2.120e+00  2.860e-01  -7.412
-    ## Race4                       -7.411e-01  2.394e-01  -3.096
-    ## Marital_Status2              2.874e+00  2.828e-01  10.164
-    ## Marital_Status3              2.353e+00  2.468e-01   9.532
-    ## Marital_Status4              2.821e+00  2.495e-01  11.307
-    ## Male_Head_Employment1        3.624e+00  5.189e-01   6.984
-    ## Male_Head_Employment2        4.198e+00  5.515e-01   7.611
-    ## Male_Head_Employment3        4.585e+00  4.585e-01  10.001
-    ## Male_Head_Employment9        3.235e+00  4.893e-01   6.611
-    ## Female_Head_Employment1      3.877e+00  4.835e-01   8.020
-    ## Female_Head_Employment2      4.189e+00  5.125e-01   8.175
-    ## Female_Head_Employment3      4.564e+00  4.653e-01   9.809
-    ## Female_Head_Employment9      3.197e+00  4.720e-01   6.773
-    ## Male_Head_Age               -2.147e-01  4.612e-02  -4.656
-    ## Female_Head_Age             -2.211e-01  4.136e-02  -5.346
+    ## (Intercept)                  4.265e+01  5.506e-01  77.463
+    ## median_income                7.345e-05  6.731e-06  10.912
+    ## inc_mid                     -8.006e-05  2.147e-06 -37.290
+    ## median_monthly_housing_cost -5.811e-03  2.827e-04 -20.550
+    ## pov_status_below_per         6.582e+00  1.012e+00   6.505
+    ## Household_Size               8.431e-03  4.749e-02   0.178
+    ## Male_Head_Education         -5.280e-01  5.502e-02  -9.597
+    ## Female_Head_Education       -7.175e-01  5.443e-02 -13.183
+    ## Race2                        1.433e+00  1.659e-01   8.636
+    ## Race3                       -2.226e+00  2.762e-01  -8.061
+    ## Race4                       -9.865e-01  2.325e-01  -4.243
+    ## Marital_Status2              1.932e+00  2.770e-01   6.975
+    ## Marital_Status3              1.685e+00  2.415e-01   6.978
+    ## Marital_Status4              2.288e+00  2.419e-01   9.457
+    ## Male_Head_Employment1        4.035e+00  5.062e-01   7.972
+    ## Male_Head_Employment2        4.156e+00  5.397e-01   7.700
+    ## Male_Head_Employment3        4.617e+00  4.455e-01  10.365
+    ## Male_Head_Employment9        3.510e+00  4.772e-01   7.355
+    ## Female_Head_Employment1      2.627e+00  4.722e-01   5.563
+    ## Female_Head_Employment2      2.855e+00  4.984e-01   5.729
+    ## Female_Head_Employment3      3.397e+00  4.527e-01   7.504
+    ## Female_Head_Employment9      2.185e+00  4.604e-01   4.745
+    ## Male_Head_Age               -2.868e-01  4.471e-02  -6.415
+    ## Female_Head_Age             -1.505e-01  4.024e-02  -3.739
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -457,29 +454,29 @@ lm.beta.lmer(lm_med_inc)
 ```
 
     ##               median_income                     inc_mid 
-    ##                 0.114460667                -0.189912312 
+    ##                0.1266754547               -0.1894730394 
     ## median_monthly_housing_cost        pov_status_below_per 
-    ##                -0.165043094                 0.047688559 
+    ##               -0.1889698282                0.0440195409 
     ##              Household_Size         Male_Head_Education 
-    ##                -0.002897621                -0.079090330 
+    ##                0.0008825192               -0.0878616579 
     ##       Female_Head_Education                       Race2 
-    ##                -0.094598673                 0.038605217 
+    ##               -0.0944158944                0.0355348897 
     ##                       Race3                       Race4 
-    ##                -0.029275710                -0.012064207 
+    ##               -0.0319064526               -0.0165568351 
     ##             Marital_Status2             Marital_Status3 
-    ##                 0.060681496                 0.066822234 
+    ##                0.0409604306                0.0481157664 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                 0.076593877                 0.060921556 
+    ##                0.0629212934                0.0690352513 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                 0.051796845                 0.180254299 
+    ##                0.0514817768                0.1836004841 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                 0.111597304                 0.101435353 
+    ##                0.1214794386                0.0689537336 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                 0.068470104                 0.170467936 
+    ##                0.0478321495                0.1287314450 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                 0.124904555                -0.060157879 
+    ##                0.0860416030               -0.0813424543 
     ##             Female_Head_Age 
-    ##                -0.049442375
+    ##               -0.0343001731
 
 ### Income difference score
 
@@ -501,7 +498,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -518,46 +515,46 @@ summary(lm_inc_diff)
     ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 477032.4
+    ## REML criterion at convergence: 473697.5
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.6646 -0.6524 -0.0992  0.5277 18.2167 
+    ## -3.6589 -0.6524 -0.0970  0.5348 18.8854 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept)   3.852   1.963  
-    ##  Residual             138.430  11.766  
-    ## Number of obs: 61197, groups:  zip, 15673
+    ##  zip      (Intercept)   3.885   1.971  
+    ##  Residual             135.069  11.622  
+    ## Number of obs: 60955, groups:  zip, 15533
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  4.151e+01  5.641e-01  73.586
-    ## inc_mid                     -1.323e-05  7.253e-06  -1.824
-    ## inc_diff                    -6.810e-05  6.946e-06  -9.805
-    ## Household_Size              -2.857e-02  4.916e-02  -0.581
-    ## pov_status_below_per         7.169e+00  1.015e+00   7.063
-    ## median_monthly_housing_cost -5.060e-03  2.839e-04 -17.825
-    ## Male_Head_Education         -4.810e-01  5.562e-02  -8.647
-    ## Female_Head_Education       -7.293e-01  5.526e-02 -13.198
-    ## Race2                        1.601e+00  1.704e-01   9.394
-    ## Race3                       -2.120e+00  2.860e-01  -7.412
-    ## Race4                       -7.411e-01  2.394e-01  -3.096
-    ## Marital_Status2              2.874e+00  2.828e-01  10.164
-    ## Marital_Status3              2.353e+00  2.468e-01   9.532
-    ## Marital_Status4              2.821e+00  2.495e-01  11.307
-    ## Male_Head_Employment1        3.624e+00  5.189e-01   6.984
-    ## Male_Head_Employment2        4.198e+00  5.515e-01   7.611
-    ## Male_Head_Employment3        4.585e+00  4.585e-01  10.001
-    ## Male_Head_Employment9        3.235e+00  4.893e-01   6.611
-    ## Female_Head_Employment1      3.877e+00  4.835e-01   8.020
-    ## Female_Head_Employment2      4.189e+00  5.125e-01   8.175
-    ## Female_Head_Employment3      4.564e+00  4.653e-01   9.809
-    ## Female_Head_Employment9      3.197e+00  4.720e-01   6.773
-    ## Male_Head_Age               -2.147e-01  4.612e-02  -4.656
-    ## Female_Head_Age             -2.211e-01  4.136e-02  -5.346
+    ## (Intercept)                  4.265e+01  5.506e-01  77.463
+    ## inc_mid                     -6.611e-06  7.054e-06  -0.937
+    ## inc_diff                    -7.345e-05  6.731e-06 -10.912
+    ## Household_Size               8.431e-03  4.749e-02   0.178
+    ## pov_status_below_per         6.582e+00  1.012e+00   6.505
+    ## median_monthly_housing_cost -5.811e-03  2.827e-04 -20.550
+    ## Male_Head_Education         -5.280e-01  5.502e-02  -9.597
+    ## Female_Head_Education       -7.175e-01  5.443e-02 -13.183
+    ## Race2                        1.433e+00  1.659e-01   8.636
+    ## Race3                       -2.226e+00  2.762e-01  -8.061
+    ## Race4                       -9.865e-01  2.325e-01  -4.243
+    ## Marital_Status2              1.932e+00  2.770e-01   6.975
+    ## Marital_Status3              1.685e+00  2.415e-01   6.978
+    ## Marital_Status4              2.288e+00  2.419e-01   9.457
+    ## Male_Head_Employment1        4.035e+00  5.062e-01   7.972
+    ## Male_Head_Employment2        4.156e+00  5.397e-01   7.700
+    ## Male_Head_Employment3        4.617e+00  4.455e-01  10.365
+    ## Male_Head_Employment9        3.510e+00  4.772e-01   7.355
+    ## Female_Head_Employment1      2.627e+00  4.722e-01   5.563
+    ## Female_Head_Employment2      2.855e+00  4.984e-01   5.729
+    ## Female_Head_Employment3      3.397e+00  4.527e-01   7.504
+    ## Female_Head_Employment9      2.185e+00  4.604e-01   4.745
+    ## Male_Head_Age               -2.868e-01  4.471e-02  -6.415
+    ## Female_Head_Age             -1.505e-01  4.024e-02  -3.739
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -572,40 +569,160 @@ lm.beta.lmer(lm_inc_diff)
 ```
 
     ##                     inc_mid                    inc_diff 
-    ##                -0.030887943                -0.165022815 
+    ##               -0.0156463210               -0.1813161674 
     ##              Household_Size        pov_status_below_per 
-    ##                -0.002897621                 0.047688559 
+    ##                0.0008825192                0.0440195409 
     ## median_monthly_housing_cost         Male_Head_Education 
-    ##                -0.165043093                -0.079090330 
+    ##               -0.1889698282               -0.0878616579 
     ##       Female_Head_Education                       Race2 
-    ##                -0.094598673                 0.038605217 
+    ##               -0.0944158944                0.0355348897 
     ##                       Race3                       Race4 
-    ##                -0.029275710                -0.012064207 
+    ##               -0.0319064526               -0.0165568351 
     ##             Marital_Status2             Marital_Status3 
-    ##                 0.060681496                 0.066822234 
+    ##                0.0409604306                0.0481157665 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                 0.076593877                 0.060921556 
+    ##                0.0629212933                0.0690352513 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                 0.051796845                 0.180254299 
+    ##                0.0514817768                0.1836004841 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                 0.111597304                 0.101435352 
+    ##                0.1214794386                0.0689537336 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                 0.068470104                 0.170467936 
+    ##                0.0478321496                0.1287314450 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                 0.124904555                -0.060157879 
+    ##                0.0860416030               -0.0813424543 
     ##             Female_Head_Age 
-    ##                -0.049442375
+    ##               -0.0343001731
+
+### Income difference score x gini
+
+``` r
+lm_inc_diff_g <-
+  lmer(
+    cal_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+```
+
+    ## Warning: Some predictor variables are on very different scales: consider
+    ## rescaling
+
+``` r
+summary(lm_inc_diff_g)
+```
+
+    ## Linear mixed model fit by REML ['lmerMod']
+    ## Formula: 
+    ## cal_per ~ inc_mid + inc_diff * gini + Household_Size + pov_status_below_per +  
+    ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
+    ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
+    ##     Male_Head_Age + Female_Head_Age + (1 | zip)
+    ##    Data: nps_2015
+    ## 
+    ## REML criterion at convergence: 473652.3
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -3.6987 -0.6532 -0.0982  0.5357 18.8986 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  zip      (Intercept)   3.718   1.928  
+    ##  Residual             135.077  11.622  
+    ## Number of obs: 60955, groups:  zip, 15533
+    ## 
+    ## Fixed effects:
+    ##                               Estimate Std. Error t value
+    ## (Intercept)                  4.587e+01  7.188e-01  63.805
+    ## inc_mid                     -3.834e-06  7.045e-06  -0.544
+    ## inc_diff                    -1.977e-05  1.479e-05  -1.336
+    ## gini                        -8.813e+00  1.246e+00  -7.075
+    ## Household_Size              -6.494e-03  4.752e-02  -0.137
+    ## pov_status_below_per         9.786e+00  1.091e+00   8.970
+    ## median_monthly_housing_cost -5.769e-03  2.821e-04 -20.448
+    ## Male_Head_Education         -5.034e-01  5.509e-02  -9.138
+    ## Female_Head_Education       -6.947e-01  5.449e-02 -12.750
+    ## Race2                        1.418e+00  1.657e-01   8.558
+    ## Race3                       -2.193e+00  2.761e-01  -7.943
+    ## Race4                       -1.006e+00  2.324e-01  -4.328
+    ## Marital_Status2              1.925e+00  2.769e-01   6.951
+    ## Marital_Status3              1.674e+00  2.414e-01   6.932
+    ## Marital_Status4              2.295e+00  2.420e-01   9.486
+    ## Male_Head_Employment1        3.917e+00  5.062e-01   7.739
+    ## Male_Head_Employment2        4.043e+00  5.397e-01   7.492
+    ## Male_Head_Employment3        4.474e+00  4.457e-01  10.038
+    ## Male_Head_Employment9        3.381e+00  4.773e-01   7.084
+    ## Female_Head_Employment1      2.469e+00  4.724e-01   5.227
+    ## Female_Head_Employment2      2.698e+00  4.986e-01   5.410
+    ## Female_Head_Employment3      3.229e+00  4.530e-01   7.129
+    ## Female_Head_Employment9      2.018e+00  4.608e-01   4.380
+    ## Male_Head_Age               -2.854e-01  4.470e-02  -6.386
+    ## Female_Head_Age             -1.453e-01  4.023e-02  -3.613
+    ## inc_diff:gini               -1.311e-04  3.145e-05  -4.168
+
+    ## 
+    ## Correlation matrix not shown by default, as p = 26 > 12.
+    ## Use print(x, correlation=TRUE)  or
+    ##     vcov(x)        if you need it
+
+    ## fit warnings:
+    ## Some predictor variables are on very different scales: consider rescaling
+
+``` r
+lm.beta.lmer(lm_inc_diff_g)
+```
+
+    ##                     inc_mid                    inc_diff 
+    ##                -0.009073196                -0.048794037 
+    ##                        gini              Household_Size 
+    ##                -0.033385775                -0.000679805 
+    ##        pov_status_below_per median_monthly_housing_cost 
+    ##                 0.065453228                -0.187633886 
+    ##         Male_Head_Education       Female_Head_Education 
+    ##                -0.083761771                -0.091410606 
+    ##                       Race2                       Race3 
+    ##                 0.035178909                -0.031426469 
+    ##                       Race4             Marital_Status2 
+    ##                -0.016883322                 0.040802318 
+    ##             Marital_Status3             Marital_Status4 
+    ##                 0.047780294                 0.063129161 
+    ##       Male_Head_Employment1       Male_Head_Employment2 
+    ##                 0.067015643                 0.050088224 
+    ##       Male_Head_Employment3       Male_Head_Employment9 
+    ##                 0.177886891                 0.117025575 
+    ##     Female_Head_Employment1     Female_Head_Employment2 
+    ##                 0.064816081                 0.045187437 
+    ##     Female_Head_Employment3     Female_Head_Employment9 
+    ##                 0.122380108                 0.079468949 
+    ##               Male_Head_Age             Female_Head_Age 
+    ##                -0.080936598                -0.033134014 
+    ##               inc_diff:gini 
+    ##                -0.140073471
 
 ### Regression table
 
 ``` r
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -615,7 +732,7 @@ stargazer(
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -627,7 +744,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 <em>Dependent variable:</em>
 
@@ -641,7 +758,7 @@ stargazer(
 
 </td>
 
-<td colspan="3" style="border-bottom: 1px solid black">
+<td colspan="4" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -653,7 +770,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 cal\_per
 
@@ -685,11 +802,17 @@ cal\_per
 
 </td>
 
+<td>
+
+(4)
+
+</td>
+
 </tr>
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -709,7 +832,11 @@ median\_income
 
 <td>
 
-0.114<sup>\*\*\*</sup>
+0.127<sup>\*\*\*</sup>
+
+</td>
+
+<td>
 
 </td>
 
@@ -739,11 +866,19 @@ median\_income
 
 </td>
 
+<td>
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -771,19 +906,25 @@ inc\_mid
 
 <td>
 
-\-0.214
+\-0.215
 
 </td>
 
 <td>
 
-\-0.190<sup>\*\*\*</sup>
+\-0.189<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.031<sup>\*\*\*</sup>
+\-0.016<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.009<sup>\*\*\*</sup>
 
 </td>
 
@@ -813,11 +954,21 @@ inc\_mid
 
 </td>
 
+<td>
+
+(0.00001)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -853,7 +1004,13 @@ inc\_diff
 
 <td>
 
-\-0.165<sup>\*\*\*</sup>
+\-0.181<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.049<sup>\*\*\*</sup>
 
 </td>
 
@@ -879,11 +1036,99 @@ inc\_diff
 
 </td>
 
+<td>
+
+(0.00001)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.033
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(1.246)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -915,13 +1160,19 @@ median\_monthly\_housing\_cost
 
 <td>
 
-\-0.165<sup>\*\*\*</sup>
+\-0.189<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.165<sup>\*\*\*</sup>
+\-0.189<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.188<sup>\*\*\*</sup>
 
 </td>
 
@@ -949,11 +1200,21 @@ median\_monthly\_housing\_cost
 
 </td>
 
+<td>
+
+(0.0003)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -985,13 +1246,19 @@ pov\_status\_below\_per
 
 <td>
 
-0.048
+0.044
 
 </td>
 
 <td>
 
-0.048
+0.044
+
+</td>
+
+<td>
+
+0.065
 
 </td>
 
@@ -1009,13 +1276,19 @@ pov\_status\_below\_per
 
 <td>
 
-(1.015)
+(1.012)
 
 </td>
 
 <td>
 
-(1.015)
+(1.012)
+
+</td>
+
+<td>
+
+(1.091)
 
 </td>
 
@@ -1024,6 +1297,10 @@ pov\_status\_below\_per
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1051,19 +1328,25 @@ Household\_Size
 
 <td>
 
-\-0.005<sup>\*\*\*</sup>
+\-0.001<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.003
+0.001
 
 </td>
 
 <td>
 
-\-0.003
+0.001
+
+</td>
+
+<td>
+
+\-0.001
 
 </td>
 
@@ -1077,19 +1360,25 @@ Household\_Size
 
 <td>
 
-(0.049)
+(0.048)
 
 </td>
 
 <td>
 
-(0.049)
+(0.047)
 
 </td>
 
 <td>
 
-(0.049)
+(0.047)
+
+</td>
+
+<td>
+
+(0.048)
 
 </td>
 
@@ -1098,6 +1387,10 @@ Household\_Size
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1125,19 +1418,25 @@ Male\_Head\_Education
 
 <td>
 
-\-0.089<sup>\*</sup>
+\-0.098<sup>\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.079
+\-0.088
 
 </td>
 
 <td>
 
-\-0.079
+\-0.088
+
+</td>
+
+<td>
+
+\-0.084
 
 </td>
 
@@ -1151,19 +1450,25 @@ Male\_Head\_Education
 
 <td>
 
-(0.056)
+(0.055)
 
 </td>
 
 <td>
 
-(0.056)
+(0.055)
 
 </td>
 
 <td>
 
-(0.056)
+(0.055)
+
+</td>
+
+<td>
+
+(0.055)
 
 </td>
 
@@ -1172,6 +1477,10 @@ Male\_Head\_Education
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1205,13 +1514,19 @@ Female\_Head\_Education
 
 <td>
 
-\-0.095<sup>\*</sup>
+\-0.094<sup>\*</sup>
 
 </td>
 
 <td>
 
-\-0.095<sup>\*</sup>
+\-0.094<sup>\*</sup>
+
+</td>
+
+<td>
+
+\-0.091<sup>\*</sup>
 
 </td>
 
@@ -1231,13 +1546,19 @@ Female\_Head\_Education
 
 <td>
 
-(0.055)
+(0.054)
 
 </td>
 
 <td>
 
-(0.055)
+(0.054)
+
+</td>
+
+<td>
+
+(0.054)
 
 </td>
 
@@ -1246,6 +1567,10 @@ Female\_Head\_Education
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1273,19 +1598,25 @@ Race2
 
 <td>
 
-0.038
+0.033
 
 </td>
 
 <td>
 
-0.039
+0.036
 
 </td>
 
 <td>
 
-0.039
+0.036
+
+</td>
+
+<td>
+
+0.035
 
 </td>
 
@@ -1294,6 +1625,12 @@ Race2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.162)
 
 </td>
 
@@ -1305,13 +1642,13 @@ Race2
 
 <td>
 
-(0.170)
+(0.166)
 
 </td>
 
 <td>
 
-(0.170)
+(0.166)
 
 </td>
 
@@ -1320,6 +1657,10 @@ Race2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1347,19 +1688,25 @@ Race3
 
 <td>
 
-\-0.039
+\-0.043
 
 </td>
 
 <td>
 
-\-0.029
+\-0.032
 
 </td>
 
 <td>
 
-\-0.029
+\-0.032
+
+</td>
+
+<td>
+
+\-0.031
 
 </td>
 
@@ -1373,19 +1720,25 @@ Race3
 
 <td>
 
-(0.284)
+(0.275)
 
 </td>
 
 <td>
 
-(0.286)
+(0.276)
 
 </td>
 
 <td>
 
-(0.286)
+(0.276)
+
+</td>
+
+<td>
+
+(0.276)
 
 </td>
 
@@ -1394,6 +1747,10 @@ Race3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1421,19 +1778,25 @@ Race4
 
 <td>
 
-\-0.016
+\-0.022
 
 </td>
 
 <td>
 
-\-0.012
+\-0.017
 
 </td>
 
 <td>
 
-\-0.012
+\-0.017
+
+</td>
+
+<td>
+
+\-0.017
 
 </td>
 
@@ -1447,19 +1810,25 @@ Race4
 
 <td>
 
-(0.238)
+(0.231)
 
 </td>
 
 <td>
 
-(0.239)
+(0.233)
 
 </td>
 
 <td>
 
-(0.239)
+(0.233)
+
+</td>
+
+<td>
+
+(0.232)
 
 </td>
 
@@ -1468,6 +1837,10 @@ Race4
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1495,19 +1868,25 @@ Marital\_Status2
 
 <td>
 
-0.059
+0.039
 
 </td>
 
 <td>
 
-0.061
+0.041
 
 </td>
 
 <td>
 
-0.061
+0.041
+
+</td>
+
+<td>
+
+0.041
 
 </td>
 
@@ -1521,19 +1900,25 @@ Marital\_Status2
 
 <td>
 
-(0.283)
+(0.278)
 
 </td>
 
 <td>
 
-(0.283)
+(0.277)
 
 </td>
 
 <td>
 
-(0.283)
+(0.277)
+
+</td>
+
+<td>
+
+(0.277)
 
 </td>
 
@@ -1542,6 +1927,10 @@ Marital\_Status2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1569,19 +1958,25 @@ Marital\_Status3
 
 <td>
 
-0.063
+0.043
 
 </td>
 
 <td>
 
-0.067
+0.048
 
 </td>
 
 <td>
 
-0.067
+0.048
+
+</td>
+
+<td>
+
+0.048
 
 </td>
 
@@ -1595,19 +1990,25 @@ Marital\_Status3
 
 <td>
 
-(0.247)
+(0.242)
 
 </td>
 
 <td>
 
-(0.247)
+(0.242)
 
 </td>
 
 <td>
 
-(0.247)
+(0.242)
+
+</td>
+
+<td>
+
+(0.241)
 
 </td>
 
@@ -1616,6 +2017,10 @@ Marital\_Status3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1643,19 +2048,25 @@ Marital\_Status4
 
 <td>
 
-0.071
+0.056
 
 </td>
 
 <td>
 
-0.077
+0.063
 
 </td>
 
 <td>
 
-0.077
+0.063
+
+</td>
+
+<td>
+
+0.063
 
 </td>
 
@@ -1669,19 +2080,25 @@ Marital\_Status4
 
 <td>
 
-(0.249)
+(0.242)
 
 </td>
 
 <td>
 
-(0.250)
+(0.242)
 
 </td>
 
 <td>
 
-(0.250)
+(0.242)
+
+</td>
+
+<td>
+
+(0.242)
 
 </td>
 
@@ -1690,6 +2107,10 @@ Marital\_Status4
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1717,19 +2138,25 @@ Male\_Head\_Employment1
 
 <td>
 
-0.066
+0.073
 
 </td>
 
 <td>
 
-0.061
+0.069
 
 </td>
 
 <td>
 
-0.061
+0.069
+
+</td>
+
+<td>
+
+0.067
 
 </td>
 
@@ -1743,19 +2170,25 @@ Male\_Head\_Employment1
 
 <td>
 
-(0.519)
+(0.507)
 
 </td>
 
 <td>
 
-(0.519)
+(0.506)
 
 </td>
 
 <td>
 
-(0.519)
+(0.506)
+
+</td>
+
+<td>
+
+(0.506)
 
 </td>
 
@@ -1764,6 +2197,10 @@ Male\_Head\_Employment1
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1791,19 +2228,25 @@ Male\_Head\_Employment2
 
 <td>
 
-0.056
+0.054
 
 </td>
 
 <td>
 
-0.052
+0.051
 
 </td>
 
 <td>
 
-0.052
+0.051
+
+</td>
+
+<td>
+
+0.050
 
 </td>
 
@@ -1817,19 +2260,25 @@ Male\_Head\_Employment2
 
 <td>
 
-(0.551)
+(0.541)
 
 </td>
 
 <td>
 
-(0.552)
+(0.540)
 
 </td>
 
 <td>
 
-(0.552)
+(0.540)
+
+</td>
+
+<td>
+
+(0.540)
 
 </td>
 
@@ -1838,6 +2287,10 @@ Male\_Head\_Employment2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1865,19 +2318,25 @@ Male\_Head\_Employment3
 
 <td>
 
-0.197
+0.198
 
 </td>
 
 <td>
 
-0.180
+0.184
 
 </td>
 
 <td>
 
-0.180
+0.184
+
+</td>
+
+<td>
+
+0.178
 
 </td>
 
@@ -1891,19 +2350,25 @@ Male\_Head\_Employment3
 
 <td>
 
-(0.458)
+(0.446)
 
 </td>
 
 <td>
 
-(0.458)
+(0.445)
 
 </td>
 
 <td>
 
-(0.458)
+(0.445)
+
+</td>
+
+<td>
+
+(0.446)
 
 </td>
 
@@ -1912,6 +2377,10 @@ Male\_Head\_Employment3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -1939,19 +2408,25 @@ Male\_Head\_Employment9
 
 <td>
 
-0.124
+0.130
 
 </td>
 
 <td>
 
-0.112
+0.121
 
 </td>
 
 <td>
 
-0.112
+0.121
+
+</td>
+
+<td>
+
+0.117
 
 </td>
 
@@ -1965,19 +2440,25 @@ Male\_Head\_Employment9
 
 <td>
 
-(0.489)
+(0.478)
 
 </td>
 
 <td>
 
-(0.489)
+(0.477)
 
 </td>
 
 <td>
 
-(0.489)
+(0.477)
+
+</td>
+
+<td>
+
+(0.477)
 
 </td>
 
@@ -1986,6 +2467,10 @@ Male\_Head\_Employment9
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -2013,241 +2498,25 @@ Female\_Head\_Employment1
 
 <td>
 
-0.107
+0.076
 
 </td>
 
 <td>
 
-0.101
+0.069
 
 </td>
 
 <td>
 
-0.101
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
+0.069
 
 </td>
 
 <td>
 
-(0.484)
-
-</td>
-
-<td>
-
-(0.483)
-
-</td>
-
-<td>
-
-(0.483)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment2
-
-</td>
-
-<td>
-
-0.072
-
-</td>
-
-<td>
-
-0.068
-
-</td>
-
-<td>
-
-0.068
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.513)
-
-</td>
-
-<td>
-
-(0.512)
-
-</td>
-
-<td>
-
-(0.512)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment3
-
-</td>
-
-<td>
-
-0.183
-
-</td>
-
-<td>
-
-0.170
-
-</td>
-
-<td>
-
-0.170
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.466)
-
-</td>
-
-<td>
-
-(0.465)
-
-</td>
-
-<td>
-
-(0.465)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment9
-
-</td>
-
-<td>
-
-0.134
-
-</td>
-
-<td>
-
-0.125
-
-</td>
-
-<td>
-
-0.125
+0.065
 
 </td>
 
@@ -2277,11 +2546,291 @@ Female\_Head\_Employment9
 
 </td>
 
+<td>
+
+(0.472)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment2
+
+</td>
+
+<td>
+
+0.052
+
+</td>
+
+<td>
+
+0.048
+
+</td>
+
+<td>
+
+0.048
+
+</td>
+
+<td>
+
+0.045
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.500)
+
+</td>
+
+<td>
+
+(0.498)
+
+</td>
+
+<td>
+
+(0.498)
+
+</td>
+
+<td>
+
+(0.499)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment3
+
+</td>
+
+<td>
+
+0.144
+
+</td>
+
+<td>
+
+0.129
+
+</td>
+
+<td>
+
+0.129
+
+</td>
+
+<td>
+
+0.122
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.454)
+
+</td>
+
+<td>
+
+(0.453)
+
+</td>
+
+<td>
+
+(0.453)
+
+</td>
+
+<td>
+
+(0.453)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment9
+
+</td>
+
+<td>
+
+0.098
+
+</td>
+
+<td>
+
+0.086
+
+</td>
+
+<td>
+
+0.086
+
+</td>
+
+<td>
+
+0.079
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.462)
+
+</td>
+
+<td>
+
+(0.460)
+
+</td>
+
+<td>
+
+(0.460)
+
+</td>
+
+<td>
+
+(0.461)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -2309,19 +2858,25 @@ Male\_Head\_Age
 
 <td>
 
-\-0.060
+\-0.078
 
 </td>
 
 <td>
 
-\-0.060
+\-0.081<sup>\*</sup>
 
 </td>
 
 <td>
 
-\-0.060
+\-0.081<sup>\*</sup>
+
+</td>
+
+<td>
+
+\-0.081<sup>\*</sup>
 
 </td>
 
@@ -2335,19 +2890,25 @@ Male\_Head\_Age
 
 <td>
 
-(0.046)
+(0.045)
 
 </td>
 
 <td>
 
-(0.046)
+(0.045)
 
 </td>
 
 <td>
 
-(0.046)
+(0.045)
+
+</td>
+
+<td>
+
+(0.045)
 
 </td>
 
@@ -2356,6 +2917,10 @@ Male\_Head\_Age
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -2383,19 +2948,25 @@ Female\_Head\_Age
 
 <td>
 
-\-0.050
+\-0.036
 
 </td>
 
 <td>
 
-\-0.049
+\-0.034
 
 </td>
 
 <td>
 
-\-0.049
+\-0.034
+
+</td>
+
+<td>
+
+\-0.033
 
 </td>
 
@@ -2409,19 +2980,25 @@ Female\_Head\_Age
 
 <td>
 
-(0.041)
+(0.040)
 
 </td>
 
 <td>
 
-(0.041)
+(0.040)
 
 </td>
 
 <td>
 
-(0.041)
+(0.040)
+
+</td>
+
+<td>
+
+(0.040)
 
 </td>
 
@@ -2430,6 +3007,88 @@ Female\_Head\_Age
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+inc\_diff:gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.140<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.00003)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -2467,29 +3126,7 @@ Constant
 
 </td>
 
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
 <td>
-
-(0.452)
-
-</td>
-
-<td>
-
-(0.564)
-
-</td>
-
-<td>
-
-(0.564)
 
 </td>
 
@@ -2503,6 +3140,42 @@ Constant
 
 <td>
 
+(0.439)
+
+</td>
+
+<td>
+
+(0.551)
+
+</td>
+
+<td>
+
+(0.551)
+
+</td>
+
+<td>
+
+(0.719)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
 </td>
 
 <td>
@@ -2517,7 +3190,7 @@ Constant
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -2533,19 +3206,25 @@ Observations
 
 <td>
 
-61,524
+61,347
 
 </td>
 
 <td>
 
-61,197
+60,955
 
 </td>
 
 <td>
 
-61,197
+60,955
+
+</td>
+
+<td>
+
+60,955
 
 </td>
 
@@ -2561,19 +3240,25 @@ Log Likelihood
 
 <td>
 
-\-240,069.500
+\-238,764.600
 
 </td>
 
 <td>
 
-\-238,516.200
+\-236,848.800
 
 </td>
 
 <td>
 
-\-238,516.200
+\-236,848.800
+
+</td>
+
+<td>
+
+\-236,826.100
 
 </td>
 
@@ -2589,19 +3274,25 @@ Akaike Inf. Crit.
 
 <td>
 
-480,185.000
+477,575.300
 
 </td>
 
 <td>
 
-477,084.400
+473,749.500
 
 </td>
 
 <td>
 
-477,084.400
+473,749.500
+
+</td>
+
+<td>
+
+473,708.300
 
 </td>
 
@@ -2617,19 +3308,25 @@ Bayesian Inf. Crit.
 
 <td>
 
-480,392.600
+477,782.800
 
 </td>
 
 <td>
 
-477,319.000
+473,984.000
 
 </td>
 
 <td>
 
-477,319.000
+473,984.000
+
+</td>
+
+<td>
+
+473,960.800
 
 </td>
 
@@ -2637,7 +3334,7 @@ Bayesian Inf. Crit.
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -2651,7 +3348,7 @@ Bayesian Inf. Crit.
 
 </td>
 
-<td colspan="3" style="text-align:right">
+<td colspan="4" style="text-align:right">
 
 <sup>*</sup>p\<0.1; <sup>**</sup>p\<0.05; <sup>***</sup>p\<0.01
 
@@ -2670,9 +3367,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "calories per $1 spent"
@@ -2680,7 +3377,7 @@ effect("inc_mid", lm_inc) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ### Own income minus median income in your zip code
 
@@ -2691,9 +3388,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "calories per $1 spent"
@@ -2701,7 +3398,28 @@ effect("inc_diff", lm_inc_diff) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+### Own income minus median income x gini in your zip code
+
+``` r
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
+  ) + 
+  theme_bw()
+```
+
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ## Sugar content
 
@@ -2722,7 +3440,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -2738,43 +3456,43 @@ summary(lm_inc)
     ## sug_per ~ inc_mid + Household_Size + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 177926.2
+    ## REML criterion at convergence: 173478.1
     ## 
     ## Scaled residuals: 
-    ##    Min     1Q Median     3Q    Max 
-    ## -2.808 -0.630 -0.120  0.472 47.323 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -2.9003 -0.6445 -0.1250  0.4858 26.5174 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.02539  0.1593  
-    ##  Residual             1.02943  1.0146  
-    ## Number of obs: 61521, groups:  zip, 15969
+    ##  zip      (Intercept) 0.02612  0.1616  
+    ##  Residual             0.96335  0.9815  
+    ## Number of obs: 61345, groups:  zip, 15889
     ## 
     ## Fixed effects:
     ##                           Estimate Std. Error t value
-    ## (Intercept)              2.583e+00  3.874e-02  66.664
-    ## inc_mid                 -6.790e-06  1.825e-07 -37.195
-    ## Household_Size           3.005e-02  4.222e-03   7.118
-    ## Male_Head_Education     -3.746e-02  4.760e-03  -7.870
-    ## Female_Head_Education   -5.180e-02  4.740e-03 -10.927
-    ## Race2                    4.018e-01  1.417e-02  28.349
-    ## Race3                   -9.551e-02  2.435e-02  -3.922
-    ## Race4                    9.203e-02  2.039e-02   4.514
-    ## Marital_Status2          1.739e-01  2.428e-02   7.160
-    ## Marital_Status3          1.309e-01  2.119e-02   6.177
-    ## Marital_Status4          1.678e-01  2.140e-02   7.841
-    ## Male_Head_Employment1    3.025e-01  4.453e-02   6.794
-    ## Male_Head_Employment2    3.642e-01  4.729e-02   7.701
-    ## Male_Head_Employment3    3.450e-01  3.931e-02   8.777
-    ## Male_Head_Employment9    2.717e-01  4.197e-02   6.474
-    ## Female_Head_Employment1  3.064e-01  4.151e-02   7.381
-    ## Female_Head_Employment2  3.237e-01  4.400e-02   7.357
-    ## Female_Head_Employment3  3.216e-01  3.994e-02   8.052
-    ## Female_Head_Employment9  2.757e-01  4.053e-02   6.801
-    ## Male_Head_Age           -1.850e-02  3.962e-03  -4.670
-    ## Female_Head_Age         -1.289e-02  3.552e-03  -3.631
+    ## (Intercept)              2.625e+00  3.681e-02  71.322
+    ## inc_mid                 -6.552e-06  1.755e-07 -37.322
+    ## Household_Size           2.621e-02  3.994e-03   6.563
+    ## Male_Head_Education     -3.891e-02  4.611e-03  -8.438
+    ## Female_Head_Education   -5.526e-02  4.574e-03 -12.081
+    ## Race2                    3.647e-01  1.352e-02  26.965
+    ## Race3                   -1.239e-01  2.302e-02  -5.382
+    ## Race4                    4.766e-02  1.940e-02   2.457
+    ## Marital_Status2          1.130e-01  2.331e-02   4.848
+    ## Marital_Status3          7.677e-02  2.031e-02   3.781
+    ## Marital_Status4          1.079e-01  2.032e-02   5.308
+    ## Male_Head_Employment1    2.887e-01  4.256e-02   6.784
+    ## Male_Head_Employment2    3.044e-01  4.536e-02   6.712
+    ## Male_Head_Employment3    3.126e-01  3.742e-02   8.353
+    ## Male_Head_Employment9    2.586e-01  4.010e-02   6.448
+    ## Female_Head_Employment1  2.667e-01  3.971e-02   6.716
+    ## Female_Head_Employment2  2.596e-01  4.191e-02   6.194
+    ## Female_Head_Employment3  2.869e-01  3.805e-02   7.540
+    ## Female_Head_Employment9  2.501e-01  3.872e-02   6.459
+    ## Male_Head_Age           -2.131e-02  3.763e-03  -5.663
+    ## Female_Head_Age         -1.106e-02  3.386e-03  -3.268
 
     ## 
     ## Correlation matrix not shown by default, as p = 21 > 12.
@@ -2789,19 +3507,19 @@ lm.beta.lmer(lm_inc)
 ```
 
     ##                 inc_mid          Household_Size     Male_Head_Education 
-    ##             -0.18680277              0.03589918             -0.07259232 
+    ##            -0.186697039             0.033037132            -0.077954251 
     ##   Female_Head_Education                   Race2                   Race3 
-    ##             -0.07922621              0.11430284             -0.01552096 
+    ##            -0.087604037             0.108960562            -0.021349755 
     ##                   Race4         Marital_Status2         Marital_Status3 
-    ##              0.01768902              0.04323409              0.04382276 
+    ##             0.009651689             0.028820598             0.026407830 
     ##         Marital_Status4   Male_Head_Employment1   Male_Head_Employment2 
-    ##              0.05371007              0.05987441              0.05306521 
+    ##             0.035755887             0.059457331             0.045468464 
     ##   Male_Head_Employment3   Male_Head_Employment9 Female_Head_Employment1 
-    ##              0.15977517              0.11044361              0.09436901 
+    ##             0.149629264             0.107762028             0.084219960 
     ## Female_Head_Employment2 Female_Head_Employment3 Female_Head_Employment9 
-    ##              0.06232478              0.14147896              0.12687308 
+    ##             0.052375256             0.130890672             0.118575302 
     ##           Male_Head_Age         Female_Head_Age 
-    ##             -0.06106390             -0.03398958
+    ##            -0.072765275            -0.030375826
 
 ### Income and median income
 
@@ -2823,7 +3541,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -2839,46 +3557,46 @@ summary(lm_med_inc)
     ##     pov_status_below_per + Household_Size + Male_Head_Education +  
     ##     Female_Head_Education + Race + Marital_Status + Male_Head_Employment +  
     ##     Female_Head_Employment + Male_Head_Age + Female_Head_Age +      (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 176509.2
+    ## REML criterion at convergence: 171828.2
     ## 
     ## Scaled residuals: 
-    ##    Min     1Q Median     3Q    Max 
-    ## -2.846 -0.631 -0.120  0.475 47.738 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -2.9117 -0.6461 -0.1248  0.4844 26.7104 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.01817  0.1348  
-    ##  Residual             1.02694  1.0134  
-    ## Number of obs: 61194, groups:  zip, 15672
+    ##  zip      (Intercept) 0.01782  0.1335  
+    ##  Residual             0.96116  0.9804  
+    ## Number of obs: 60953, groups:  zip, 15531
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  2.566e+00  4.806e-02  53.385
-    ## median_income                4.925e-06  5.841e-07   8.432
-    ## inc_mid                     -6.003e-06  1.875e-07 -32.018
-    ## median_monthly_housing_cost -3.648e-04  2.388e-05 -15.276
-    ## pov_status_below_per         5.688e-01  8.552e-02   6.650
-    ## Household_Size               3.233e-02  4.217e-03   7.666
-    ## Male_Head_Education         -3.302e-02  4.770e-03  -6.923
-    ## Female_Head_Education       -4.926e-02  4.740e-03 -10.394
-    ## Race2                        3.993e-01  1.455e-02  27.445
-    ## Race3                       -3.856e-02  2.451e-02  -1.573
-    ## Race4                        1.074e-01  2.053e-02   5.234
-    ## Marital_Status2              1.788e-01  2.426e-02   7.369
-    ## Marital_Status3              1.408e-01  2.118e-02   6.650
-    ## Marital_Status4              1.876e-01  2.141e-02   8.763
-    ## Male_Head_Employment1        2.810e-01  4.451e-02   6.313
-    ## Male_Head_Employment2        3.417e-01  4.731e-02   7.223
-    ## Male_Head_Employment3        3.156e-01  3.933e-02   8.026
-    ## Male_Head_Employment9        2.468e-01  4.197e-02   5.879
-    ## Female_Head_Employment1      2.889e-01  4.147e-02   6.965
-    ## Female_Head_Employment2      3.051e-01  4.396e-02   6.941
-    ## Female_Head_Employment3      2.963e-01  3.992e-02   7.421
-    ## Female_Head_Employment9      2.569e-01  4.050e-02   6.344
-    ## Male_Head_Age               -1.882e-02  3.957e-03  -4.755
-    ## Female_Head_Age             -1.217e-02  3.548e-03  -3.429
+    ## (Intercept)                  2.665e+00  4.593e-02  58.026
+    ## median_income                4.641e-06  5.543e-07   8.373
+    ## inc_mid                     -5.694e-06  1.803e-07 -31.574
+    ## median_monthly_housing_cost -3.950e-04  2.329e-05 -16.959
+    ## pov_status_below_per         4.540e-01  8.349e-02   5.437
+    ## Household_Size               2.804e-02  3.990e-03   7.028
+    ## Male_Head_Education         -3.444e-02  4.621e-03  -7.452
+    ## Female_Head_Education       -5.222e-02  4.572e-03 -11.421
+    ## Race2                        3.660e-01  1.387e-02  26.384
+    ## Race3                       -6.312e-02  2.318e-02  -2.723
+    ## Race4                        7.094e-02  1.953e-02   3.633
+    ## Marital_Status2              1.188e-01  2.327e-02   5.104
+    ## Marital_Status3              8.849e-02  2.029e-02   4.360
+    ## Marital_Status4              1.284e-01  2.032e-02   6.318
+    ## Male_Head_Employment1        2.691e-01  4.253e-02   6.329
+    ## Male_Head_Employment2        2.882e-01  4.535e-02   6.355
+    ## Male_Head_Employment3        2.845e-01  3.742e-02   7.601
+    ## Male_Head_Employment9        2.374e-01  4.009e-02   5.922
+    ## Female_Head_Employment1      2.458e-01  3.967e-02   6.195
+    ## Female_Head_Employment2      2.388e-01  4.188e-02   5.704
+    ## Female_Head_Employment3      2.561e-01  3.803e-02   6.733
+    ## Female_Head_Employment9      2.273e-01  3.868e-02   5.875
+    ## Male_Head_Age               -2.204e-02  3.757e-03  -5.867
+    ## Female_Head_Age             -1.031e-02  3.381e-03  -3.050
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -2893,29 +3611,29 @@ lm.beta.lmer(lm_med_inc)
 ```
 
     ##               median_income                     inc_mid 
-    ##                  0.09760970                 -0.16531438 
+    ##                  0.09643694                 -0.16235524 
     ## median_monthly_housing_cost        pov_status_below_per 
-    ##                 -0.14031052                  0.04460829 
+    ##                 -0.15475901                  0.03657698 
     ##              Household_Size         Male_Head_Education 
-    ##                  0.03866170                 -0.06404003 
+    ##                  0.03536396                 -0.06904250 
     ##       Female_Head_Education                       Race2 
-    ##                 -0.07534905                  0.11357238 
+    ##                 -0.08278137                  0.10937563 
     ##                       Race3                       Race4 
-    ##                 -0.00627986                  0.02062536 
+    ##                 -0.01089868                  0.01434764 
     ##             Marital_Status2             Marital_Status3 
-    ##                  0.04450839                  0.04716249 
+    ##                  0.03033505                  0.03043867 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                  0.06004359                  0.05569503 
+    ##                  0.04255332                  0.05547379 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                  0.04972525                  0.14631276 
+    ##                  0.04301454                  0.13628044 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                  0.10040319                  0.08912230 
+    ##                  0.09901587                  0.07773276 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                  0.05880868                  0.13047754 
+    ##                  0.04820448                  0.11691386 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                  0.11836010                 -0.06215840 
+    ##                  0.10783739                 -0.07530614 
     ##             Female_Head_Age 
-    ##                 -0.03207584
+    ##                 -0.02832030
 
 ### Income difference score
 
@@ -2937,7 +3655,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -2954,46 +3672,46 @@ summary(lm_inc_diff)
     ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: 176509.2
+    ## REML criterion at convergence: 171828.2
     ## 
     ## Scaled residuals: 
-    ##    Min     1Q Median     3Q    Max 
-    ## -2.846 -0.631 -0.120  0.475 47.738 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -2.9117 -0.6461 -0.1248  0.4844 26.7104 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.01817  0.1348  
-    ##  Residual             1.02694  1.0134  
-    ## Number of obs: 61194, groups:  zip, 15672
+    ##  zip      (Intercept) 0.01782  0.1335  
+    ##  Residual             0.96116  0.9804  
+    ## Number of obs: 60953, groups:  zip, 15531
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  2.566e+00  4.806e-02  53.385
-    ## inc_mid                     -1.079e-06  6.109e-07  -1.765
-    ## inc_diff                    -4.925e-06  5.841e-07  -8.432
-    ## Household_Size               3.233e-02  4.217e-03   7.666
-    ## pov_status_below_per         5.688e-01  8.552e-02   6.650
-    ## median_monthly_housing_cost -3.648e-04  2.388e-05 -15.276
-    ## Male_Head_Education         -3.302e-02  4.770e-03  -6.923
-    ## Female_Head_Education       -4.926e-02  4.740e-03 -10.394
-    ## Race2                        3.993e-01  1.455e-02  27.445
-    ## Race3                       -3.856e-02  2.451e-02  -1.573
-    ## Race4                        1.074e-01  2.053e-02   5.234
-    ## Marital_Status2              1.788e-01  2.426e-02   7.369
-    ## Marital_Status3              1.408e-01  2.118e-02   6.650
-    ## Marital_Status4              1.876e-01  2.141e-02   8.763
-    ## Male_Head_Employment1        2.810e-01  4.451e-02   6.313
-    ## Male_Head_Employment2        3.417e-01  4.731e-02   7.223
-    ## Male_Head_Employment3        3.156e-01  3.933e-02   8.026
-    ## Male_Head_Employment9        2.468e-01  4.197e-02   5.879
-    ## Female_Head_Employment1      2.889e-01  4.147e-02   6.965
-    ## Female_Head_Employment2      3.051e-01  4.396e-02   6.941
-    ## Female_Head_Employment3      2.963e-01  3.992e-02   7.421
-    ## Female_Head_Employment9      2.569e-01  4.050e-02   6.344
-    ## Male_Head_Age               -1.882e-02  3.957e-03  -4.755
-    ## Female_Head_Age             -1.217e-02  3.548e-03  -3.429
+    ## (Intercept)                  2.665e+00  4.593e-02  58.026
+    ## inc_mid                     -1.053e-06  5.819e-07  -1.809
+    ## inc_diff                    -4.641e-06  5.543e-07  -8.373
+    ## Household_Size               2.804e-02  3.990e-03   7.028
+    ## pov_status_below_per         4.540e-01  8.349e-02   5.437
+    ## median_monthly_housing_cost -3.950e-04  2.329e-05 -16.959
+    ## Male_Head_Education         -3.444e-02  4.621e-03  -7.452
+    ## Female_Head_Education       -5.222e-02  4.572e-03 -11.421
+    ## Race2                        3.660e-01  1.387e-02  26.384
+    ## Race3                       -6.312e-02  2.318e-02  -2.723
+    ## Race4                        7.094e-02  1.953e-02   3.633
+    ## Marital_Status2              1.188e-01  2.327e-02   5.104
+    ## Marital_Status3              8.849e-02  2.029e-02   4.360
+    ## Marital_Status4              1.284e-01  2.032e-02   6.318
+    ## Male_Head_Employment1        2.691e-01  4.253e-02   6.329
+    ## Male_Head_Employment2        2.882e-01  4.535e-02   6.355
+    ## Male_Head_Employment3        2.845e-01  3.742e-02   7.601
+    ## Male_Head_Employment9        2.374e-01  4.009e-02   5.922
+    ## Female_Head_Employment1      2.458e-01  3.967e-02   6.195
+    ## Female_Head_Employment2      2.388e-01  4.188e-02   5.704
+    ## Female_Head_Employment3      2.561e-01  3.803e-02   6.733
+    ## Female_Head_Employment9      2.273e-01  3.868e-02   5.875
+    ## Male_Head_Age               -2.204e-02  3.757e-03  -5.867
+    ## Female_Head_Age             -1.031e-02  3.381e-03  -3.050
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -3008,40 +3726,160 @@ lm.beta.lmer(lm_inc_diff)
 ```
 
     ##                     inc_mid                    inc_diff 
-    ##                 -0.02970221                 -0.14072832 
+    ##                 -0.03002114                 -0.13803737 
     ##              Household_Size        pov_status_below_per 
-    ##                  0.03866170                  0.04460829 
+    ##                  0.03536396                  0.03657698 
     ## median_monthly_housing_cost         Male_Head_Education 
-    ##                 -0.14031052                 -0.06404003 
+    ##                 -0.15475901                 -0.06904250 
     ##       Female_Head_Education                       Race2 
-    ##                 -0.07534905                  0.11357238 
+    ##                 -0.08278137                  0.10937563 
     ##                       Race3                       Race4 
-    ##                 -0.00627986                  0.02062536 
+    ##                 -0.01089868                  0.01434764 
     ##             Marital_Status2             Marital_Status3 
-    ##                  0.04450839                  0.04716249 
+    ##                  0.03033505                  0.03043867 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                  0.06004359                  0.05569503 
+    ##                  0.04255332                  0.05547379 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                  0.04972525                  0.14631276 
+    ##                  0.04301454                  0.13628044 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                  0.10040319                  0.08912230 
+    ##                  0.09901587                  0.07773276 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                  0.05880868                  0.13047754 
+    ##                  0.04820448                  0.11691386 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                  0.11836010                 -0.06215840 
+    ##                  0.10783739                 -0.07530614 
     ##             Female_Head_Age 
-    ##                 -0.03207584
+    ##                 -0.02832030
+
+### Income difference score x gini
+
+``` r
+lm_inc_diff_g <-
+  lmer(
+    sug_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+```
+
+    ## Warning: Some predictor variables are on very different scales: consider
+    ## rescaling
+
+``` r
+summary(lm_inc_diff_g)
+```
+
+    ## Linear mixed model fit by REML ['lmerMod']
+    ## Formula: 
+    ## sug_per ~ inc_mid + inc_diff * gini + Household_Size + pov_status_below_per +  
+    ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
+    ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
+    ##     Male_Head_Age + Female_Head_Age + (1 | zip)
+    ##    Data: nps_2015
+    ## 
+    ## REML criterion at convergence: 171821.7
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -2.9232 -0.6468 -0.1245  0.4836 26.7202 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  zip      (Intercept) 0.01722  0.1312  
+    ##  Residual             0.96120  0.9804  
+    ## Number of obs: 60953, groups:  zip, 15531
+    ## 
+    ## Fixed effects:
+    ##                               Estimate Std. Error t value
+    ## (Intercept)                  2.866e+00  5.976e-02  47.963
+    ## inc_mid                     -8.883e-07  5.819e-07  -1.526
+    ## inc_diff                    -1.738e-06  1.235e-06  -1.408
+    ## gini                        -5.483e-01  1.028e-01  -5.335
+    ## Household_Size               2.709e-02  3.993e-03   6.785
+    ## pov_status_below_per         6.502e-01  9.015e-02   7.212
+    ## median_monthly_housing_cost -3.924e-04  2.327e-05 -16.864
+    ## Male_Head_Education         -3.289e-02  4.628e-03  -7.106
+    ## Female_Head_Education       -5.078e-02  4.578e-03 -11.091
+    ## Race2                        3.650e-01  1.387e-02  26.327
+    ## Race3                       -6.100e-02  2.318e-02  -2.632
+    ## Race4                        6.973e-02  1.953e-02   3.572
+    ## Marital_Status2              1.184e-01  2.327e-02   5.088
+    ## Marital_Status3              8.783e-02  2.029e-02   4.328
+    ## Marital_Status4              1.292e-01  2.033e-02   6.355
+    ## Male_Head_Employment1        2.618e-01  4.254e-02   6.154
+    ## Male_Head_Employment2        2.811e-01  4.535e-02   6.198
+    ## Male_Head_Employment3        2.754e-01  3.745e-02   7.353
+    ## Male_Head_Employment9        2.293e-01  4.011e-02   5.716
+    ## Female_Head_Employment1      2.359e-01  3.970e-02   5.941
+    ## Female_Head_Employment2      2.289e-01  4.190e-02   5.463
+    ## Female_Head_Employment3      2.455e-01  3.807e-02   6.448
+    ## Female_Head_Employment9      2.167e-01  3.872e-02   5.597
+    ## Male_Head_Age               -2.194e-02  3.756e-03  -5.840
+    ## Female_Head_Age             -9.991e-03  3.381e-03  -2.955
+    ## inc_diff:gini               -7.117e-06  2.635e-06  -2.701
+
+    ## 
+    ## Correlation matrix not shown by default, as p = 26 > 12.
+    ## Use print(x, correlation=TRUE)  or
+    ##     vcov(x)        if you need it
+
+    ## fit warnings:
+    ## Some predictor variables are on very different scales: consider rescaling
+
+``` r
+lm.beta.lmer(lm_inc_diff_g)
+```
+
+    ##                     inc_mid                    inc_diff 
+    ##                 -0.02532893                 -0.05168617 
+    ##                        gini              Household_Size 
+    ##                 -0.02502271                  0.03417003 
+    ##        pov_status_below_per median_monthly_housing_cost 
+    ##                  0.05238712                 -0.15375126 
+    ##         Male_Head_Education       Female_Head_Education 
+    ##                 -0.06593461                 -0.08049314 
+    ##                       Race2                       Race3 
+    ##                  0.10908609                 -0.01053175 
+    ##                       Race4             Marital_Status2 
+    ##                  0.01410310                  0.03023686 
+    ##             Marital_Status3             Marital_Status4 
+    ##                  0.03021165                  0.04281818 
+    ##       Male_Head_Employment1       Male_Head_Employment2 
+    ##                  0.05395316                  0.04195386 
+    ##       Male_Head_Employment3       Male_Head_Employment9 
+    ##                  0.13191681                  0.09560179 
+    ##     Female_Head_Employment1     Female_Head_Employment2 
+    ##                  0.07459705                  0.04619533 
+    ##     Female_Head_Employment3     Female_Head_Employment9 
+    ##                  0.11207226                  0.10283177 
+    ##               Male_Head_Age             Female_Head_Age 
+    ##                 -0.07495269                 -0.02743968 
+    ##               inc_diff:gini 
+    ##                 -0.09162545
 
 ### Regression table
 
 ``` r
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -3051,7 +3889,7 @@ stargazer(
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -3063,7 +3901,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 <em>Dependent variable:</em>
 
@@ -3077,7 +3915,7 @@ stargazer(
 
 </td>
 
-<td colspan="3" style="border-bottom: 1px solid black">
+<td colspan="4" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -3089,7 +3927,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 sug\_per
 
@@ -3121,11 +3959,17 @@ sug\_per
 
 </td>
 
+<td>
+
+(4)
+
+</td>
+
 </tr>
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -3145,7 +3989,11 @@ median\_income
 
 <td>
 
-0.098<sup>\*\*\*</sup>
+0.096<sup>\*\*\*</sup>
+
+</td>
+
+<td>
 
 </td>
 
@@ -3175,11 +4023,19 @@ median\_income
 
 </td>
 
+<td>
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3213,7 +4069,7 @@ inc\_mid
 
 <td>
 
-\-0.165<sup>\*\*\*</sup>
+\-0.162<sup>\*\*\*</sup>
 
 </td>
 
@@ -3223,6 +4079,12 @@ inc\_mid
 
 </td>
 
+<td>
+
+\-0.025<sup>\*\*\*</sup>
+
+</td>
+
 </tr>
 
 <tr>
@@ -3249,11 +4111,21 @@ inc\_mid
 
 </td>
 
+<td>
+
+(0.00000)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3289,7 +4161,13 @@ inc\_diff
 
 <td>
 
-\-0.141<sup>\*\*\*</sup>
+\-0.138<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.052<sup>\*\*\*</sup>
 
 </td>
 
@@ -3315,11 +4193,99 @@ inc\_diff
 
 </td>
 
+<td>
+
+(0.00000)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.025
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.103)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3351,13 +4317,19 @@ median\_monthly\_housing\_cost
 
 <td>
 
-\-0.140<sup>\*\*\*</sup>
+\-0.155<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.140<sup>\*\*\*</sup>
+\-0.155<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.154<sup>\*\*\*</sup>
 
 </td>
 
@@ -3385,11 +4357,21 @@ median\_monthly\_housing\_cost
 
 </td>
 
+<td>
+
+(0.00002)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3421,13 +4403,19 @@ pov\_status\_below\_per
 
 <td>
 
-0.045
+0.037
 
 </td>
 
 <td>
 
-0.045
+0.037
+
+</td>
+
+<td>
+
+0.052
 
 </td>
 
@@ -3445,13 +4433,19 @@ pov\_status\_below\_per
 
 <td>
 
-(0.086)
+(0.083)
 
 </td>
 
 <td>
 
-(0.086)
+(0.083)
+
+</td>
+
+<td>
+
+(0.090)
 
 </td>
 
@@ -3460,6 +4454,10 @@ pov\_status\_below\_per
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3487,19 +4485,25 @@ Household\_Size
 
 <td>
 
-0.036<sup>\*\*\*</sup>
+0.033<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.039<sup>\*\*\*</sup>
+0.035<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.039<sup>\*\*\*</sup>
+0.035<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.034<sup>\*\*\*</sup>
 
 </td>
 
@@ -3529,11 +4533,21 @@ Household\_Size
 
 </td>
 
+<td>
+
+(0.004)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3561,19 +4575,25 @@ Male\_Head\_Education
 
 <td>
 
-\-0.073<sup>\*\*\*</sup>
+\-0.078<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.064<sup>\*\*\*</sup>
+\-0.069<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.064<sup>\*\*\*</sup>
+\-0.069<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.066<sup>\*\*\*</sup>
 
 </td>
 
@@ -3603,11 +4623,21 @@ Male\_Head\_Education
 
 </td>
 
+<td>
+
+(0.005)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3635,19 +4665,25 @@ Female\_Head\_Education
 
 <td>
 
-\-0.079<sup>\*\*\*</sup>
+\-0.088<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.075<sup>\*\*\*</sup>
+\-0.083<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.075<sup>\*\*\*</sup>
+\-0.083<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.080<sup>\*\*\*</sup>
 
 </td>
 
@@ -3677,11 +4713,21 @@ Female\_Head\_Education
 
 </td>
 
+<td>
+
+(0.005)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3709,19 +4755,25 @@ Race2
 
 <td>
 
-0.114<sup>\*\*\*</sup>
+0.109<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.114<sup>\*\*\*</sup>
+0.109<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.114<sup>\*\*\*</sup>
+0.109<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.109<sup>\*\*\*</sup>
 
 </td>
 
@@ -3741,13 +4793,19 @@ Race2
 
 <td>
 
-(0.015)
+(0.014)
 
 </td>
 
 <td>
 
-(0.015)
+(0.014)
+
+</td>
+
+<td>
+
+(0.014)
 
 </td>
 
@@ -3756,6 +4814,10 @@ Race2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3783,19 +4845,25 @@ Race3
 
 <td>
 
-\-0.016
+\-0.021
 
 </td>
 
 <td>
 
-\-0.006
+\-0.011
 
 </td>
 
 <td>
 
-\-0.006
+\-0.011
+
+</td>
+
+<td>
+
+\-0.011
 
 </td>
 
@@ -3809,19 +4877,25 @@ Race3
 
 <td>
 
-(0.024)
+(0.023)
 
 </td>
 
 <td>
 
-(0.025)
+(0.023)
 
 </td>
 
 <td>
 
-(0.025)
+(0.023)
+
+</td>
+
+<td>
+
+(0.023)
 
 </td>
 
@@ -3830,6 +4904,10 @@ Race3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3857,19 +4935,25 @@ Race4
 
 <td>
 
-0.018
+0.010
 
 </td>
 
 <td>
 
-0.021
+0.014
 
 </td>
 
 <td>
 
-0.021
+0.014
+
+</td>
+
+<td>
+
+0.014
 
 </td>
 
@@ -3878,6 +4962,12 @@ Race4
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.019)
 
 </td>
 
@@ -3889,13 +4979,13 @@ Race4
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
@@ -3904,6 +4994,10 @@ Race4
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -3931,19 +5025,25 @@ Marital\_Status2
 
 <td>
 
-0.043<sup>\*\*</sup>
+0.029
 
 </td>
 
 <td>
 
-0.045<sup>\*</sup>
+0.030
 
 </td>
 
 <td>
 
-0.045<sup>\*</sup>
+0.030
+
+</td>
+
+<td>
+
+0.030
 
 </td>
 
@@ -3957,19 +5057,25 @@ Marital\_Status2
 
 <td>
 
-(0.024)
+(0.023)
 
 </td>
 
 <td>
 
-(0.024)
+(0.023)
 
 </td>
 
 <td>
 
-(0.024)
+(0.023)
+
+</td>
+
+<td>
+
+(0.023)
 
 </td>
 
@@ -3978,6 +5084,10 @@ Marital\_Status2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4005,19 +5115,25 @@ Marital\_Status3
 
 <td>
 
-0.044<sup>\*</sup>
+0.026
 
 </td>
 
 <td>
 
-0.047<sup>\*\*</sup>
+0.030
 
 </td>
 
 <td>
 
-0.047<sup>\*\*</sup>
+0.030
+
+</td>
+
+<td>
+
+0.030
 
 </td>
 
@@ -4031,19 +5147,25 @@ Marital\_Status3
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
 <td>
 
-(0.021)
+(0.020)
+
+</td>
+
+<td>
+
+(0.020)
 
 </td>
 
@@ -4052,6 +5174,10 @@ Marital\_Status3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4079,19 +5205,25 @@ Marital\_Status4
 
 <td>
 
-0.054<sup>\*\*</sup>
+0.036<sup>\*</sup>
 
 </td>
 
 <td>
 
-0.060<sup>\*\*\*</sup>
+0.043<sup>\*\*</sup>
 
 </td>
 
 <td>
 
-0.060<sup>\*\*\*</sup>
+0.043<sup>\*\*</sup>
+
+</td>
+
+<td>
+
+0.043<sup>\*\*</sup>
 
 </td>
 
@@ -4105,19 +5237,25 @@ Marital\_Status4
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
 <td>
 
-(0.021)
+(0.020)
 
 </td>
 
 <td>
 
-(0.021)
+(0.020)
+
+</td>
+
+<td>
+
+(0.020)
 
 </td>
 
@@ -4126,6 +5264,10 @@ Marital\_Status4
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4153,19 +5295,25 @@ Male\_Head\_Employment1
 
 <td>
 
-0.060<sup>\*\*\*</sup>
+0.059<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.056
+0.055
 
 </td>
 
 <td>
 
-0.056
+0.055
+
+</td>
+
+<td>
+
+0.054
 
 </td>
 
@@ -4179,19 +5327,25 @@ Male\_Head\_Employment1
 
 <td>
 
-(0.045)
+(0.043)
 
 </td>
 
 <td>
 
-(0.045)
+(0.043)
 
 </td>
 
 <td>
 
-(0.045)
+(0.043)
+
+</td>
+
+<td>
+
+(0.043)
 
 </td>
 
@@ -4200,6 +5354,10 @@ Male\_Head\_Employment1
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4227,19 +5385,25 @@ Male\_Head\_Employment2
 
 <td>
 
-0.053
+0.045
 
 </td>
 
 <td>
 
-0.050
+0.043
 
 </td>
 
 <td>
 
-0.050
+0.043
+
+</td>
+
+<td>
+
+0.042
 
 </td>
 
@@ -4253,19 +5417,25 @@ Male\_Head\_Employment2
 
 <td>
 
-(0.047)
+(0.045)
 
 </td>
 
 <td>
 
-(0.047)
+(0.045)
 
 </td>
 
 <td>
 
-(0.047)
+(0.045)
+
+</td>
+
+<td>
+
+(0.045)
 
 </td>
 
@@ -4274,6 +5444,10 @@ Male\_Head\_Employment2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4301,19 +5475,25 @@ Male\_Head\_Employment3
 
 <td>
 
-0.160<sup>\*\*\*</sup>
+0.150<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.146<sup>\*\*\*</sup>
+0.136<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.146<sup>\*\*\*</sup>
+0.136<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.132<sup>\*\*\*</sup>
 
 </td>
 
@@ -4327,19 +5507,25 @@ Male\_Head\_Employment3
 
 <td>
 
-(0.039)
+(0.037)
 
 </td>
 
 <td>
 
-(0.039)
+(0.037)
 
 </td>
 
 <td>
 
-(0.039)
+(0.037)
+
+</td>
+
+<td>
+
+(0.037)
 
 </td>
 
@@ -4348,6 +5534,10 @@ Male\_Head\_Employment3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4375,19 +5565,25 @@ Male\_Head\_Employment9
 
 <td>
 
-0.110<sup>\*\*\*</sup>
+0.108<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.100<sup>\*\*</sup>
+0.099<sup>\*\*</sup>
 
 </td>
 
 <td>
 
-0.100<sup>\*\*</sup>
+0.099<sup>\*\*</sup>
+
+</td>
+
+<td>
+
+0.096<sup>\*\*</sup>
 
 </td>
 
@@ -4401,19 +5597,25 @@ Male\_Head\_Employment9
 
 <td>
 
-(0.042)
+(0.040)
 
 </td>
 
 <td>
 
-(0.042)
+(0.040)
 
 </td>
 
 <td>
 
-(0.042)
+(0.040)
+
+</td>
+
+<td>
+
+(0.040)
 
 </td>
 
@@ -4422,6 +5624,10 @@ Male\_Head\_Employment9
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4449,19 +5655,25 @@ Female\_Head\_Employment1
 
 <td>
 
-0.094<sup>\*\*</sup>
+0.084<sup>\*\*</sup>
 
 </td>
 
 <td>
 
-0.089<sup>\*\*</sup>
+0.078<sup>\*</sup>
 
 </td>
 
 <td>
 
-0.089<sup>\*\*</sup>
+0.078<sup>\*</sup>
+
+</td>
+
+<td>
+
+0.075<sup>\*</sup>
 
 </td>
 
@@ -4475,19 +5687,25 @@ Female\_Head\_Employment1
 
 <td>
 
-(0.042)
+(0.040)
 
 </td>
 
 <td>
 
-(0.041)
+(0.040)
 
 </td>
 
 <td>
 
-(0.041)
+(0.040)
+
+</td>
+
+<td>
+
+(0.040)
 
 </td>
 
@@ -4496,6 +5714,10 @@ Female\_Head\_Employment1
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4523,19 +5745,25 @@ Female\_Head\_Employment2
 
 <td>
 
-0.062
+0.052
 
 </td>
 
 <td>
 
-0.059
+0.048
 
 </td>
 
 <td>
 
-0.059
+0.048
+
+</td>
+
+<td>
+
+0.046
 
 </td>
 
@@ -4549,19 +5777,25 @@ Female\_Head\_Employment2
 
 <td>
 
-(0.044)
+(0.042)
 
 </td>
 
 <td>
 
-(0.044)
+(0.042)
 
 </td>
 
 <td>
 
-(0.044)
+(0.042)
+
+</td>
+
+<td>
+
+(0.042)
 
 </td>
 
@@ -4570,6 +5804,10 @@ Female\_Head\_Employment2
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4597,19 +5835,25 @@ Female\_Head\_Employment3
 
 <td>
 
-0.141<sup>\*\*\*</sup>
+0.131<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.130<sup>\*\*\*</sup>
+0.117<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.130<sup>\*\*\*</sup>
+0.117<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.112<sup>\*\*\*</sup>
 
 </td>
 
@@ -4623,19 +5867,25 @@ Female\_Head\_Employment3
 
 <td>
 
-(0.040)
+(0.038)
 
 </td>
 
 <td>
 
-(0.040)
+(0.038)
 
 </td>
 
 <td>
 
-(0.040)
+(0.038)
+
+</td>
+
+<td>
+
+(0.038)
 
 </td>
 
@@ -4644,6 +5894,10 @@ Female\_Head\_Employment3
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4671,19 +5925,25 @@ Female\_Head\_Employment9
 
 <td>
 
-0.127<sup>\*\*\*</sup>
+0.119<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.118<sup>\*\*\*</sup>
+0.108<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-0.118<sup>\*\*\*</sup>
+0.108<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.103<sup>\*\*\*</sup>
 
 </td>
 
@@ -4697,19 +5957,25 @@ Female\_Head\_Employment9
 
 <td>
 
-(0.041)
+(0.039)
 
 </td>
 
 <td>
 
-(0.040)
+(0.039)
 
 </td>
 
 <td>
 
-(0.040)
+(0.039)
+
+</td>
+
+<td>
+
+(0.039)
 
 </td>
 
@@ -4718,6 +5984,10 @@ Female\_Head\_Employment9
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4745,19 +6015,25 @@ Male\_Head\_Age
 
 <td>
 
-\-0.061
+\-0.073<sup>\*</sup>
 
 </td>
 
 <td>
 
-\-0.062<sup>\*\*\*</sup>
+\-0.075<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.062<sup>\*\*\*</sup>
+\-0.075<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.075<sup>\*\*\*</sup>
 
 </td>
 
@@ -4787,11 +6063,21 @@ Male\_Head\_Age
 
 </td>
 
+<td>
+
+(0.004)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4819,19 +6105,25 @@ Female\_Head\_Age
 
 <td>
 
-\-0.034<sup>\*\*\*</sup>
+\-0.030<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.032<sup>\*\*\*</sup>
+\-0.028<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.032<sup>\*\*\*</sup>
+\-0.028<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.027<sup>\*\*\*</sup>
 
 </td>
 
@@ -4845,19 +6137,25 @@ Female\_Head\_Age
 
 <td>
 
-(0.004)
+(0.003)
 
 </td>
 
 <td>
 
-(0.004)
+(0.003)
 
 </td>
 
 <td>
 
-(0.004)
+(0.003)
+
+</td>
+
+<td>
+
+(0.003)
 
 </td>
 
@@ -4866,6 +6164,88 @@ Female\_Head\_Age
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+inc\_diff:gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.092<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.00000)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -4903,29 +6283,7 @@ Constant
 
 </td>
 
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
 <td>
-
-(0.039)
-
-</td>
-
-<td>
-
-(0.048)
-
-</td>
-
-<td>
-
-(0.048)
 
 </td>
 
@@ -4939,6 +6297,42 @@ Constant
 
 <td>
 
+(0.037)
+
+</td>
+
+<td>
+
+(0.046)
+
+</td>
+
+<td>
+
+(0.046)
+
+</td>
+
+<td>
+
+(0.060)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
 </td>
 
 <td>
@@ -4953,7 +6347,7 @@ Constant
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -4969,19 +6363,25 @@ Observations
 
 <td>
 
-61,521
+61,345
 
 </td>
 
 <td>
 
-61,194
+60,953
 
 </td>
 
 <td>
 
-61,194
+60,953
+
+</td>
+
+<td>
+
+60,953
 
 </td>
 
@@ -4997,19 +6397,25 @@ Log Likelihood
 
 <td>
 
-\-88,963.080
+\-86,739.070
 
 </td>
 
 <td>
 
-\-88,254.600
+\-85,914.090
 
 </td>
 
 <td>
 
-\-88,254.600
+\-85,914.090
+
+</td>
+
+<td>
+
+\-85,910.820
 
 </td>
 
@@ -5025,19 +6431,25 @@ Akaike Inf. Crit.
 
 <td>
 
-177,972.200
+173,524.100
 
 </td>
 
 <td>
 
-176,561.200
+171,880.200
 
 </td>
 
 <td>
 
-176,561.200
+171,880.200
+
+</td>
+
+<td>
+
+171,877.600
 
 </td>
 
@@ -5053,19 +6465,25 @@ Bayesian Inf. Crit.
 
 <td>
 
-178,179.800
+173,731.700
 
 </td>
 
 <td>
 
-176,795.800
+172,114.600
 
 </td>
 
 <td>
 
-176,795.800
+172,114.600
+
+</td>
+
+<td>
+
+172,130.200
 
 </td>
 
@@ -5073,7 +6491,7 @@ Bayesian Inf. Crit.
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -5087,7 +6505,7 @@ Bayesian Inf. Crit.
 
 </td>
 
-<td colspan="3" style="text-align:right">
+<td colspan="4" style="text-align:right">
 
 <sup>*</sup>p\<0.1; <sup>**</sup>p\<0.05; <sup>***</sup>p\<0.01
 
@@ -5106,9 +6524,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of sugar per $1 spent"
@@ -5116,7 +6534,7 @@ effect("inc_mid", lm_inc) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ### Own income minus median income in your zip code
 
@@ -5127,9 +6545,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of sugar per $1 spent"
@@ -5137,7 +6555,28 @@ effect("inc_diff", lm_inc_diff) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+### Own income minus median income x gini in your zip code
+
+``` r
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
+  ) + 
+  theme_bw()
+```
+
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ## Saturated fat content
 
@@ -5158,7 +6597,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -5174,43 +6613,43 @@ summary(lm_inc)
     ## sf_per ~ inc_mid + Household_Size + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: -9953
+    ## REML criterion at convergence: -11835.5
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.1066 -0.6453 -0.1030  0.5114 18.2042 
+    ## -3.0657 -0.6443 -0.1015  0.5171 18.6432 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.001845 0.04296 
-    ##  Residual             0.047963 0.21900 
-    ## Number of obs: 61517, groups:  zip, 15969
+    ##  zip      (Intercept) 0.002035 0.04511 
+    ##  Residual             0.046290 0.21515 
+    ## Number of obs: 61343, groups:  zip, 15889
     ## 
     ## Fixed effects:
     ##                           Estimate Std. Error t value
-    ## (Intercept)              6.705e-01  8.409e-03  79.734
-    ## inc_mid                 -1.587e-06  3.967e-08 -40.007
-    ## Household_Size          -5.822e-03  9.160e-04  -6.356
-    ## Male_Head_Education     -1.536e-02  1.033e-03 -14.867
-    ## Female_Head_Education   -1.717e-02  1.029e-03 -16.693
-    ## Race2                    8.648e-03  3.096e-03   2.793
-    ## Race3                   -3.684e-02  5.292e-03  -6.962
-    ## Race4                   -1.664e-02  4.427e-03  -3.759
-    ## Marital_Status2          4.009e-02  5.268e-03   7.609
-    ## Marital_Status3          3.944e-02  4.596e-03   8.580
-    ## Marital_Status4          4.131e-02  4.643e-03   8.898
-    ## Male_Head_Employment1    7.696e-02  9.662e-03   7.965
-    ## Male_Head_Employment2    8.992e-02  1.026e-02   8.764
-    ## Male_Head_Employment3    9.485e-02  8.530e-03  11.119
-    ## Male_Head_Employment9    7.275e-02  9.107e-03   7.988
-    ## Female_Head_Employment1  6.008e-02  9.007e-03   6.670
-    ## Female_Head_Employment2  6.956e-02  9.547e-03   7.286
-    ## Female_Head_Employment3  7.737e-02  8.666e-03   8.929
-    ## Female_Head_Employment9  5.480e-02  8.795e-03   6.231
-    ## Male_Head_Age           -1.707e-03  8.594e-04  -1.986
-    ## Female_Head_Age         -1.048e-03  7.706e-04  -1.360
+    ## (Intercept)              6.908e-01  8.123e-03  85.044
+    ## inc_mid                 -1.565e-06  3.878e-08 -40.357
+    ## Household_Size          -5.473e-03  8.809e-04  -6.213
+    ## Male_Head_Education     -1.519e-02  1.018e-03 -14.930
+    ## Female_Head_Education   -1.626e-02  1.009e-03 -16.114
+    ## Race2                    5.905e-03  3.006e-03   1.964
+    ## Race3                   -4.048e-02  5.089e-03  -7.955
+    ## Race4                   -2.244e-02  4.281e-03  -5.241
+    ## Marital_Status2          2.744e-02  5.139e-03   5.340
+    ## Marital_Status3          2.819e-02  4.478e-03   6.297
+    ## Marital_Status4          3.092e-02  4.483e-03   6.897
+    ## Male_Head_Employment1    7.775e-02  9.386e-03   8.284
+    ## Male_Head_Employment2    8.079e-02  1.000e-02   8.077
+    ## Male_Head_Employment3    8.569e-02  8.254e-03  10.382
+    ## Male_Head_Employment9    6.645e-02  8.845e-03   7.513
+    ## Female_Head_Employment1  4.077e-02  8.758e-03   4.656
+    ## Female_Head_Employment2  4.868e-02  9.243e-03   5.266
+    ## Female_Head_Employment3  5.996e-02  8.392e-03   7.145
+    ## Female_Head_Employment9  3.822e-02  8.540e-03   4.475
+    ## Male_Head_Age           -2.183e-03  8.298e-04  -2.631
+    ## Female_Head_Age         -4.481e-04  7.466e-04  -0.600
 
     ## 
     ## Correlation matrix not shown by default, as p = 21 > 12.
@@ -5225,19 +6664,19 @@ lm.beta.lmer(lm_inc)
 ```
 
     ##                 inc_mid          Household_Size     Male_Head_Education 
-    ##             -0.19911398             -0.03172026             -0.13576035 
+    ##            -0.200046823            -0.030940482            -0.136506956 
     ##   Female_Head_Education                   Race2                   Race3 
-    ##             -0.11978913              0.01121950             -0.02730698 
+    ##            -0.115607980             0.007914181            -0.031281586 
     ##                   Race4         Marital_Status2         Marital_Status3 
-    ##             -0.01458579              0.04546000              0.06022530 
+    ##            -0.020378759             0.031396846             0.043500223 
     ##         Marital_Status4   Male_Head_Employment1   Male_Head_Employment2 
-    ##              0.06031034              0.06946673              0.05975941 
+    ##             0.045958980             0.071817097             0.054121785 
     ##   Male_Head_Employment3   Male_Head_Employment9 Female_Head_Employment1 
-    ##              0.20032402              0.13485444              0.08439747 
+    ##             0.183976689             0.124211523             0.057748464 
     ## Female_Head_Employment2 Female_Head_Employment3 Female_Head_Employment9 
-    ##              0.06108298              0.15525834              0.11502316 
+    ##             0.044053567             0.122700642             0.081259460 
     ##           Male_Head_Age         Female_Head_Age 
-    ##             -0.02569503             -0.01259923
+    ##            -0.033433581            -0.005518566
 
 ### Income and median income
 
@@ -5259,7 +6698,7 @@ lm_med_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -5275,46 +6714,46 @@ summary(lm_med_inc)
     ##     pov_status_below_per + Household_Size + Male_Head_Education +  
     ##     Female_Head_Education + Race + Marital_Status + Male_Head_Employment +  
     ##     Female_Head_Employment + Male_Head_Age + Female_Head_Age +      (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: -10514.4
+    ## REML criterion at convergence: -12525.2
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.1387 -0.6424 -0.1053  0.5114 18.5116 
+    ## -3.0932 -0.6442 -0.1018  0.5208 18.8344 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.001345 0.03668 
-    ##  Residual             0.047841 0.21873 
-    ## Number of obs: 61190, groups:  zip, 15672
+    ##  zip      (Intercept) 0.001456 0.03815 
+    ##  Residual             0.046123 0.21476 
+    ## Number of obs: 60951, groups:  zip, 15531
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  6.707e-01  1.049e-02  63.932
-    ## median_income                1.167e-06  1.292e-07   9.031
-    ## inc_mid                     -1.374e-06  4.065e-08 -33.811
-    ## median_monthly_housing_cost -9.358e-05  5.282e-06 -17.718
-    ## pov_status_below_per         1.536e-01  1.888e-02   8.135
-    ## Household_Size              -5.350e-03  9.140e-04  -5.854
-    ## Male_Head_Education         -1.405e-02  1.034e-03 -13.582
-    ## Female_Head_Education       -1.637e-02  1.027e-03 -15.929
-    ## Race2                        6.935e-03  3.169e-03   2.188
-    ## Race3                       -2.285e-02  5.318e-03  -4.296
-    ## Race4                       -1.270e-02  4.451e-03  -2.853
-    ## Marital_Status2              4.142e-02  5.258e-03   7.879
-    ## Marital_Status3              4.230e-02  4.589e-03   9.217
-    ## Marital_Status4              4.572e-02  4.640e-03   9.854
-    ## Male_Head_Employment1        7.093e-02  9.648e-03   7.351
-    ## Male_Head_Employment2        8.340e-02  1.025e-02   8.133
-    ## Male_Head_Employment3        8.643e-02  8.525e-03  10.139
-    ## Male_Head_Employment9        6.561e-02  9.098e-03   7.212
-    ## Female_Head_Employment1      5.547e-02  8.990e-03   6.170
-    ## Female_Head_Employment2      6.467e-02  9.529e-03   6.787
-    ## Female_Head_Employment3      7.046e-02  8.652e-03   8.144
-    ## Female_Head_Employment9      4.958e-02  8.777e-03   5.649
-    ## Male_Head_Age               -1.779e-03  8.575e-04  -2.074
-    ## Female_Head_Age             -9.477e-04  7.691e-04  -1.232
+    ## (Intercept)                  6.953e-01  1.020e-02  68.136
+    ## median_income                1.248e-06  1.252e-07   9.971
+    ## inc_mid                     -1.349e-06  3.972e-08 -33.962
+    ## median_monthly_housing_cost -1.026e-04  5.258e-06 -19.515
+    ## pov_status_below_per         1.478e-01  1.881e-02   7.861
+    ## Household_Size              -5.178e-03  8.786e-04  -5.893
+    ## Male_Head_Education         -1.392e-02  1.018e-03 -13.677
+    ## Female_Head_Education       -1.550e-02  1.007e-03 -15.396
+    ## Race2                        5.540e-03  3.072e-03   1.803
+    ## Race3                       -2.597e-02  5.112e-03  -5.081
+    ## Race4                       -1.702e-02  4.301e-03  -3.957
+    ## Marital_Status2              2.842e-02  5.124e-03   5.546
+    ## Marital_Status3              3.109e-02  4.468e-03   6.958
+    ## Marital_Status4              3.527e-02  4.475e-03   7.880
+    ## Male_Head_Employment1        7.325e-02  9.364e-03   7.822
+    ## Male_Head_Employment2        7.586e-02  9.985e-03   7.598
+    ## Male_Head_Employment3        7.846e-02  8.241e-03   9.520
+    ## Male_Head_Employment9        6.107e-02  8.828e-03   6.918
+    ## Female_Head_Employment1      3.596e-02  8.735e-03   4.117
+    ## Female_Head_Employment2      4.378e-02  9.221e-03   4.748
+    ## Female_Head_Employment3      5.264e-02  8.374e-03   6.286
+    ## Female_Head_Employment9      3.261e-02  8.518e-03   3.828
+    ## Male_Head_Age               -2.436e-03  8.272e-04  -2.945
+    ## Female_Head_Age             -2.637e-04  7.444e-04  -0.354
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -5329,29 +6768,29 @@ lm.beta.lmer(lm_med_inc)
 ```
 
     ##               median_income                     inc_mid 
-    ##                 0.105420886                -0.172465531 
+    ##                 0.116330930                -0.172521372 
     ## median_monthly_housing_cost        pov_status_below_per 
-    ##                -0.164041222                 0.054910300 
+    ##                -0.180324004                 0.053435664 
     ##              Household_Size         Male_Head_Education 
-    ##                -0.029162185                -0.124134881 
+    ##                -0.029291675                -0.125197602 
     ##       Female_Head_Education                       Race2 
-    ##                -0.114073941                 0.008987839 
+    ##                -0.110231190                 0.007426804 
     ##                       Race3                       Race4 
-    ##                -0.016954274                -0.011107058 
+    ##                -0.020111644                -0.015439669 
     ##             Marital_Status2             Marital_Status3 
-    ##                 0.047003262                 0.064569399 
+    ##                 0.032559296                 0.047969940 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                 0.066694127                 0.064072670 
+    ##                 0.052423051                 0.067724231 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                 0.055311720                 0.182601443 
+    ##                 0.050791523                 0.168603971 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                 0.121664533                 0.077986229 
+    ##                 0.114245352                 0.051019610 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                 0.056810820                 0.141431975 
+    ##                 0.039636748                 0.107804435 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                 0.104100132                -0.026778909 
+    ##                 0.069400837                -0.037338654 
     ##             Female_Head_Age 
-    ##                -0.011386133
+    ##                -0.003248761
 
 ### Income difference score
 
@@ -5373,7 +6812,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2014
+    data = nps_2015
   )
 ```
 
@@ -5389,46 +6828,46 @@ summary(lm_inc_diff)
     ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
     ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
     ##     Male_Head_Age + Female_Head_Age + (1 | zip)
-    ##    Data: nps_2014
+    ##    Data: nps_2015
     ## 
-    ## REML criterion at convergence: -10514.4
+    ## REML criterion at convergence: -12525.2
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.1387 -0.6424 -0.1053  0.5114 18.5116 
+    ## -3.0932 -0.6442 -0.1018  0.5208 18.8344 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  zip      (Intercept) 0.001345 0.03668 
-    ##  Residual             0.047841 0.21873 
-    ## Number of obs: 61190, groups:  zip, 15672
+    ##  zip      (Intercept) 0.001456 0.03815 
+    ##  Residual             0.046123 0.21476 
+    ## Number of obs: 60951, groups:  zip, 15531
     ## 
     ## Fixed effects:
     ##                               Estimate Std. Error t value
-    ## (Intercept)                  6.707e-01  1.049e-02  63.932
-    ## inc_mid                     -2.072e-07  1.350e-07  -1.535
-    ## inc_diff                    -1.167e-06  1.292e-07  -9.031
-    ## Household_Size              -5.350e-03  9.140e-04  -5.854
-    ## pov_status_below_per         1.536e-01  1.888e-02   8.135
-    ## median_monthly_housing_cost -9.358e-05  5.282e-06 -17.718
-    ## Male_Head_Education         -1.405e-02  1.034e-03 -13.582
-    ## Female_Head_Education       -1.637e-02  1.027e-03 -15.929
-    ## Race2                        6.935e-03  3.169e-03   2.188
-    ## Race3                       -2.285e-02  5.318e-03  -4.296
-    ## Race4                       -1.270e-02  4.451e-03  -2.853
-    ## Marital_Status2              4.142e-02  5.258e-03   7.879
-    ## Marital_Status3              4.230e-02  4.589e-03   9.217
-    ## Marital_Status4              4.572e-02  4.640e-03   9.854
-    ## Male_Head_Employment1        7.093e-02  9.648e-03   7.351
-    ## Male_Head_Employment2        8.340e-02  1.025e-02   8.133
-    ## Male_Head_Employment3        8.643e-02  8.525e-03  10.139
-    ## Male_Head_Employment9        6.561e-02  9.098e-03   7.212
-    ## Female_Head_Employment1      5.547e-02  8.990e-03   6.170
-    ## Female_Head_Employment2      6.467e-02  9.529e-03   6.787
-    ## Female_Head_Employment3      7.046e-02  8.652e-03   8.144
-    ## Female_Head_Employment9      4.958e-02  8.777e-03   5.649
-    ## Male_Head_Age               -1.779e-03  8.575e-04  -2.074
-    ## Female_Head_Age             -9.477e-04  7.691e-04  -1.232
+    ## (Intercept)                  6.953e-01  1.020e-02  68.136
+    ## inc_mid                     -1.008e-07  1.311e-07  -0.769
+    ## inc_diff                    -1.248e-06  1.252e-07  -9.971
+    ## Household_Size              -5.178e-03  8.786e-04  -5.893
+    ## pov_status_below_per         1.478e-01  1.881e-02   7.861
+    ## median_monthly_housing_cost -1.026e-04  5.258e-06 -19.515
+    ## Male_Head_Education         -1.392e-02  1.018e-03 -13.677
+    ## Female_Head_Education       -1.550e-02  1.007e-03 -15.396
+    ## Race2                        5.540e-03  3.072e-03   1.803
+    ## Race3                       -2.597e-02  5.112e-03  -5.081
+    ## Race4                       -1.702e-02  4.301e-03  -3.957
+    ## Marital_Status2              2.842e-02  5.124e-03   5.546
+    ## Marital_Status3              3.109e-02  4.468e-03   6.958
+    ## Marital_Status4              3.527e-02  4.475e-03   7.880
+    ## Male_Head_Employment1        7.325e-02  9.364e-03   7.822
+    ## Male_Head_Employment2        7.586e-02  9.985e-03   7.598
+    ## Male_Head_Employment3        7.846e-02  8.241e-03   9.520
+    ## Male_Head_Employment9        6.107e-02  8.828e-03   6.918
+    ## Female_Head_Employment1      3.596e-02  8.735e-03   4.117
+    ## Female_Head_Employment2      4.378e-02  9.221e-03   4.748
+    ## Female_Head_Employment3      5.264e-02  8.374e-03   6.286
+    ## Female_Head_Employment9      3.261e-02  8.518e-03   3.828
+    ## Male_Head_Age               -2.436e-03  8.272e-04  -2.945
+    ## Female_Head_Age             -2.637e-04  7.444e-04  -0.354
 
     ## 
     ## Correlation matrix not shown by default, as p = 24 > 12.
@@ -5443,40 +6882,160 @@ lm.beta.lmer(lm_inc_diff)
 ```
 
     ##                     inc_mid                    inc_diff 
-    ##                -0.025999908                -0.151983786 
+    ##                -0.012892798                -0.166505364 
     ##              Household_Size        pov_status_below_per 
-    ##                -0.029162185                 0.054910300 
+    ##                -0.029291675                 0.053435664 
     ## median_monthly_housing_cost         Male_Head_Education 
-    ##                -0.164041222                -0.124134881 
+    ##                -0.180324004                -0.125197602 
     ##       Female_Head_Education                       Race2 
-    ##                -0.114073941                 0.008987839 
+    ##                -0.110231190                 0.007426804 
     ##                       Race3                       Race4 
-    ##                -0.016954274                -0.011107058 
+    ##                -0.020111644                -0.015439669 
     ##             Marital_Status2             Marital_Status3 
-    ##                 0.047003262                 0.064569399 
+    ##                 0.032559296                 0.047969940 
     ##             Marital_Status4       Male_Head_Employment1 
-    ##                 0.066694127                 0.064072670 
+    ##                 0.052423051                 0.067724231 
     ##       Male_Head_Employment2       Male_Head_Employment3 
-    ##                 0.055311720                 0.182601443 
+    ##                 0.050791523                 0.168603971 
     ##       Male_Head_Employment9     Female_Head_Employment1 
-    ##                 0.121664533                 0.077986229 
+    ##                 0.114245352                 0.051019610 
     ##     Female_Head_Employment2     Female_Head_Employment3 
-    ##                 0.056810820                 0.141431975 
+    ##                 0.039636748                 0.107804435 
     ##     Female_Head_Employment9               Male_Head_Age 
-    ##                 0.104100132                -0.026778909 
+    ##                 0.069400837                -0.037338654 
     ##             Female_Head_Age 
-    ##                -0.011386133
+    ##                -0.003248761
+
+### Income difference score x gini
+
+``` r
+lm_inc_diff_g <-
+  lmer(
+    sf_per ~
+      inc_mid +     
+      inc_diff * gini +
+      Household_Size +
+      pov_status_below_per +
+      median_monthly_housing_cost + 
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
+      (1|zip), 
+    data = nps_2015
+  )
+```
+
+    ## Warning: Some predictor variables are on very different scales: consider
+    ## rescaling
+
+``` r
+summary(lm_inc_diff_g)
+```
+
+    ## Linear mixed model fit by REML ['lmerMod']
+    ## Formula: 
+    ## sf_per ~ inc_mid + inc_diff * gini + Household_Size + pov_status_below_per +  
+    ##     median_monthly_housing_cost + Male_Head_Education + Female_Head_Education +  
+    ##     Race + Marital_Status + Male_Head_Employment + Female_Head_Employment +  
+    ##     Male_Head_Age + Female_Head_Age + (1 | zip)
+    ##    Data: nps_2015
+    ## 
+    ## REML criterion at convergence: -12557.3
+    ## 
+    ## Scaled residuals: 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -3.0967 -0.6448 -0.1007  0.5201 18.8488 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  zip      (Intercept) 0.001391 0.03729 
+    ##  Residual             0.046130 0.21478 
+    ## Number of obs: 60951, groups:  zip, 15531
+    ## 
+    ## Fixed effects:
+    ##                               Estimate Std. Error t value
+    ## (Intercept)                  7.563e-01  1.334e-02  56.702
+    ## inc_mid                     -4.825e-08  1.309e-07  -0.369
+    ## inc_diff                    -2.233e-07  2.741e-07  -0.814
+    ## gini                        -1.670e-01  2.315e-02  -7.213
+    ## Household_Size              -5.460e-03  8.790e-04  -6.211
+    ## pov_status_below_per         2.087e-01  2.027e-02  10.293
+    ## median_monthly_housing_cost -1.018e-04  5.245e-06 -19.406
+    ## Male_Head_Education         -1.346e-02  1.019e-03 -13.206
+    ## Female_Head_Education       -1.507e-02  1.008e-03 -14.956
+    ## Race2                        5.270e-03  3.069e-03   1.717
+    ## Race3                       -2.532e-02  5.110e-03  -4.954
+    ## Race4                       -1.738e-02  4.299e-03  -4.043
+    ## Marital_Status2              2.826e-02  5.122e-03   5.517
+    ## Marital_Status3              3.085e-02  4.466e-03   6.906
+    ## Marital_Status4              3.538e-02  4.476e-03   7.903
+    ## Male_Head_Employment1        7.103e-02  9.364e-03   7.586
+    ## Male_Head_Employment2        7.374e-02  9.984e-03   7.386
+    ## Male_Head_Employment3        7.576e-02  8.245e-03   9.189
+    ## Male_Head_Employment9        5.866e-02  8.830e-03   6.643
+    ## Female_Head_Employment1      3.299e-02  8.739e-03   3.775
+    ## Female_Head_Employment2      4.080e-02  9.224e-03   4.423
+    ## Female_Head_Employment3      4.948e-02  8.380e-03   5.904
+    ## Female_Head_Employment9      2.947e-02  8.524e-03   3.457
+    ## Male_Head_Age               -2.412e-03  8.268e-04  -2.917
+    ## Female_Head_Age             -1.672e-04  7.441e-04  -0.225
+    ## inc_diff:gini               -2.502e-06  5.824e-07  -4.296
+
+    ## 
+    ## Correlation matrix not shown by default, as p = 26 > 12.
+    ## Use print(x, correlation=TRUE)  or
+    ##     vcov(x)        if you need it
+
+    ## fit warnings:
+    ## Some predictor variables are on very different scales: consider rescaling
+
+``` r
+lm.beta.lmer(lm_inc_diff_g)
+```
+
+    ##                     inc_mid                    inc_diff 
+    ##                -0.006171381                -0.029785693 
+    ##                        gini              Household_Size 
+    ##                -0.034187904                -0.030887285 
+    ##        pov_status_below_per median_monthly_housing_cost 
+    ##                 0.075427604                -0.178896694 
+    ##         Male_Head_Education       Female_Head_Education 
+    ##                -0.121033370                -0.107189196 
+    ##                       Race2                       Race3 
+    ##                 0.007064384                -0.019603036 
+    ##                       Race4             Marital_Status2 
+    ##                -0.015770136                 0.032373373 
+    ##             Marital_Status3             Marital_Status4 
+    ##                 0.047595932                 0.052588295 
+    ##       Male_Head_Employment1       Male_Head_Employment2 
+    ##                 0.065672937                 0.049372075 
+    ##       Male_Head_Employment3       Male_Head_Employment9 
+    ##                 0.162804161                 0.109729811 
+    ##     Female_Head_Employment1     Female_Head_Employment2 
+    ##                 0.046802316                 0.036938863 
+    ##     Female_Head_Employment3     Female_Head_Employment9 
+    ##                 0.101331845                 0.062711689 
+    ##               Male_Head_Age             Female_Head_Age 
+    ##                -0.036957623                -0.002059978 
+    ##               inc_diff:gini 
+    ##                -0.144468288
 
 ### Regression table
 
 ``` r
 stargazer(
-  lm_inc, lm_med_inc, lm_inc_diff,
+  lm_inc, lm_med_inc, lm_inc_diff, lm_inc_diff_g,
   coef = 
     list(
       lm.beta.lmer(lm_inc), 
       lm.beta.lmer(lm_med_inc), 
-      lm.beta.lmer(lm_inc_diff)
+      lm.beta.lmer(lm_inc_diff),
+      lm.beta.lmer(lm_inc_diff_g)
     ),
   type = "html"
 )
@@ -5486,7 +7045,7 @@ stargazer(
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -5498,7 +7057,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 <em>Dependent variable:</em>
 
@@ -5512,7 +7071,7 @@ stargazer(
 
 </td>
 
-<td colspan="3" style="border-bottom: 1px solid black">
+<td colspan="4" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -5524,7 +7083,7 @@ stargazer(
 
 </td>
 
-<td colspan="3">
+<td colspan="4">
 
 sf\_per
 
@@ -5556,11 +7115,17 @@ sf\_per
 
 </td>
 
+<td>
+
+(4)
+
+</td>
+
 </tr>
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -5580,7 +7145,11 @@ median\_income
 
 <td>
 
-0.105<sup>\*\*\*</sup>
+0.116<sup>\*\*\*</sup>
+
+</td>
+
+<td>
 
 </td>
 
@@ -5610,11 +7179,19 @@ median\_income
 
 </td>
 
+<td>
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -5642,19 +7219,25 @@ inc\_mid
 
 <td>
 
-\-0.199<sup>\*\*\*</sup>
+\-0.200<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.172<sup>\*\*\*</sup>
+\-0.173<sup>\*\*\*</sup>
 
 </td>
 
 <td>
 
-\-0.026<sup>\*\*\*</sup>
+\-0.013<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.006<sup>\*\*\*</sup>
 
 </td>
 
@@ -5684,11 +7267,21 @@ inc\_mid
 
 </td>
 
+<td>
+
+(0.00000)
+
+</td>
+
 </tr>
 
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -5724,7 +7317,13 @@ inc\_diff
 
 <td>
 
-\-0.152<sup>\*\*\*</sup>
+\-0.167<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.030<sup>\*\*\*</sup>
 
 </td>
 
@@ -5733,6 +7332,2050 @@ inc\_diff
 <tr>
 
 <td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.00000)
+
+</td>
+
+<td>
+
+(0.00000)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.034
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.023)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+median\_monthly\_housing\_cost
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.180<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.180<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.179<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.00001)
+
+</td>
+
+<td>
+
+(0.00001)
+
+</td>
+
+<td>
+
+(0.00001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+pov\_status\_below\_per
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+0.053<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.053<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.075<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(0.019)
+
+</td>
+
+<td>
+
+(0.019)
+
+</td>
+
+<td>
+
+(0.020)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Household\_Size
+
+</td>
+
+<td>
+
+\-0.031<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.029<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.029<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.031<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Education
+
+</td>
+
+<td>
+
+\-0.137<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.125<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.125<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.121<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Education
+
+</td>
+
+<td>
+
+\-0.116<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.110<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.110<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.107<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Race2
+
+</td>
+
+<td>
+
+0.008<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.007<sup>\*\*</sup>
+
+</td>
+
+<td>
+
+0.007<sup>\*\*</sup>
+
+</td>
+
+<td>
+
+0.007<sup>\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.003)
+
+</td>
+
+<td>
+
+(0.003)
+
+</td>
+
+<td>
+
+(0.003)
+
+</td>
+
+<td>
+
+(0.003)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Race3
+
+</td>
+
+<td>
+
+\-0.031<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.020<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.020<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.020<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Race4
+
+</td>
+
+<td>
+
+\-0.020<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.015<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.015<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.016<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Marital\_Status2
+
+</td>
+
+<td>
+
+0.031<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.033<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.033<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.032<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+<td>
+
+(0.005)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Marital\_Status3
+
+</td>
+
+<td>
+
+0.044<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.048<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.048<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.048<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Marital\_Status4
+
+</td>
+
+<td>
+
+0.046<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.052<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.052<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.053<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+<td>
+
+(0.004)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Employment1
+
+</td>
+
+<td>
+
+0.072<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.068<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.068<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.066<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Employment2
+
+</td>
+
+<td>
+
+0.054<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.051<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.051<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.049<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.010)
+
+</td>
+
+<td>
+
+(0.010)
+
+</td>
+
+<td>
+
+(0.010)
+
+</td>
+
+<td>
+
+(0.010)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Employment3
+
+</td>
+
+<td>
+
+0.184<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.169<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.169<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.163<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Employment9
+
+</td>
+
+<td>
+
+0.124<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.114<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.114<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.110<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment1
+
+</td>
+
+<td>
+
+0.058<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.051<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.051<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.047<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment2
+
+</td>
+
+<td>
+
+0.044<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.040<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.040<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.037<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment3
+
+</td>
+
+<td>
+
+0.123<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.108<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.108<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.101<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+<td>
+
+(0.008)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Employment9
+
+</td>
+
+<td>
+
+0.081<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.069<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.069<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.063<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+<td>
+
+(0.009)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Male\_Head\_Age
+
+</td>
+
+<td>
+
+\-0.033<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.037<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.037<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.037<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Female\_Head\_Age
+
+</td>
+
+<td>
+
+\-0.006<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.003<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.003<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.002<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+<td>
+
+(0.001)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+inc\_diff:gini
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.144<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
 
 </td>
 
@@ -5770,1548 +9413,6 @@ inc\_diff
 
 </td>
 
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-median\_monthly\_housing\_cost
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-\-0.164<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.164<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-(0.00001)
-
-</td>
-
-<td>
-
-(0.00001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-pov\_status\_below\_per
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-0.055<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.055<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-(0.019)
-
-</td>
-
-<td>
-
-(0.019)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Household\_Size
-
-</td>
-
-<td>
-
-\-0.032<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.029<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.029<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Education
-
-</td>
-
-<td>
-
-\-0.136<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.124<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.124<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Education
-
-</td>
-
-<td>
-
-\-0.120<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.114<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.114<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Race2
-
-</td>
-
-<td>
-
-0.011<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.009<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.009<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.003)
-
-</td>
-
-<td>
-
-(0.003)
-
-</td>
-
-<td>
-
-(0.003)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Race3
-
-</td>
-
-<td>
-
-\-0.027<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.017<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.017<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Race4
-
-</td>
-
-<td>
-
-\-0.015<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.011<sup>\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.011<sup>\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.004)
-
-</td>
-
-<td>
-
-(0.004)
-
-</td>
-
-<td>
-
-(0.004)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Marital\_Status2
-
-</td>
-
-<td>
-
-0.045<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.047<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.047<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Marital\_Status3
-
-</td>
-
-<td>
-
-0.060<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.065<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.065<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Marital\_Status4
-
-</td>
-
-<td>
-
-0.060<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.067<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.067<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-<td>
-
-(0.005)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Employment1
-
-</td>
-
-<td>
-
-0.069<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.064<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.064<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Employment2
-
-</td>
-
-<td>
-
-0.060<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.055<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.055<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Employment3
-
-</td>
-
-<td>
-
-0.200<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.183<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.183<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Employment9
-
-</td>
-
-<td>
-
-0.135<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.122<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.122<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment1
-
-</td>
-
-<td>
-
-0.084<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.078<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.078<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment2
-
-</td>
-
-<td>
-
-0.061<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.057<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.057<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-<td>
-
-(0.010)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment3
-
-</td>
-
-<td>
-
-0.155<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.141<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.141<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Employment9
-
-</td>
-
-<td>
-
-0.115<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.104<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-0.104<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-<td>
-
-(0.009)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Male\_Head\_Age
-
-</td>
-
-<td>
-
-\-0.026<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.027<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.027<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-Female\_Head\_Age
-
-</td>
-
-<td>
-
-\-0.013<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.011<sup>\*\*\*</sup>
-
-</td>
-
-<td>
-
-\-0.011<sup>\*\*\*</sup>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-<td>
-
-(0.001)
-
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left">
-
-</td>
-
-<td>
-
-</td>
-
-<td>
-
-</td>
-
 <td>
 
 </td>
@@ -7323,6 +9424,10 @@ Female\_Head\_Age
 <td style="text-align:left">
 
 Constant
+
+</td>
+
+<td>
 
 </td>
 
@@ -7364,6 +9469,12 @@ Constant
 
 </td>
 
+<td>
+
+(0.013)
+
+</td>
+
 </tr>
 
 <tr>
@@ -7384,11 +9495,15 @@ Constant
 
 </td>
 
+<td>
+
+</td>
+
 </tr>
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -7404,19 +9519,25 @@ Observations
 
 <td>
 
-61,517
+61,343
 
 </td>
 
 <td>
 
-61,190
+60,951
 
 </td>
 
 <td>
 
-61,190
+60,951
+
+</td>
+
+<td>
+
+60,951
 
 </td>
 
@@ -7432,19 +9553,25 @@ Log Likelihood
 
 <td>
 
-4,976.486
+5,917.740
 
 </td>
 
 <td>
 
-5,257.191
+6,262.615
 
 </td>
 
 <td>
 
-5,257.191
+6,262.615
+
+</td>
+
+<td>
+
+6,278.629
 
 </td>
 
@@ -7460,19 +9587,25 @@ Akaike Inf. Crit.
 
 <td>
 
-\-9,906.972
+\-11,789.480
 
 </td>
 
 <td>
 
-\-10,462.380
+\-12,473.230
 
 </td>
 
 <td>
 
-\-10,462.380
+\-12,473.230
+
+</td>
+
+<td>
+
+\-12,501.260
 
 </td>
 
@@ -7488,19 +9621,25 @@ Bayesian Inf. Crit.
 
 <td>
 
-\-9,699.349
+\-11,581.920
 
 </td>
 
 <td>
 
-\-10,227.820
+\-12,238.770
 
 </td>
 
 <td>
 
-\-10,227.820
+\-12,238.770
+
+</td>
+
+<td>
+
+\-12,248.760
 
 </td>
 
@@ -7508,7 +9647,7 @@ Bayesian Inf. Crit.
 
 <tr>
 
-<td colspan="4" style="border-bottom: 1px solid black">
+<td colspan="5" style="border-bottom: 1px solid black">
 
 </td>
 
@@ -7522,7 +9661,7 @@ Bayesian Inf. Crit.
 
 </td>
 
-<td colspan="3" style="text-align:right">
+<td colspan="4" style="text-align:right">
 
 <sup>*</sup>p\<0.1; <sup>**</sup>p\<0.05; <sup>***</sup>p\<0.01
 
@@ -7541,9 +9680,9 @@ effect("inc_mid", lm_inc) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) + sd(nps_2014$inc_mid, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_mid, na.rm = TRUE) - sd(nps_2014$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) + sd(nps_2015$inc_mid, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_mid, na.rm = TRUE) - sd(nps_2015$inc_mid, na.rm = TRUE)) +
   labs(
     x = "own income",
     y = "grams of saturated fat per $1 spent"
@@ -7551,7 +9690,7 @@ effect("inc_mid", lm_inc) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 ### Own income minus median income in your zip code
 
@@ -7562,9 +9701,9 @@ effect("inc_diff", lm_inc_diff) %>%
   geom_line() +
   geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2) +
   scale_x_continuous(labels = scales::comma) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) + sd(nps_2014$inc_diff, na.rm = TRUE)) +
-  geom_vline(xintercept = mean(nps_2014$inc_diff, na.rm = TRUE) - sd(nps_2014$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
   labs(
     x = "own income - median income in zip code",
     y = "grams of saturated fat per $1 spent"
@@ -7572,4 +9711,25 @@ effect("inc_diff", lm_inc_diff) %>%
   theme_bw()
 ```
 
-![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+### Own income minus median income x gini in your zip code
+
+``` r
+effect("inc_diff * gini", lm_inc_diff_g) %>% 
+  as_tibble() %>% 
+  ggplot(aes(inc_diff, fit, group = gini, color = gini, fill = gini)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = fit - se, ymax = fit + se), alpha  = 0.2, color = NA) +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) + sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  geom_vline(xintercept = mean(nps_2015$inc_diff, na.rm = TRUE) - sd(nps_2015$inc_diff, na.rm = TRUE)) +
+  labs(
+    x = "own income - median income in zip code",
+    y = "grams of saturated fat per $1 spent"
+  ) + 
+  theme_bw()
+```
+
+![](nielsen_secondary_data_analysis_nutrition_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
