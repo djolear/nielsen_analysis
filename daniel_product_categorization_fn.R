@@ -59,7 +59,8 @@ daniel_product_categorication_fn <- function(products_master){
       chips = str_detect(product_module_descr, "CHIPS"),
       nuts = str_detect(product_module_descr, "NUTS"),
       ice_cream = str_detect(product_module_descr, "ICE CREAM"),
-      soft_drinks_reg = str_detect(product_module_descr, "SOFT DRINKS - CARBONATED")
+      soft_drinks_reg = str_detect(product_module_descr, "SOFT DRINKS - CARBONATED"),
+      produce = str_detect(product_group_descr, "FRESH PRODUCE")
     )
   
   products_master <-
@@ -75,6 +76,7 @@ daniel_product_categorication_fn <- function(products_master){
           chips == "TRUE" ~ "chips",
           nuts == "TRUE" ~ "nuts",
           ice_cream == "TRUE" ~ "ice_cream",
+          produce == "TRUE" ~ "produce",
           soft_drinks_reg == "TRUE" ~ "soft_drinks_reg"
         )
     )
@@ -92,6 +94,7 @@ daniel_product_categorication_fn <- function(products_master){
           dc == "chips" ~ "unhealthy",
           dc == "nuts" ~ "healthy",
           dc == "ice_cream" ~ "unhealthy",
+          dc == "produce" ~ "healthy",
           dc == "soft_drinks_reg" ~ "unhealthy"
           
         )

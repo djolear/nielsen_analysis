@@ -81,6 +81,8 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
   products_master <-
     readr::read_tsv("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/Master_Files/Latest/products.tsv")
   
+  retailers <-
+    readr::read_tsv("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/Master_Files/Latest/retailers.tsv")
   
   source(paste0(machine_path, "research/projects/niel/nielsen_analysis/daniel_product_categorization_fn.R"))
   
@@ -124,40 +126,40 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
   
   # Could look only at food stores
   
-  # trips <- 
-  #   trips %>% 
-  #   left_join(
-  #     retailers %>% 
-  #       filter(
-  #         channel_type %in% 
-  #           c(
-  #             "Grocery", 
-  #             "Bakery", 
-  #             "Beverage Store", 
-  #             "Bodega", "Butcher", 
-  #             "Candy Store", 
-  #             "Cheese Stores", 
-  #             "Coffee Store/Gourmet Coffee",
-  #             "Convenience Store",
-  #             "Dairy Store",
-  #             "Delicatessen",
-  #             "Dollar Store",
-  #             "Drug Store",
-  #             "Fish Market",
-  #             "Fruit Stand",
-  #             "as Mini Mart",
-  #             "Health Food Store",
-  #             "Pizzeria",
-  #             "Quick Serve Restaurants",
-  #             "Restaurant",
-  #             "Vending Machine"
-  #           )
-  #       )
-  #   )
+  trips <-
+    trips %>%
+    left_join(
+      retailers %>%
+        filter(
+          channel_type %in%
+            c(
+              "Grocery",
+              "Bakery",
+              "Beverage Store",
+              "Bodega", "Butcher",
+              "Candy Store",
+              "Cheese Stores",
+              "Coffee Store/Gourmet Coffee",
+              "Convenience Store",
+              "Dairy Store",
+              "Delicatessen",
+              "Dollar Store",
+              "Drug Store",
+              "Fish Market",
+              "Fruit Stand",
+              "as Mini Mart",
+              "Health Food Store",
+              "Pizzeria",
+              "Quick Serve Restaurants",
+              "Restaurant",
+              "Vending Machine"
+            )
+        )
+    )
   
   spend <-
     trips %>% 
-    # filter(!is.na(channel_type)) %>% 
+    filter(!is.na(channel_type)) %>% 
     group_by(household_code) %>% 
     summarise(
       total_spend = sum(total_spent, na.rm = TRUE)
@@ -213,23 +215,23 @@ calculate_spend_per_dc_fn <- function(year, products_master) {
     )
 
   
-  spend_per_dc <-
-    spend_per_dc %>% 
-    mutate(
-      across(.cols = c(Race:Female_Head_Employment), .fns = as.factor)
-    ) %>% 
-    mutate(
-      across(.cols = c(Male_Head_Education:Female_Head_Education), .fns = as.numeric)
-    )
+  # spend_per_dc <-
+  #   spend_per_dc %>% 
+  #   mutate(
+  #     across(.cols = c(Race:Female_Head_Employment), .fns = as.factor)
+  #   ) %>% 
+  #   mutate(
+  #     across(.cols = c(Male_Head_Education:Female_Head_Education), .fns = as.numeric)
+  #   )
   
   # spend_per_dc <-
   #   spend_per_dc %>% 
   #   ungroup %>% 
-  #   mutate(
-  #     state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
-  #     county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
-  #     fips_code = paste0(state_fips, county_fips)
-  #   )
+    # mutate(
+    #   state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
+    #   county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
+    #   fips_code = paste0(state_fips, county_fips)
+    # )
   
   # rm(niel_df, trips, panelists, purchase, trips)
   

@@ -140,17 +140,17 @@ lm_inc_diff <-
       Household_Size +
       pov_status_below_per +
       median_monthly_housing_cost + 
-      # Male_Head_Education +
-      # Female_Head_Education +
-      # Race +
-      # Marital_Status +
-      # Male_Head_Employment +
-      # Female_Head_Employment +
-      # Male_Head_Age +
-      # Female_Head_Age +
+      Male_Head_Education +
+      Female_Head_Education +
+      Race +
+      Marital_Status +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Male_Head_Age +
+      Female_Head_Age +
       (1|zip), 
     data = 
-      spend_per_dc_17 %>% 
+      spend_per_dc %>% 
       filter(dc == "vegetable")
   )
   

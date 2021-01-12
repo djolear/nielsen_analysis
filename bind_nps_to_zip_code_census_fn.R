@@ -46,7 +46,13 @@ bind_zip_code_census_data_function <- function(nps, year) {
   nps <-
     nps %>% 
     left_join(
-      census_ses_zip_wide,
+      census_ses_zip_wide %>% 
+        dplyr::select(
+          zip,
+          median_income,
+          median_monthly_housing_cost,
+          pov_status_below_per
+        ),
       by = "zip"
     )
   

@@ -62,13 +62,16 @@ lm.beta.lmer <- function(mod) {
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/calculate_nutrition_per_spend_fn.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nps_to_zip_code_census_fn.R"))
 
-year = "2015"
+year = "2017"
 
 nps_2015 <- 
   nutrition_per_spend_fn(year)
 
 nps_2015 <-
   bind_zip_code_census_data_function(nps_2015, year)  
+
+nutr_per_cal <-
+  bind_zip_code_census_data_function(nutr_per_cal, year)  
 ```
 
 
@@ -81,7 +84,7 @@ nps_2015 <-
 ```{r}
 lm_inc <-
   lmer(
-    cal_per ~
+    add_sugar_cal ~
       inc_mid +
       Household_Size +
       Male_Head_Education +
@@ -93,7 +96,7 @@ lm_inc <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2015
+    data = npc_2017
   )
   
 summary(lm_inc)
@@ -107,7 +110,7 @@ lm.beta.lmer(lm_inc)
 ```{r}
 lm_med_inc <-
   lmer(
-    cal_per ~
+    add_sugar_cal ~
       median_income + 
       inc_mid + 
       median_monthly_housing_cost + 
@@ -121,8 +124,9 @@ lm_med_inc <-
       Female_Head_Employment +
       Male_Head_Age +
       Female_Head_Age +
-      (1|zip), 
-    data = nps_2015
+      (1|zip) +
+      (1|month), 
+    data = nutr_per_cal 
   )
   
 summary(lm_med_inc)
@@ -136,12 +140,12 @@ lm.beta.lmer(lm_med_inc)
 ```{r}
 lm_inc_diff <-
   lmer(
-    cal_per ~
+    sug_per ~
       inc_mid +     
-      inc_diff + 
+      # inc_diff + 
       Household_Size +
-      pov_status_below_per +
-      median_monthly_housing_cost + 
+      # pov_status_below_per +
+      # median_monthly_housing_cost + 
       Male_Head_Education +
       Female_Head_Education +
       Race +
@@ -151,7 +155,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2015
+    data = nutr_per_spend  
   )
   
 summary(lm_inc_diff)
@@ -535,7 +539,7 @@ lm_inc_diff <-
       Male_Head_Age +
       Female_Head_Age +
       (1|zip), 
-    data = nps_2015
+    data = npc_2017
   )
   
 summary(lm_inc_diff)

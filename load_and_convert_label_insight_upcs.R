@@ -19,7 +19,7 @@ machine_path <-
 
 
 li_upc <-
-  read_csv(paste0(machine_path, "research/projects/niel/label_insight_upc.csv"))
+  read_csv(paste0(machine_path, "research/projects/niel/food_export_120120.csv"))
 
 ##############################
 ## Create 13 Character UPC's ##
@@ -38,3 +38,7 @@ li_upc <-
   mutate(
     upc_new = ifelse(char == 12, paste0("0", UPC), UPC)
   )
+
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/li_upc_servings_conversion.R"))
+
+write_csv(li_upc_update, (paste0(machine_path, "research/projects/niel/nielsen_analysis/li_upc_update_011021.csv")))

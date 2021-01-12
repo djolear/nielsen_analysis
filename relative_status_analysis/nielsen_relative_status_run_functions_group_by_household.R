@@ -1,0 +1,95 @@
+sinfo <- data.frame(Sys.info())
+machine <- sinfo$Sys.info..[4]
+
+machine_path <- 
+  ifelse(
+    machine %in% c("sussman-rp-mbpro.local", "sussman-rp-mbpro.lan"), 
+    "/Users/djolear/Google Drive/", 
+    "G:/My Drive/"
+  )
+
+data_path <- "research/projects/niel/nielsen_data_output/group_spend_data_all_categories/"
+
+###################
+## Load Packages ##
+###################
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(
+  tidyverse, 
+  haven
+)
+
+
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_median_earnings_census_functions.R"))
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_median_income_nielsen_functions.R"))
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_census_data_county_functions.R"))
+
+nielsen_read_add2_write <- function(df_path, current_year) {
+  
+  panelists <-
+    readr::read_tsv(paste0("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/", current_year, "/Annual_Files/panelists_", current_year, ".tsv"))
+  
+  df <-
+    read_csv(df_path)
+  
+  df <-
+    df %>% 
+    mutate(
+      year = current_year
+    ) %>% 
+    left_join(
+      panelists %>% 
+        dplyr::select(
+          household_code = Household_Cd,
+          Fips_County_Cd,
+          Fips_State_Cd,
+          Household_Composition,
+          Household_Size,
+          Household_Composition,
+          Male_Head_Age,
+          Female_Head_Age,
+          Male_Head_Employment,
+          Female_Head_Employment,
+          Male_Head_Education,
+          Female_Head_Education,
+          Marital_Status,
+          Race
+        )
+    ) %>% 
+    mutate(
+      state_fips = ifelse(nchar(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
+      cty_fips = ifelse(nchar(Fips_County_Cd) == 1, paste0("00", Fips_County_Cd), ifelse(nchar(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd)),
+      fips_code = paste0(state_fips, cty_fips)
+    )
+  
+  df <- median_earnings_male_all_census_function(df)
+  df <- median_income_nielsen_all_function(df)
+  df <- bind_county_census_data_function(df, year)
+  
+  df <- standardize_vars(df)
+  
+  write_csv(df, paste0(machine_path, data_path, "group_spend_by_household_wide_secondary_", current_year, ".csv"))
+}
+
+file_list <- 
+  data.frame(
+    file_list = list.files(path = paste0(machine_path, data_path))
+  )
+
+file_list <-
+  file_list %>% 
+  filter(
+    str_detect(file_list, ".csv")
+  ) %>% slice(1)
+
+for(i in 1:length(file_list$file_list)) {
+  assign(
+    paste0("nielsen_group_by_household_all_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
+    nielsen_read_add2_write(
+      paste0(machine_path, data_path, file_list$file_list[i]), 
+      as.numeric(str_extract(file_list$file_list[i], "[[:digit:]]+"))
+    )
+  )
+  print(paste0(str_extract(file_list$file_list[i], "[[:digit:]]+"), " complete."))
+}

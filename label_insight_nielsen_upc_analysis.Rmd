@@ -47,7 +47,7 @@ source(paste0(machine_path, "research/projects/niel/nielsen_analysis/bind_nielse
 # Load data
 
 ```{r}
-# Set uear
+# Set year
 year = "2015"
 
 niel_df <- bind_labels_to_purchases_fn(year)
@@ -89,6 +89,7 @@ niel_df %>%
 ```
 
 
+
 ### Sugar
 
 ```{r}
@@ -108,6 +109,31 @@ niel_df %>%
   labs(
     x = "department description",
     y = "proportion coverage of sugar NI by label insight upc's"
+  ) +
+  coord_flip() +
+  theme_bw()
+```
+
+
+### Sugar
+
+```{r}
+niel_df %>% 
+  count(department_descr, !is.na(add_sugars)) %>% 
+  left_join(
+    niel_df %>% 
+      count(department_descr) %>% 
+      mutate(total = n) %>% 
+      dplyr::select(-n)
+  ) %>%
+  filter(department_descr %in% c("DAIRY", "DELI", "DRY GROCERY", "FRESH PRODUCE", "FROZEN FOODS", "PACKAGED MEAT", NA)) %>% 
+  mutate(per = n / total) %>% 
+  filter(`!is.na(add_sugars)` == TRUE) %>% 
+  ggplot(aes(fct_reorder(department_descr, per), per, fill = department_descr)) +
+  geom_col() +
+  labs(
+    x = "department description",
+    y = "proportion coverage of add_sugars NI by label insight upc's"
   ) +
   coord_flip() +
   theme_bw()

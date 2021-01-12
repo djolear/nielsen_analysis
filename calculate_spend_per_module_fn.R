@@ -78,6 +78,8 @@ calculate_spend_per_module_fn <- function(year, products_master) {
   products <-
     readr::read_tsv(paste0("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/", year, "/Annual_Files/products_extra_", year, ".tsv"))
   
+  products_master <-
+    readr::read_tsv("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/Master_Files/Latest/products.tsv")
   
   
   trips <-
@@ -113,6 +115,12 @@ calculate_spend_per_module_fn <- function(year, products_master) {
           upc_ver_uc,
         ),
       by = c("upc", "upc_ver_uc")
+    )
+  
+  niel_df <-
+    niel_df %>% 
+    filter(
+      department_descr %in% c("DAIRY", "DELI", "DRY GROCERY", "FRESH PRODUCE", "FROZEN FOODS", "PACKAGED MEAT", NA)
     )
   
   
@@ -212,14 +220,14 @@ calculate_spend_per_module_fn <- function(year, products_master) {
         )
     )
   
-  spend_per_cat <-
-    spend_per_cat %>% 
-    ungroup %>% 
-    mutate(
-      state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
-      county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
-      fips_code = paste0(state_fips, county_fips)
-    )
+  # spend_per_cat <-
+  #   spend_per_cat %>% 
+  #   ungroup %>% 
+  #   mutate(
+  #     state_fips = ifelse(str_length(Fips_State_Cd) == 1, paste0("0", Fips_State_Cd), Fips_State_Cd),
+  #     county_fips = ifelse(str_length(Fips_County_Cd) == 2, paste0("0", Fips_County_Cd), Fips_County_Cd),
+  #     fips_code = paste0(state_fips, county_fips)
+  #   )
   
   #rm(niel_df, trips, panelists, purchase, trips)
   

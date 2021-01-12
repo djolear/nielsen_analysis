@@ -124,10 +124,10 @@ nf <- function(year) {
           product_group_descr,
           product_module_descr,
           department_descr,
-          class,
+          # class,
           upc,
           upc_ver_uc,
-          upc_new
+          # upc_new
         ),
       by = c("upc", "upc_ver_uc")
     )
@@ -142,6 +142,7 @@ nf <- function(year) {
         dplyr::select(
           upc_new,
           sugar = Sugars,
+          add_sugars = `Added Sugars`,
           calories = Calories,
           saturated_fat = `Saturated Fat`
         ),
