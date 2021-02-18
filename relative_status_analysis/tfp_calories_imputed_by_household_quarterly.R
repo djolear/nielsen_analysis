@@ -8,7 +8,6 @@ machine_path <-
     "G:/My Drive/"
   )
 
-data_path <- "research/projects/niel/nielsen_data_output/foodgroup_data/"
 
 ###################
 ## Load Packages ##
@@ -21,11 +20,11 @@ pacman::p_load(
 )
 
 
-source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_median_earnings_census_functions.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_median_income_nielsen_functions.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_census_data_county_functions.R"))
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_standardize_vars_function.R"))
 
-nielsen_read_add2_write <- function(df_path, current_year) {
+nielsen_read_add_secondary_write <- function(df_path, current_year) {
   
   panelists <-
     readr::read_tsv(paste0("G:/Shared drives/SPL-Nielsen/Consumer_Panel_Data_2004_2017/Consumer_Panel_Data_2004_2017/nielsen_extracts/HMS/", current_year, "/Annual_Files/panelists_", current_year, ".tsv"))
@@ -63,31 +62,35 @@ nielsen_read_add2_write <- function(df_path, current_year) {
       fips_code = paste0(state_fips, cty_fips)
     )
   
-  #df <- median_earnings_male_all_census_function(df)
-  #df <- median_income_nielsen_all_function(df)
-  df <- bind_county_census_data_function(df, year)
+  df <- median_income_nielsen_all_function(df)
+  df <- bind_county_census_data_function(df, current_year)
   
-  df <- standardize_vars(df)
+  df <- standardize_vars_tfp(df)
   
-  write_csv(df, paste0(machine_path, data_path, "foodgroup_spend_by_household_monthly_wide_secondary_", current_year, ".csv"))
+  write_csv(df, paste0(data_path, "tfp_calories_imputed_by_household_quarterly_wide_secondary_", current_year, ".csv"))
+  
+  return(df)
 }
+
+data_path <- "D:/data/nielsen/tfp_calories_imputed_by_household_quarterly/"
 
 file_list <- 
   data.frame(
-    file_list = list.files(path = paste0(machine_path, data_path))
+    file_list = list.files(path = data_path)
   )
 
 file_list <-
   file_list %>% 
   filter(
     str_detect(file_list, ".csv")
-  ) %>% slice(1)
+  ) %>% 
+  slice(1:16)
 
 for(i in 1:length(file_list$file_list)) {
   assign(
-    paste0("foodgroup_by_household_all_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
-    nielsen_read_add2_write(
-      paste0(machine_path, data_path, file_list$file_list[i]), 
+    paste0("tfp_calories_imputed_by_household_quarterly_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
+    nielsen_read_add_secondary_write(
+      paste0(data_path, file_list$file_list[i]), 
       as.numeric(str_extract(file_list$file_list[i], "[[:digit:]]+"))
     )
   )

@@ -19,7 +19,7 @@ bind_county_census_data_function <- function(df, year) {
   ################
   
   year = ifelse(year < 2010, 2010, year)
-  
+  year = ifelse(year == 2019, 2018, year)
   
   census <- 
     read_csv(paste0(machine_path, "research/projects/secondary_data/census/census_ses_county_wide_", year, ".csv"))
