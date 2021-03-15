@@ -67,6 +67,13 @@ survey <-
     sc1 = scale((Q10_A_1 + Q10_A_3) / 2),
     sc2 = scale((Q10_A_2 + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 5)
   )
+
+df <-
+  df %>% 
+  mutate(
+    sc1 = scale((Q10_A_1 + Q10_A_3) / 2),
+    sc2 = scale((Q10_A_2 + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 5)
+  )
 ```
 
 ## Regression
@@ -76,7 +83,7 @@ survey <-
 ```{r}
 lm1 <-
   lm(
-    sc1 ~
+    yes ~
       income_scale +
       med_inc_niel_avg_scale +
       Household_Size_scale +
@@ -92,7 +99,7 @@ lm1 <-
       total_pop_county_scale +
       land_area_2010_scale +
       median_monthly_housing_cost_county_scale,
-    data = survey %>% filter(Male_Head_Age != 0 & Female_Head_Age != 0)
+    data = df 
   )
 
 summary(lm1)

@@ -70,7 +70,7 @@ panelists <-
         Household_Income == 26 ~ 85000,
         Household_Income == 27 ~ 100000
       )
-  )
+  ) 
 
 
 # Join panelists data to survey data
@@ -110,5 +110,7 @@ df <- read_csv("D:/data/nielsen/qfahpd_health_calories_imputed_sc_by_household_q
 df <-
   df %>% 
   left_join(
-    survey
+    survey,
+    by = "household_code",
+    suffix = c("", "_survey")
   )
