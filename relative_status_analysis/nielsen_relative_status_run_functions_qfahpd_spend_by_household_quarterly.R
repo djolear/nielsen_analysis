@@ -23,6 +23,7 @@ pacman::p_load(
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_median_income_nielsen_functions.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_join_census_data_county_functions.R"))
 source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/nielsen_standardize_vars_function.R"))
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/bind_chr_data.R"))
 
 nielsen_read_add_secondary_write <- function(df_path, current_year) {
   
@@ -53,7 +54,8 @@ nielsen_read_add_secondary_write <- function(df_path, current_year) {
           Male_Head_Education,
           Female_Head_Education,
           Marital_Status,
-          Race
+          Race,
+          zip = Panelist_ZipCd
         )
     ) %>% 
     mutate(
@@ -64,6 +66,7 @@ nielsen_read_add_secondary_write <- function(df_path, current_year) {
   
   df <- median_income_nielsen_all_function(df)
   df <- bind_county_census_data_function(df, current_year)
+  df <- bind_chr(df, current_year)
   
   df <- standardize_vars_qfahpd_health(df)
   

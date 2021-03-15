@@ -78,7 +78,7 @@ lm1 <-
   lm(
     sc1 ~
       income_scale +
-      med_earn_census_state_male_scale * Male_Head_Education_scale +
+      med_inc_niel_avg_scale +
       Household_Size_scale +
       Household_Composition +
       Male_Head_Age_scale +
@@ -92,7 +92,7 @@ lm1 <-
       total_pop_county_scale +
       land_area_2010_scale +
       median_monthly_housing_cost_county_scale,
-    data = survey
+    data = survey %>% filter(Male_Head_Age != 0 & Female_Head_Age != 0)
   )
 
 summary(lm1)
@@ -115,7 +115,7 @@ lm1 <-
   lm(
     sc2 ~
       income_scale +
-      med_earn_census_state_male_scale * Male_Head_Education_scale +
+      med_inc_niel_avg_scale +
       Household_Size_scale +
       Household_Composition +
       Male_Head_Age_scale +
@@ -143,7 +143,7 @@ lm1 <-
   lm(
     scale(Q27_A_1) ~
       income_scale +
-      med_earn_census_state_male_scale * Male_Head_Education_scale +
+      med_inc_niel_avg_scale +
       Household_Size_scale +
       Household_Composition +
       Male_Head_Age_scale +

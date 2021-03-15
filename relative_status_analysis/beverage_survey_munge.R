@@ -38,7 +38,7 @@ source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_st
 ## Load Data ##
 
 survey <- 
-  read_csv(paste0(machine_path, "research/projects/niel/bev_survey.csv")) %>% 
+  read_csv(paste0(machine_path, "research/projects/niel/beverage_survey/bev_survey.csv")) %>% 
   mutate(year = 2017)
 
 # Load all panelists data
@@ -104,3 +104,11 @@ survey <- median_earnings_all_census_function(survey)
 survey <- bind_county_census_data_function(survey, 2017)
 survey <- standardize_vars(survey)
 
+df <- read_csv("D:/data/nielsen/qfahpd_health_calories_imputed_sc_by_household_quarterly/qfahpd_health_calories_imputed_sc_by_household_quarterly_wide_2017.csv")
+
+
+df <-
+  df %>% 
+  left_join(
+    survey
+  )

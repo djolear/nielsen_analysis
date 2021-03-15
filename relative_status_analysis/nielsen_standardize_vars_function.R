@@ -50,17 +50,7 @@ standardize_vars_group <- function(df) {
         ends_with("scale")
       ),
       as.numeric
-    ) %>% 
-    dplyr::select(
-      -(baby_food:yogurt),
-      -unweighted_pop_county,
-      -total_pop_county,
-      -land_area_2010,
-      -median_income_county,
-      -median_monthly_housing_cost_county,
-      -median_home_value_county,
-      -gini_county
-    ) %>% 
+    )  %>% 
     mutate_at(
       vars(
         Race,
@@ -127,16 +117,7 @@ standardize_vars_qfahpd_health <- function(df) {
         ends_with("scale")
       ),
       as.numeric
-    ) %>% 
-    dplyr::select(
-      -unweighted_pop_county,
-      -total_pop_county,
-      -land_area_2010,
-      -median_income_county,
-      -median_monthly_housing_cost_county,
-      -median_home_value_county,
-      -gini_county
-    ) %>% 
+    )  %>% 
     mutate_at(
       vars(
         Race,
@@ -202,16 +183,7 @@ standardize_vars_tfp <- function(df) {
         ends_with("scale")
       ),
       as.numeric
-    ) %>% 
-    dplyr::select(
-      -unweighted_pop_county,
-      -total_pop_county,
-      -land_area_2010,
-      -median_income_county,
-      -median_monthly_housing_cost_county,
-      -median_home_value_county,
-      -gini_county
-    ) %>% 
+    )  %>% 
     mutate_at(
       vars(
         Race,

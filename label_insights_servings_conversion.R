@@ -1,3 +1,5 @@
+# label insights file as 'li_upc'
+
 servings_master <- 
   li_upc %>% 
   mutate(
@@ -27,6 +29,10 @@ servings_first_pass <-
   )
 
 # need to figure out double decimals
+
+# 28.3495 = grams/oz
+# 453.592 = grams/pound
+# 29.5735 = ml/fl oz
 
 servings_second_pass <-
   servings_master %>% 

@@ -8,7 +8,7 @@ median_income_nielsen_general_function <- function(df, year){
   med_inc_niel <-
     panelists %>% 
     filter(Male_Head_Age > 0 & Female_Head_Age > 0) %>% 
-    group_by(Female_Head_Education, Male_Head_Education) %>% 
+    group_by(Female_Head_Education, Male_Head_Education, Male_Head_Age, Female_Head_Age) %>% 
     summarise(
       med_inc_gen_niel = matrixStats::weightedMedian(Household_Income, w = Projection_Factor, na.rm = TRUE)
     ) %>% 
@@ -18,7 +18,7 @@ median_income_nielsen_general_function <- function(df, year){
     df %>% 
     left_join(
       med_inc_niel,
-      by = c("Female_Head_Education", "Male_Head_Education")
+      by = c("Female_Head_Education", "Male_Head_Education", "Male_Head_Age", "Female_Head_Age")
     )
   
   med_inc_niel_male <-
@@ -50,6 +50,12 @@ median_income_nielsen_general_function <- function(df, year){
     df %>% 
     left_join(
       med_inc_niel_female
+    )
+  
+  df <-
+    df %>% 
+    mutate(
+      med_inc_niel_avg = (med_inc_niel_female + med_inc_niel_male) / 2
     )
   
   
