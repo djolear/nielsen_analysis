@@ -6,7 +6,7 @@ products_master <-
 products_master <-
   products_master %>% 
   filter(department_descr %!in% c("HEALTH & BEAUTY CARE", "NON-FOOD GROCERY", "GENERAL MERCHANDISE", "MAGNET DATA")) %>% 
-  filter(size1_units %in% c("CT", "OZ", "PO"))
+  count(size1_units %in% c("CT", "OZ", "PO", "LI", "QT", "ML"))
 
 products_master <-
   products_master %>% 
@@ -64,7 +64,7 @@ products_master <-
         size1_units == "PO" ~ size1_amount * 16,
         size1_units == "LI" ~ size1_amount * 16 * 2.2,
         size1_units == "ML" ~ (size1_amount*16*2.2)/1000,
-        size1_units == "QT" ~ size1_amount*16*2.08,
+        size1_units == "QT" ~ size1_amount *16*2.08,
         TRUE ~ size1_amount
       ),
     units_new =
@@ -105,7 +105,7 @@ calories_sc_per_unit <-
       count(product_module_descr, units_new)
   )
 
-# Filter out cells that have less than 2 products
+# Filter out cells that have less than 5 products
 calories_sc_per_unit <-
   calories_sc_per_unit %>% 
   filter(n > 5)
