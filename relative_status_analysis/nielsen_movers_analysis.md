@@ -308,6 +308,86 @@ sjPlot::plot_model(lm_z1) +
 
 ![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
+``` r
+tidy_lm_z1 <- tidy(lm_z1)
+
+est <- 
+  tidy_lm_z1 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_z1 <-
+  tidy_lm_z1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_z1 <-
+  tidy_lm_z1 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_z1$dot_color)
+names(col) <- as.character(tidy_lm_z1$dot_color)
+
+calorie_budget_zip_code_moves_1yr <-
+  tidy_lm_z1 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "zip code moves, 1 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+calorie_budget_zip_code_moves_1yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_zip_code_moves_1yr.png",
+  calorie_budget_zip_code_moves_1yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
+
 #### 2 years
 
 ``` r
@@ -559,6 +639,78 @@ tidy_lm_z2
     ## 10 fixed  <NA>  income_scale_t1                      0.0474    0.00543      8.74
     ## # ... with 29 more rows
 
+``` r
+tidy_lm_z2 <- tidy(lm_z2)
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_z2$dot_color)
+names(col) <- as.character(tidy_lm_z2$dot_color)
+
+grocery_spend_zipcode_moves_2yr <-
+  tidy_lm_z2 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed") +
+  labs(
+    y = "standardized beta",
+    title = "zip code move, 2 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  ylim(-0.11, 0.11) +
+  coord_flip()
+
+grocery_spend_zipcode_moves_2yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_zipcode_moves_2yr.png",
+  grocery_spend_zipcode_moves_2yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
+
 ##### Plotting coefficients
 
 ``` r
@@ -577,7 +729,87 @@ sjPlot::plot_model(lm_z2) +
     ## Scale for 'y' is already present. Adding another scale for 'y', which will
     ## replace the existing scale.
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+tidy_lm_z2 <- tidy(lm_z2)
+
+est <- 
+  tidy_lm_z2 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_z2$dot_color)
+names(col) <- as.character(tidy_lm_z2$dot_color)
+
+calorie_budget_zip_code_moves_2yr <-
+  tidy_lm_z2 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "zip code moves, 2 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+calorie_budget_zip_code_moves_2yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_zip_code_moves_2yr.png",
+  calorie_budget_zip_code_moves_2yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 ### County moves
 
@@ -852,7 +1084,87 @@ sjPlot::plot_model(lm_f1) +
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
+tidy_lm_f1 <- tidy(lm_f1)
+
+est <- 
+  tidy_lm_f1 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_f1 <-
+  tidy_lm_f1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_f1 <-
+  tidy_lm_f1 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_f1$dot_color)
+names(col) <- as.character(tidy_lm_f1$dot_color)
+
+calorie_budget_county_moves_1yr <-
+  tidy_lm_f1 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "county moves, 1 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+calorie_budget_county_moves_1yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_county_moves_1yr.png",
+  calorie_budget_county_moves_1yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 #### 2 years
 
@@ -1123,7 +1435,87 @@ sjPlot::plot_model(lm_f2) +
     ## Scale for 'y' is already present. Adding another scale for 'y', which will
     ## replace the existing scale.
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+tidy_lm_f2 <- tidy(lm_f2)
+
+est <- 
+  tidy_lm_f2 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_f2 <-
+  tidy_lm_f2 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_f2 <-
+  tidy_lm_f2 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_f2$dot_color)
+names(col) <- as.character(tidy_lm_f2$dot_color)
+
+calorie_budget_county_moves_2yr <-
+  tidy_lm_f2 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "county moves, 2 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+calorie_budget_county_moves_2yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_county_moves_2yr.png",
+  calorie_budget_county_moves_2yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 ## Outcome = % of food spend in healthy category
 
@@ -1400,7 +1792,87 @@ sjPlot::plot_model(lm_z1) +
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+tidy_lm_z1 <- tidy(lm_z1)
+
+est <- 
+  tidy_lm_z1 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_z1 <-
+  tidy_lm_z1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_z1 <-
+  tidy_lm_z1 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_z1$dot_color)
+names(col) <- as.character(tidy_lm_z1$dot_color)
+
+grocery_spend_zip_code_moves_1yr <-
+  tidy_lm_z1 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "zip code moves, 1 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+grocery_spend_zip_code_moves_1yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_zip_code_moves_1yr.png",
+  grocery_spend_zip_code_moves_1yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 #### 2 years
 
@@ -1663,7 +2135,87 @@ sjPlot::plot_model(lm_z2) +
     ## Scale for 'y' is already present. Adding another scale for 'y', which will
     ## replace the existing scale.
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+``` r
+tidy_lm_z2 <- tidy(lm_z2)
+
+est <- 
+  tidy_lm_z2 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_z2 <-
+  tidy_lm_z2 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_z2$dot_color)
+names(col) <- as.character(tidy_lm_z2$dot_color)
+
+grocery_spend_zip_code_moves_2yr <-
+  tidy_lm_z2 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "zip code moves, 2 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+grocery_spend_zip_code_moves_2yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_zip_code_moves_2yr.png",
+  grocery_spend_zip_code_moves_2yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 ### County moves
 
@@ -1938,7 +2490,87 @@ sjPlot::plot_model(lm_f1) +
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+
+``` r
+tidy_lm_f1 <- tidy(lm_f1)
+
+est <- 
+  tidy_lm_f1 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_f1 <-
+  tidy_lm_f1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_f1 <-
+  tidy_lm_f1 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_f1$dot_color)
+names(col) <- as.character(tidy_lm_f1$dot_color)
+
+grocery_spend_county_moves_1yr <-
+  tidy_lm_f1 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "county moves, 1 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+grocery_spend_county_moves_1yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_county_moves_1yr.png",
+  grocery_spend_county_moves_1yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
 
 #### 2 years
 
@@ -2211,4 +2843,84 @@ sjPlot::plot_model(lm_f2) +
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+
+``` r
+tidy_lm_f2 <- tidy(lm_f2)
+
+est <- 
+  tidy_lm_f2 %>% 
+  dplyr::filter(term == "scale(I(median_income_county_t2 - median_income_county_t1))") %>% 
+  dplyr::select(estimate)
+
+tidy_lm_f2 <-
+  tidy_lm_f2 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm_f2 <-
+  tidy_lm_f2 %>% 
+  filter(
+    term == "scale(I(median_income_county_t2 - median_income_county_t1))" |
+    term == "median_income_county_scale_t1" |
+    term == "scale(I(physicians_scale_t2 - physicians_scale_t1))" | 
+    term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))" | 
+    term == "scale(I(income_t2 - income_t1))" | 
+    term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "scale(I(median_income_county_t2 - median_income_county_t1))" ~ "change in median income",
+        term == "median_income_county_scale_t1"  ~ "median income at t1",
+        term == "scale(I(physicians_scale_t2 - physicians_scale_t1))"  ~ "change in healthcare access",
+        term == "scale(I(median_monthly_housing_cost_county_t2 - median_monthly_housing_cost_county_t1))"  ~ "change in housing cost", 
+        term == "scale(I(income_t2 - income_t1))"  ~ "change in income",
+        term == "scale(I(Female_Head_Education_t2 - Female_Head_Education_t1))"  ~ "change in female education"
+      )
+  ) 
+
+col <- as.character(tidy_lm_f2$dot_color)
+names(col) <- as.character(tidy_lm_f2$dot_color)
+
+grocery_spend_county_moves_2yr <-
+  tidy_lm_f2 %>% 
+  ggplot(aes(variable, estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c(-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15),
+    limits = c(-0.17, 0.17)
+  ) +
+  labs(
+    y = "standardized beta",
+    title = "county moves, 2 year"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+grocery_spend_county_moves_2yr
+```
+
+![](nielsen_movers_analysis_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+
+``` r
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_county_moves_2yr.png",
+  grocery_spend_county_moves_2yr,
+  width = 8,
+  height = 6,
+  dpi = 500
+)
+```
