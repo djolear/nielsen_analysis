@@ -38,26 +38,26 @@ bind_nutrition_info_to_products_master <- function(products_master, year) {
   syndigo_value_prepared <-
     read_csv(paste0("/kilts/syndigo/", year, "/ValuePrepared.csv"))
   
-  syndigo_products <-
-    syndigo_products %>% 
-    mutate(
-      upc_new = str_sub(UPC, 0, nchar(UPC) - 1)
-    ) %>% 
-    dplyr::select(
-      upc_new,
-      HasNutrition
-    )
-  
-  products_master <-
-    products_master %>% 
-    left_join(
-      syndigo_products,
-      by = "upc_new"
-    )
-  
-  products_master <-
-    products_master %>% 
-    filter(HasNutrition == 1)
+  # syndigo_products <-
+  #   syndigo_products %>% 
+  #   mutate(
+  #     upc_new = str_sub(UPC, 0, nchar(UPC) - 1)
+  #   ) %>% 
+  #   dplyr::select(
+  #     upc_new,
+  #     HasNutrition
+  #   )
+  # 
+  # products_master <-
+  #   products_master %>% 
+  #   left_join(
+  #     syndigo_products,
+  #     by = "upc_new"
+  #   )
+  # 
+  # products_master <-
+  #   products_master %>% 
+  #   filter(HasNutrition == 1)
   
   syndigo_nutrients_master <-
     syndigo_nutrients_master %>% 
@@ -154,7 +154,14 @@ bind_nutrition_info_to_products_master <- function(products_master, year) {
       )
   }
   
-
+  products_master <-
+    products_master %>% 
+    dplyr::select(
+      upc:upc_new,
+      calories_final
+    )
+  
+  
   
   return(products_master)
   
@@ -165,10 +172,17 @@ bind_nutrition_info_to_products_master <- function(products_master, year) {
 products_master <- 
   readr::read_tsv("/kilts/nielsen_extracts/HMS/Master_Files/Latest/products.tsv")
 
-years <- seq(2020, 2005, -1)
+products_master <-
+  products_master %>%  
+  mutate(upc_new = paste0("0", upc))
+
+years <- c(seq(2020, 2012, -1), seq(2010, 2005, -1))
+
+years 
 
 for(i in 1:length(years)){
   products_master <- bind_nutrition_info_to_products_master(products_master, years[i])
+  write_csv(products_master, "/project/ourminsk/nielsen/relative_status/syndigo/products_master_syndigo.csv")
+  print(paste0( years[i], " complete"))
 }
 
-write_csv(products_master, "/project/ourminsk/nielsen/relative_status/syndigo/products_master_syndigo.csv")
