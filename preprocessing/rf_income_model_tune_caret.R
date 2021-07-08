@@ -121,6 +121,13 @@ model_caret <-
 
 ## Export Results ##
 
+get_best_result = function(caret_fit) {
+  best = which(rownames(caret_fit$results) == rownames(caret_fit$bestTune))
+  best_result = caret_fit$results[best, ]
+  rownames(best_result) = NULL
+  best_result
+}
+
 results <- 
   get_best_result(model_caret)
 
@@ -133,15 +140,17 @@ preds <- predict(model_caret, data_train)
 data <-
   bind_cols(
     data,
-    income_demo_ranger_all_vars_scale = scale(preds)
+    income_demo_ranger_sar_vars_scale = as.numeric(scale(preds))
   ) 
 
 data <-
   data %>% 
   dplyr::select(
-    subid,
+    household_code,
+    year,
     income_demo_ranger_sar_vars_scale
   )
 
 write_csv(data, "/project/ourminsk/gallup/results/ml/preds_rf_income_sar_vars.csv")
 
+write_csv(data, "D:/data/nielsen/ml/preds_rf_income_sar_vars.csv")
