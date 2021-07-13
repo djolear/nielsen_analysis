@@ -30,9 +30,14 @@ Note that this repository contains code used to analyze data exported by scripts
 
 ### Results
 
+For a high-level description of the project and our findings, please [click here](https://github.com/djolear/gallup_rs/blob/main/results/main.md).
+
 ### Folder Structure
-1. The **analysis** folder contains scripts and markdowns showcasing the statistical analyses.
-2. The **preprocessing** folder contains code for cleaning the data and preparing it for analyses.
+1. The **preprocessing** folder contains code for cleaning the data and preparing it for analyses.
+2. The **analysis** folder contains scripts and markdowns showcasing the statistical analyses.
+3. The **results** folder contains markdowns that describe our findings.
+4. The **plots** folder contains scripts and markdowns for producing visualizations.
+
 
 ### Data Sources
 
