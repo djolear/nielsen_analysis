@@ -69,3 +69,6 @@ qh_calories_imputed_sc_by_household_monthly <-
     qh_calories_imputed_sc_by_household_monthly_2018,
     qh_calories_imputed_sc_by_household_monthly_2019
   )
+
+
+write_csv(qh_calories_imputed_sc_by_household_monthly , "D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv")
