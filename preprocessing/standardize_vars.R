@@ -41,7 +41,12 @@ standardize_vars_group <- function(df) {
         gini_county,
         
         starts_with("med_"),
-        starts_with("median")
+        starts_with("median"),
+        
+        -Household_Composition,
+        -unweighted_pop_county,
+        -Projection_Factor,
+        -Panel_Year
       ),
       list(scale = scale2)
     ) %>% 
@@ -73,7 +78,7 @@ standardize_vars_qfahpd_health <- function(df) {
         income,
         yes, 
         no,
-        Household_Size:Female_Head_Age,
+        household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
         
@@ -86,7 +91,12 @@ standardize_vars_qfahpd_health <- function(df) {
         gini_county,
         
         starts_with("med_"),
-        starts_with("median")
+        starts_with("median"),
+        
+        -Household_Composition,
+        -unweighted_pop_county,
+        -Projection_Factor,
+        -Panel_Year
       ),
       as.numeric
     ) %>% 
@@ -95,7 +105,7 @@ standardize_vars_qfahpd_health <- function(df) {
         income,
         yes, 
         no,
-        Household_Size:Female_Head_Age,
+        household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
         
@@ -140,7 +150,7 @@ standardize_vars_tfp <- function(df) {
       vars(
         income,
         starts_with("tfp"), 
-        Household_Size:Female_Head_Age,
+        household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
         
@@ -153,7 +163,12 @@ standardize_vars_tfp <- function(df) {
         gini_county,
         
         starts_with("med_"),
-        starts_with("median")
+        starts_with("median"),
+        
+        -Household_Composition,
+        -unweighted_pop_county,
+        -Projection_Factor,
+        -Panel_Year
       ),
       as.numeric
     ) %>% 
@@ -161,7 +176,7 @@ standardize_vars_tfp <- function(df) {
       vars(
         income,
         starts_with("tfp"), 
-        Household_Size:Female_Head_Age,
+        household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
         
