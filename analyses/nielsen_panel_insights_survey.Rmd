@@ -1,0 +1,186 @@
+---
+title: "Beverage Survey Analysis"
+author: "Daniel O'Leary"
+date: "1/11/2021"
+output:
+  github_document:
+    toc: true
+    toc_depth: 5
+---
+
+```{r, include = FALSE}
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(
+  tidyverse, 
+  haven,
+  lme4,
+  lm.beta,
+  sjPlot,
+  stargazer
+)
+```
+
+```{r, include = FALSE}
+sinfo <- data.frame(Sys.info())
+machine <- sinfo$Sys.info..[4]
+
+machine_path <- 
+  ifelse(
+    machine %in% c("sussman-rp-mbpro.local", "sussman-rp-mbpro.lan"), 
+    "/Users/djolear/Google Drive/", 
+    "G:/My Drive/"
+  )
+
+source(paste0(machine_path, "research/projects/niel/nielsen_analysis/relative_status_analysis/beverage_survey_munge.R"))
+```
+
+# Analysis
+
+## Factor analysis of individual items
+
+```{r}
+items <-
+  survey %>% 
+  dplyr::select(
+    starts_with("Q10")
+  )
+
+items_mat <-
+  items %>% 
+  mutate(across(starts_with("Q10"), as.numeric)) %>% 
+  filter_all(all_vars(!is.na(.))) %>% 
+  as.matrix() %>% 
+  scale()
+
+VSS.scree(items_mat)
+
+res_fa <- fa(items_mat, nfactors = 2, rotate = "promax", fm = "mle")
+
+res_fa
+```
+
+```{r}
+survey <-
+  survey %>% 
+  mutate(
+    sc1 = scale((Q10_A_1 + Q10_A_3) / 2),
+    sc2 = scale((Q10_A_2 + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 5),
+    sc3 = scale(((5 - Q10_A_1) + Q10_A_2 + (5 - Q10_A_3) + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 7)
+  )
+
+df <-
+  df %>% 
+  mutate(
+    sc1 = scale((Q10_A_1 + Q10_A_3) / 2),
+    sc2 = scale((Q10_A_2 + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 5),
+    sc3 = scale(((5 - Q10_A_1) + Q10_A_2 + (5 - Q10_A_3) + Q10_A_4 + Q10_A_5 + Q10_A_6 + Q10_A_7) / 7)
+  )
+```
+
+## Regression
+
+### SC 1
+
+```{r}
+lm1 <-
+  lm(
+    scale(yes) ~
+      income_scale +
+      income_demo_ranger_sar_scale +
+      sc3 + Q27_A_1 +
+      Household_Size_scale +
+      #Household_Composition +
+      Male_Head_Age_scale +
+      Female_Head_Age_scale +
+      Male_Head_Education_scale +
+      Female_Head_Education_scale +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Marital_Status +
+      Race +
+      total_pop_county_scale +
+      land_area_2010_scale +
+      median_monthly_housing_cost_county_scale +
+      quarter,
+    data = df
+  )
+
+summary(lm1)
+regclass::VIF(lm1)
+```
+
+
+#### Plot data
+
+```{r}
+plot_model(lm1, type = "pred", terms = c("med_earn_census_state_male_scale"))
+
+plot_model(lm1, type = "pred", terms = c("med_earn_census_state_male_scale", "Male_Head_Education_scale"))
+```
+
+
+### SC 2
+
+```{r}
+lm1 <-
+  lm(
+    scale(Q27_A_1) ~
+      income_scale +
+      med_inc_niel_avg_scale +
+      Household_Size_scale +
+      Household_Composition +
+      Male_Head_Age_scale +
+      Female_Head_Age_scale +
+      Male_Head_Education_scale +
+      Female_Head_Education_scale +
+      # Male_Head_Employment +
+      # Female_Head_Employment +
+      Marital_Status +
+      Race +
+      total_pop_county_scale +
+      land_area_2010_scale +
+      median_monthly_housing_cost_county_scale,
+    data = survey
+  )
+
+summary(lm1)
+```
+
+
+### Importance of staying healthy
+
+```{r}
+lm1 <-
+  lm(
+    scale(Q27_A_1) ~
+      income_scale +
+      med_inc_niel_avg_scale +
+      Household_Size_scale +
+      Household_Composition +
+      Male_Head_Age_scale +
+      Female_Head_Age_scale +
+      Male_Head_Education_scale +
+      Female_Head_Education_scale +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      Marital_Status +
+      Race +
+      total_pop_county_scale +
+      land_area_2010_scale +
+      median_monthly_housing_cost_county_scale,
+    data = survey
+  )
+
+summary(lm1)
+```
+
+#### Plot data
+
+```{r}
+plot_model(lm1, type = "pred", terms = c("med_earn_census_state_male_scale"))
+
+plot_model(lm1, type = "pred", terms = c("med_earn_census_state_male_scale", "Male_Head_Education_scale"))
+```
+
+
