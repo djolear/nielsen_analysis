@@ -25,8 +25,6 @@ machine_path <-
     "G:/My Drive/"
   )
 
-data_path <- "research/projects/gallup/gallup_data/relative_status/"
-
 ###############
 ## Load Data ##
 ###############
@@ -52,22 +50,22 @@ for(i in 1:length(file_list$file_list)) {
 
 qh_calories_imputed_sc_by_household_monthly <-
   bind_rows(
-    qh_calories_imputed_sc_by_household_monthly_2004,
-    qh_calories_imputed_sc_by_household_monthly_2005,
-    qh_calories_imputed_sc_by_household_monthly_2006,
-    qh_calories_imputed_sc_by_household_monthly_2007,
-    qh_calories_imputed_sc_by_household_monthly_2008,
-    qh_calories_imputed_sc_by_household_monthly_2009,
-    qh_calories_imputed_sc_by_household_monthly_2010,
-    qh_calories_imputed_sc_by_household_monthly_2011,
-    qh_calories_imputed_sc_by_household_monthly_2012,
-    qh_calories_imputed_sc_by_household_monthly_2013,
-    qh_calories_imputed_sc_by_household_monthly_2014,
-    qh_calories_imputed_sc_by_household_monthly_2015,
-    qh_calories_imputed_sc_by_household_monthly_2016,
-    qh_calories_imputed_sc_by_household_monthly_2017,
-    qh_calories_imputed_sc_by_household_monthly_2018,
-    qh_calories_imputed_sc_by_household_monthly_2019
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2004,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2005,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2006,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2007,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2008,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2009,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2010,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2011,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2012,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2013,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2014,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2015,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2016,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2017,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2018,
+    qh_calories_imputed_sc_by_household_monthly_wide_secondary_2019
   )
 
 
