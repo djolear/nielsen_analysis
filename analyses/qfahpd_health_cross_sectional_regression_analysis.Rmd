@@ -25,14 +25,11 @@ pacman::p_load(
 ```
 
 ```{r}
-nielsen_calorie_budget <-
-  read_csv("D:/data/nielsen/qfahpd_health_calories_imputed_sc_by_household_quarterly/qh_calories_imputed_sc_by_household_quarterly_wide_secondary_all_years.csv")
+qh_calories_imputed_sc_by_household_monthly <-
+  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
+  mutate(across(c(month, year), as.factor))
 
 
-nielsen_dollar_budget <-
-  read_csv("D:/data/nielsen/qfahpd_health_spend_by_household_quarterly/qh_spend_by_household_quarterly_wide_secondary_all_years.csv")
-
-nielsen_calorie_budget <- nielsen_calorie_budget %>% left_join(nielsen_dollar_budget %>% dplyr::select(household_code, income_demo_ranger_sar_scale, year) %>% distinct())
 ```
 
 
@@ -45,23 +42,22 @@ lm1 <-
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
-      # Female_Head_Age_scale +
-      # as.factor(Male_Head_Employment) +
-      # as.factor(Female_Head_Employment) +
+      Female_Head_Age_scale +
+      Male_Head_Employment +
+      Female_Head_Employment +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
       Race +
       Marital_Status +
-      as.factor(household_size) + 
-      #as.factor(Household_Composition) +
+      household_size_scale +
       month + 
       year,
       # (1|quarter) +
       # (1 + income_demo_ranger_sar_scale|fip_code) +
       # (1 + income_scale | fips_code),
     data = 
-      qh_calories_imputed_sc_by_household_monthly  %>% filter(year <= 2016)
+      qh_calories_imputed_sc_by_household_monthly  
   )
 
 summary(lm1)
@@ -74,7 +70,7 @@ tidy_lm1 <- tidy(lm1)
 ```{r}
 est <- 
   tidy_lm1 %>% 
-  dplyr::filter(term == "med_inc_niel_avg_scale") %>% 
+  dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
 tidy_lm1 <-
