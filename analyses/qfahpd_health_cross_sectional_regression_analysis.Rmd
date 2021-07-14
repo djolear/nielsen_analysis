@@ -34,11 +34,13 @@ pacman::p_load(
 ```{r}
 qh_calories_imputed_sc_by_household_monthly <-
   read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
-  mutate(across(c(month, year), as.factor))
+  mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
+  mutate(yes_cal = yes_scale) 
 
 qh_spend_by_household_monthly <-
   read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv") %>% 
-  mutate(across(c(month, year), as.factor))
+  mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
+  mutate(yes_spend = yes_scale) 
 ```
 
 
@@ -51,38 +53,36 @@ qh_spend_by_household_monthly <-
 #### Fit model
 
 ```{r}
-lm1 <-
+lm_dri_cal <-
   lm(
-    yes_scale ~
-      income_demo_ranger_sar_scale +
+    scale(yes_scale) ~
+      scale(income_demo_ranger_sar_scale) +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
-      Race +
-      Marital_Status +
+      physicians_scale +
+      as.factor(Race) +
+      as.factor(Marital_Status) +
       household_size_scale +
-      month + 
-      year,
-      # (1|quarter) +
-      # (1 + income_demo_ranger_sar_scale|fip_code) +
-      # (1 + income_scale | fips_code),
+      as.factor(month) + 
+      as.factor(year),
     data = 
-      qh_calories_imputed_sc_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      qhc_isc_mo_sec_tp  %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
-summary(lm1)
-regclass::VIF(lm1)
-lm.beta::lm.beta(lm1)
+summary(lm_dri_cal)
+regclass::VIF(lm_dri_cal)
+lm.beta::lm.beta(lm_dri_cal)
 
-tidy_lm1 <- tidy(lm1)
+tidy_lm_dri_cal <- tidy(lm_dri_cal)
 ```
 
 
@@ -90,19 +90,19 @@ tidy_lm1 <- tidy(lm1)
 
 ```{r}
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_dri_cal %>% 
   dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_cal <-
+  tidy_lm_dri_cal %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_cal <-
+  tidy_lm_dri_cal %>% 
   filter(
     term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
@@ -119,11 +119,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_dri_cal$dot_color)
+names(col) <- as.character(tidy_lm_dri_cal$dot_color)
 
 qh_dri_calories_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_dri_cal %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -164,20 +164,21 @@ ggsave(
 #### Fit model
 
 ```{r}
-lm1 <-
+lm_dri_spn <-
   lm(
-    yes_scale ~
+    yes_spend ~
       income_demo_ranger_sar_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      Male_Head_Employment_scale +
+      Female_Head_Employment_scale +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
@@ -188,14 +189,15 @@ lm1 <-
       # (1 + income_scale | fips_code),
     data = 
       qh_spend_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      filter(year %in% c(2004:2016)) %>% 
+      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
   )
 
-summary(lm1)
-regclass::VIF(lm1)
-lm.beta::lm.beta(lm1)
+summary(lm_dri_spn)
+regclass::VIF(lm_dri_spn)
+lm.beta::lm.beta(lm_dri_spn)
 
-tidy_lm1 <- tidy(lm1)
+tidy_lm_dri_spn <- tidy(lm_dri_spn)
 ```
 
 
@@ -203,19 +205,19 @@ tidy_lm1 <- tidy(lm1)
 
 ```{r}
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_dri_spn %>% 
   dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_spn <-
+  tidy_lm_dri_spn %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_spn <-
+  tidy_lm_dri_spn %>% 
   filter(
     term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
@@ -232,11 +234,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_dri_spn$dot_color)
+names(col) <- as.character(tidy_lm_dri_spn$dot_color)
 
 qh_dri_spend_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_dri_spn %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -279,20 +281,21 @@ ggsave(
 #### Fit model
 
 ```{r}
-lm1 <-
+lm_gri_cal <-
   lm(
-    yes_scale ~
+    yes_cal ~
       median_income_county_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      Male_Head_Employment_scale +
+      Female_Head_Employment_scale +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
@@ -303,14 +306,15 @@ lm1 <-
       # (1 + income_scale | fips_code),
     data = 
       qh_calories_imputed_sc_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      filter(year %in% c(2004:2016)) %>% 
+      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
   )
 
-summary(lm1)
-regclass::VIF(lm1)
-lm.beta::lm.beta(lm1)
+summary(lm_gri_cal)
+regclass::VIF(lm_gri_cal)
+lm.beta::lm.beta(lm_gri_cal)
 
-tidy_lm1 <- tidy(lm1)
+tidy_lm_gri_cal <- tidy(lm_gri_cal)
 ```
 
 
@@ -318,19 +322,19 @@ tidy_lm1 <- tidy(lm1)
 
 ```{r}
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_gri_cal %>% 
   dplyr::filter(term == "median_income_county_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_cal <-
+  tidy_lm_gri_cal %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_cal <-
+  tidy_lm_gri_cal %>% 
   filter(
     term == "median_income_county_scale" |
     term == "income_scale" |
@@ -347,11 +351,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_gri_cal$dot_color)
+names(col) <- as.character(tidy_lm_gri_cal$dot_color)
 
 qh_gri_calories_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_gri_cal %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -392,20 +396,21 @@ ggsave(
 #### Fit model
 
 ```{r}
-lm1 <-
+lm_gri_spn <-
   lm(
-    yes_scale ~
+    yes_spend ~
       median_income_county_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      Male_Head_Employment_scale +
+      Female_Head_Employment_scale +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
@@ -416,14 +421,15 @@ lm1 <-
       # (1 + income_scale | fips_code),
     data = 
       qh_spend_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      filter(year %in% c(2004:2016)) %>% 
+      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
   )
 
-summary(lm1)
-regclass::VIF(lm1)
-lm.beta::lm.beta(lm1)
+summary(lm_gri_spn)
+regclass::VIF(lm_gri_spn)
+lm.beta::lm.beta(lm_gri_spn)
 
-tidy_lm1 <- tidy(lm1)
+tidy_lm_gri_spn <- tidy(lm_gri_spn)
 ```
 
 
@@ -431,19 +437,19 @@ tidy_lm1 <- tidy(lm1)
 
 ```{r}
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_gri_spn %>% 
   dplyr::filter(term == "median_income_county_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_spn <-
+  tidy_lm_gri_spn %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_spn <-
+  tidy_lm_gri_spn %>% 
   filter(
     term == "median_income_county_scale" |
     term == "income_scale" |
@@ -460,11 +466,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_gri_spn$dot_color)
+names(col) <- as.character(tidy_lm_gri_spn$dot_color)
 
 qh_gri_spend_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_gri_spn %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -498,3 +504,40 @@ ggsave(
   dpi = 750
 )
 ```
+
+```{r}
+stargazer(
+  lm_dri_cal, lm_dri_spn, lm_gri_cal, lm_gri_spn,
+  ci = TRUE,
+  type="html", digits = 2,
+  #out="df_risk_all_bin.doc",
+  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods"),
+  covariate.labels =
+    c(
+      "demographic ref. income",
+      "geographic ref. income",
+      "income",
+      "male education",
+      "female education",
+      "male age",
+      "female age",
+      "male employment",
+      "female employment",
+      "median home value",
+      "county land area",
+      "county population",
+      "black/ african american",
+      "asian",
+      "other",
+      "widowed",
+      "divorced/separated",
+      "single",
+      "household size"
+    ),
+  omit = c("month", "year"),
+  star.char = c("*", "**", "***"),
+  star.cutoffs = c(0.05, 0.01, 0.001),
+  notes = c("* p<0.05; ** p<0.01; *** p<0.001")
+)
+```
+
