@@ -44,9 +44,11 @@ qh_spend_by_household_monthly <-
 
 # Analysis
 
-## Outcome: % of monthly household calorie budget that goes to QFAHPD healthy categories
+## Demographic reference income
 
-### Fit model
+### Outcome: % of monthly household calorie budget that goes to QFAHPD healthy categories
+
+#### Fit model
 
 ```{r}
 lm1 <-
@@ -84,7 +86,7 @@ tidy_lm1 <- tidy(lm1)
 ```
 
 
-### Plot results
+#### Plot results
 
 ```{r}
 est <- 
@@ -120,7 +122,7 @@ tidy_lm1 <-
 col <- as.character(tidy_lm1$dot_color)
 names(col) <- as.character(tidy_lm1$dot_color)
 
-qh_calories_monthly <-
+qh_dri_calories_monthly <-
   tidy_lm1 %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
@@ -145,11 +147,11 @@ qh_calories_monthly <-
   ) +
   coord_flip()
 
-qh_calories_monthly
+qh_dri_calories_monthly
 
 ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_calories_monthly.png",
-  qh_calories_monthly,
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_dri_calories_monthly.png",
+  qh_dri_calories_monthly,
   width = 6,
   height = 4,
   dpi = 750
@@ -157,9 +159,9 @@ ggsave(
 ```
 
 
-## Outcome: % of monthly household food spend that goes to QFAHPD healthy categories
+### Outcome: % of monthly household food spend that goes to QFAHPD healthy categories
 
-### Fit model
+#### Fit model
 
 ```{r}
 lm1 <-
@@ -197,7 +199,7 @@ tidy_lm1 <- tidy(lm1)
 ```
 
 
-### Plot results
+#### Plot results
 
 ```{r}
 est <- 
@@ -233,7 +235,7 @@ tidy_lm1 <-
 col <- as.character(tidy_lm1$dot_color)
 names(col) <- as.character(tidy_lm1$dot_color)
 
-qh_spend_monthly <-
+qh_dri_spend_monthly <-
   tidy_lm1 %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
@@ -258,11 +260,239 @@ qh_spend_monthly <-
   ) +
   coord_flip()
 
-qh_calories_monthly
+qh_dri_calories_monthly
 
 ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_spend_monthly.png",
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_dri_spend_monthly.png",
   qh_spend_monthly,
+  width = 6,
+  height = 4,
+  dpi = 750
+)
+```
+
+
+## Geographic reference income
+
+### Outcome: % of monthly household calorie budget that goes to QFAHPD healthy categories
+
+#### Fit model
+
+```{r}
+lm1 <-
+  lm(
+    yes_scale ~
+      median_income_county_scale +
+      income_scale +
+      Male_Head_Education_scale +
+      Female_Head_Education_scale +
+      Male_Head_Age_scale + 
+      Female_Head_Age_scale +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      median_home_value_county_scale +
+      land_area_2010_scale +
+      total_pop_county_scale +
+      Race +
+      Marital_Status +
+      household_size_scale +
+      month + 
+      year,
+      # (1|quarter) +
+      # (1 + median_income_county_scale|fip_code) +
+      # (1 + income_scale | fips_code),
+    data = 
+      qh_calories_imputed_sc_by_household_monthly %>% 
+      filter(year %in% c(2004:2016))
+  )
+
+summary(lm1)
+regclass::VIF(lm1)
+lm.beta::lm.beta(lm1)
+
+tidy_lm1 <- tidy(lm1)
+```
+
+
+#### Plot results
+
+```{r}
+est <- 
+  tidy_lm1 %>% 
+  dplyr::filter(term == "median_income_county_scale") %>% 
+  dplyr::select(estimate)
+
+tidy_lm1 <-
+  tidy_lm1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm1 <-
+  tidy_lm1 %>% 
+  filter(
+    term == "median_income_county_scale" |
+    term == "income_scale" |
+    term == "Male_Head_Education_scale" | 
+    term == "Female_Head_Education_scale" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "income_scale" ~ "household income",
+        term == "Male_Head_Education_scale" ~ "male head education",
+        term == "Female_Head_Education_scale" ~ "female head education"
+      )
+  ) 
+
+col <- as.character(tidy_lm1$dot_color)
+names(col) <- as.character(tidy_lm1$dot_color)
+
+qh_gri_calories_monthly <-
+  tidy_lm1 %>% 
+  ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+    limits = c(-0.35, 0.35)
+  ) +
+  labs(
+    y = "standardized beta",
+    x = "variable"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+qh_gri_calories_monthly
+
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_gri_calories_monthly.png",
+  qh_gri_calories_monthly,
+  width = 6,
+  height = 4,
+  dpi = 750
+)
+```
+
+
+### Outcome: % of monthly household food spend that goes to QFAHPD healthy categories
+
+#### Fit model
+
+```{r}
+lm1 <-
+  lm(
+    yes_scale ~
+      median_income_county_scale +
+      income_scale +
+      Male_Head_Education_scale +
+      Female_Head_Education_scale +
+      Male_Head_Age_scale + 
+      Female_Head_Age_scale +
+      Male_Head_Employment +
+      Female_Head_Employment +
+      median_home_value_county_scale +
+      land_area_2010_scale +
+      total_pop_county_scale +
+      Race +
+      Marital_Status +
+      household_size_scale +
+      month + 
+      year,
+      # (1|quarter) +
+      # (1 + median_income_county_scale|fip_code) +
+      # (1 + income_scale | fips_code),
+    data = 
+      qh_spend_by_household_monthly %>% 
+      filter(year %in% c(2004:2016))
+  )
+
+summary(lm1)
+regclass::VIF(lm1)
+lm.beta::lm.beta(lm1)
+
+tidy_lm1 <- tidy(lm1)
+```
+
+
+#### Plot results
+
+```{r}
+est <- 
+  tidy_lm1 %>% 
+  dplyr::filter(term == "median_income_county_scale") %>% 
+  dplyr::select(estimate)
+
+tidy_lm1 <-
+  tidy_lm1 %>% 
+  mutate(
+    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
+    se = std.error
+  )
+
+tidy_lm1 <-
+  tidy_lm1 %>% 
+  filter(
+    term == "median_income_county_scale" |
+    term == "income_scale" |
+    term == "Male_Head_Education_scale" | 
+    term == "Female_Head_Education_scale" 
+  ) %>% 
+  mutate(
+    variable = 
+      case_when(
+        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "income_scale" ~ "household income",
+        term == "Male_Head_Education_scale" ~ "male head education",
+        term == "Female_Head_Education_scale" ~ "female head education"
+      )
+  ) 
+
+col <- as.character(tidy_lm1$dot_color)
+names(col) <- as.character(tidy_lm1$dot_color)
+
+qh_gri_spend_monthly <-
+  tidy_lm1 %>% 
+  ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
+  geom_point(aes(color = dot_color), size = 4) +
+  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
+  scale_color_manual(values = col) +
+  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
+  scale_y_continuous(
+    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+    limits = c(-0.35, 0.35)
+  ) +
+  labs(
+    y = "standardized beta",
+    x = "variable"
+  ) +
+  theme_bw() +
+  theme(
+    text = element_text(size = 17),
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  ) +
+  coord_flip()
+
+qh_gri_calories_monthly
+
+ggsave(
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_gri_spend_monthly.png",
+  qh_gri_spend_monthly,
   width = 6,
   height = 4,
   dpi = 750
