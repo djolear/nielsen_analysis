@@ -37,36 +37,36 @@ file_list <-
 file_list <-
   file_list %>% 
   filter(
-    str_detect(file_list, ".csv")
+    str_detect(file_list, "tp_") & file_list != "qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2p_2008.csv"
   )  
 
 for(i in 1:length(file_list$file_list)) {
   assign(
-    paste0("qh_calories_imputed_sc_by_household_quarterly_wide_secondary_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
+    paste0("qhc_isc_mo_sec_tp_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
     read_csv(paste0("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_quarterly/with_secondary_data/", file_list$file_list[i]))
   )
   print(paste0("load ", str_extract(file_list$file_list[i], "[[:digit:]]+"), " complete."))
 }
 
-qh_calories_imputed_sc_by_household_quarterly <-
+qhc_isc_mo_sec_tp <-
   bind_rows(
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2004,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2005,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2006,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2007,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2008,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2009,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2010,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2011,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2012,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2013,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2014,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2015,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2016,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2017,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2018,
-    qh_calories_imputed_sc_by_household_quarterly_wide_secondary_2019
+    qhc_isc_mo_sec_tp_2004,
+    qhc_isc_mo_sec_tp_2005,
+    qhc_isc_mo_sec_tp_2006,
+    qhc_isc_mo_sec_tp_2007,
+    qhc_isc_mo_sec_tp_2008,
+    qhc_isc_mo_sec_tp_2009,
+    qhc_isc_mo_sec_tp_2010,
+    qhc_isc_mo_sec_tp_2011,
+    qhc_isc_mo_sec_tp_2012,
+    qhc_isc_mo_sec_tp_2013,
+    qhc_isc_mo_sec_tp_2014,
+    qhc_isc_mo_sec_tp_2015,
+    qhc_isc_mo_sec_tp_2016,
+    qhc_isc_mo_sec_tp_2017,
+    qhc_isc_mo_sec_tp_2018,
+    qhc_isc_mo_sec_tp_2019
   )
 
 
-write_csv(qh_calories_imputed_sc_by_household_quarterly , "D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_quarterly/combined/qh_calories_imputed_sc_by_household_quarterly.csv")
+write_csv(qhc_isc_mo_sec_tp , "D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_quarterly/combined/qhc_isc_mo_sec_tp.csv")

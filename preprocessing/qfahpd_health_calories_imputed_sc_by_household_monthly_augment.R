@@ -28,7 +28,7 @@ pacman::p_load(
 ## Load Main Function ##
 ########################
 
-source("G:/My Drive/research/projects/niel/nielsen_relative_income/preprocessing/qfahpd_health_by_household_augment.R")
+source("G:/My Drive/research/projects/niel/nielsen_relative_income/preprocessing/qfahpd_health_by_household_augment_two_person.R")
 
 
 ######################
@@ -61,13 +61,13 @@ reference_group_incomes <-
 # Loop over years and munge data
 for(i in 1:length(file_list$file_list)) {
   assign(
-    paste0("qh_calories_imputed_sc_by_household_monthly_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
-    add_secondary_and_save(
+    paste0("qhc_isc_mo_", str_extract(file_list$file_list[i], "[[:digit:]]+")), 
+    add_secondary_and_save_two_person(
       data_path = data_path,
       file_name = file_list$file_list[i], 
       current_year = as.numeric(str_extract(file_list$file_list[i], "[[:digit:]]+")),
       reference_group_incomes = reference_group_incomes,
-      file_name_stem = "qh_calories_imputed_sc_by_household_monthly_wide_secondary_"
+      file_name_stem = "qhc_isc_mo_sec_tp_"
     )
   )
   print(paste0(str_extract(file_list$file_list[i], "[[:digit:]]+"), " complete."))

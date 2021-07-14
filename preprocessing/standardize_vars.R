@@ -10,7 +10,7 @@ standardize_vars_group <- function(df) {
         Household_Size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
-
+        contains("Employment"),
         unweighted_pop_county,
         total_pop_county,
         land_area_2010,
@@ -31,7 +31,7 @@ standardize_vars_group <- function(df) {
         Household_Size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
-        
+        contains("Employment"),        
         unweighted_pop_county,
         total_pop_county,
         land_area_2010,
@@ -59,8 +59,7 @@ standardize_vars_group <- function(df) {
     mutate_at(
       vars(
         Race,
-        Marital_Status,
-        contains("Employment")
+        Marital_Status
       ),
       as.factor
     )
@@ -81,7 +80,7 @@ standardize_vars_qfahpd_health <- function(df) {
         household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
-        
+        contains("Employment"),        
         unweighted_pop_county,
         total_pop_county,
         land_area_2010,
@@ -108,7 +107,7 @@ standardize_vars_qfahpd_health <- function(df) {
         household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
-        
+        contains("Employment"),        
         unweighted_pop_county,
         total_pop_county,
         land_area_2010,
@@ -131,8 +130,7 @@ standardize_vars_qfahpd_health <- function(df) {
     mutate_at(
       vars(
         Race,
-        Marital_Status,
-        contains("Employment")
+        Marital_Status
       ),
       as.factor
     )
@@ -179,6 +177,7 @@ standardize_vars_tfp <- function(df) {
         household_size:Female_Head_Age,
         Male_Head_Age,
         Male_Head_Education:Female_Head_Education,
+        contains("Employment"),
         
         unweighted_pop_county,
         total_pop_county,
@@ -202,8 +201,7 @@ standardize_vars_tfp <- function(df) {
     mutate_at(
       vars(
         Race,
-        Marital_Status,
-        contains("Employment")
+        Marital_Status
       ),
       as.factor
     )
