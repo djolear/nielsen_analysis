@@ -36,13 +36,15 @@ qh_calories_imputed_sc_by_household_monthly <-
   read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
   mutate(across(c(month, year), as.factor))
 
-
+qh_spend_by_household_monthly <-
+  read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv") %>% 
+  mutate(across(c(month, year), as.factor))
 ```
 
 
 # Analysis
 
-## Outcome: % of household calorie budget that goes to QFAHPD healthy categories
+## Outcome: % of monthly household calorie budget that goes to QFAHPD healthy categories
 
 ### Fit model
 
@@ -146,63 +148,74 @@ qh_calories_monthly <-
 qh_calories_monthly
 
 ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/grocery_spend_demog.png",
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_calories_monthly.png",
   qh_calories_monthly,
-  width = 8,
-  height = 6,
-  dpi = 500
+  width = 6,
+  height = 4,
+  dpi = 750
 )
 ```
 
 
+## Outcome: % of monthly household food spend that goes to QFAHPD healthy categories
+
+### Fit model
 
 ```{r}
-lm2 <-
+lm1 <-
   lm(
     yes_scale ~
-      median_income_county_scale +
+      income_demo_ranger_sar_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
-      Male_Head_Age_scale +
+      Male_Head_Age_scale + 
       Female_Head_Age_scale +
       Male_Head_Employment +
       Female_Head_Employment +
-      median_monthly_housing_cost_county_scale +
+      median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
       Race +
-      Male_Head_Employment +
-      Female_Head_Employment +
       Marital_Status +
-      Household_Size_scale + 
-      quarter + 
+      household_size_scale +
+      month + 
       year,
-    data = nielsen_dollar_budget %>% filter(!is.na(median_income_county_scale))
+      # (1|quarter) +
+      # (1 + income_demo_ranger_sar_scale|fip_code) +
+      # (1 + income_scale | fips_code),
+    data = 
+      qh_spend_by_household_monthly %>% 
+      filter(year %in% c(2004:2016))
   )
 
-summary(lm2)
+summary(lm1)
+regclass::VIF(lm1)
+lm.beta::lm.beta(lm1)
 
-tidy_lm2 <- tidy(lm2)
+tidy_lm1 <- tidy(lm1)
 ```
+
+
+### Plot results
 
 ```{r}
 est <- 
-  tidy_lm2 %>% 
-  dplyr::filter(term == "median_income_county_scale") %>% 
+  tidy_lm1 %>% 
+  dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm2 <-
-  tidy_lm2 %>% 
+tidy_lm1 <-
+  tidy_lm1 %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm2 <-
-  tidy_lm2 %>% 
+tidy_lm1 <-
+  tidy_lm1 %>% 
   filter(
-    term == "median_income_county_scale" |
+    term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
     term == "Male_Head_Education_scale" | 
     term == "Female_Head_Education_scale" 
@@ -210,18 +223,18 @@ tidy_lm2 <-
   mutate(
     variable = 
       case_when(
-        term == "median_income_county_scale" ~ "geographic reference \n median income",
+        term == "income_demo_ranger_sar_scale" ~ "demographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
       )
   ) 
 
-col <- as.character(tidy_lm2$dot_color)
-names(col) <- as.character(tidy_lm2$dot_color)
+col <- as.character(tidy_lm1$dot_color)
+names(col) <- as.character(tidy_lm1$dot_color)
 
-grocery_spend_geog <-
-  tidy_lm2 %>% 
+qh_spend_monthly <-
+  tidy_lm1 %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -245,215 +258,13 @@ grocery_spend_geog <-
   ) +
   coord_flip()
 
-grocery_spend_geog
+qh_calories_monthly
 
 ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_geog.png",
-  grocery_spend_geog,
-  width = 8,
-  height = 6,
-  dpi = 500
-)
-```
-
-
-
-
-```{r}
-lm1 <-
-  lm(
-    yes_scale ~
-      med_inc_niel_avg_scale +
-      income_scale +
-      Male_Head_Education_scale +
-      Female_Head_Education_scale +
-      Male_Head_Age_scale +
-      Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
-      median_monthly_housing_cost_county_scale +
-      land_area_2010_scale +
-      total_pop_county_scale +
-      Race +
-      Male_Head_Employment +
-      Female_Head_Employment +
-      Marital_Status +
-      Household_Size_scale + 
-      quarter + 
-      year,
-    data = nielsen_calorie_budget %>% filter(!is.na(med_inc_niel_avg_scale))
-  )
-
-summary(lm1)
-
-tidy_lm1 <- tidy(lm1)
-```
-
-```{r}
-est <- 
-  tidy_lm1 %>% 
-  dplyr::filter(term == "med_inc_niel_avg_scale") %>% 
-  dplyr::select(estimate)
-
-tidy_lm1 <-
-  tidy_lm1 %>% 
-  mutate(
-    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
-    se = std.error
-  )
-
-tidy_lm1 <-
-  tidy_lm1 %>% 
-  filter(
-    term == "med_inc_niel_avg_scale" |
-    term == "income_scale" |
-    term == "Male_Head_Education_scale" | 
-    term == "Female_Head_Education_scale" 
-  ) %>% 
-  mutate(
-    variable = 
-      case_when(
-        term == "med_inc_niel_avg_scale" ~ "demographic reference \n median income",
-        term == "income_scale" ~ "household income",
-        term == "Male_Head_Education_scale" ~ "male head education",
-        term == "Female_Head_Education_scale" ~ "female head education"
-      )
-  ) 
-
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
-
-calorie_budget_demog <-
-  tidy_lm1 %>% 
-  ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
-  geom_point(aes(color = dot_color), size = 4) +
-  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
-  scale_color_manual(values = col) +
-  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.25, 0.25)
-  ) +
-  labs(
-    y = "standardized beta",
-    x = "variable"
-  ) +
-  theme_bw() +
-  theme(
-    text = element_text(size = 17),
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "none"
-  ) +
-  coord_flip()
-
-calorie_budget_demog
-
-ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_demog.png",
-  calorie_budget_demog,
-  width = 8,
-  height = 6,
-  dpi = 500
-)
-```
-```{r}
-lm2 <-
-  lm(
-    yes_scale ~
-      median_income_county_scale +
-      income_scale +
-      Male_Head_Education_scale +
-      Female_Head_Education_scale +
-      Male_Head_Age_scale +
-      Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
-      median_monthly_housing_cost_county_scale +
-      land_area_2010_scale +
-      total_pop_county_scale +
-      Race +
-      Male_Head_Employment +
-      Female_Head_Employment +
-      Marital_Status +
-      Household_Size_scale + 
-      quarter + 
-      year,
-    data = nielsen_calorie_budget %>% filter(!is.na(median_income_county_scale))
-  )
-
-summary(lm2)
-
-tidy_lm2 <- tidy(lm2)
-```
-
-```{r}
-est <- 
-  tidy_lm2 %>% 
-  dplyr::filter(term == "median_income_county_scale") %>% 
-  dplyr::select(estimate)
-
-tidy_lm2 <-
-  tidy_lm2 %>% 
-  mutate(
-    dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
-    se = std.error
-  )
-
-tidy_lm2 <-
-  tidy_lm2 %>% 
-  filter(
-    term == "median_income_county_scale" |
-    term == "income_scale" |
-    term == "Male_Head_Education_scale" | 
-    term == "Female_Head_Education_scale" 
-  ) %>% 
-  mutate(
-    variable = 
-      case_when(
-        term == "median_income_county_scale" ~ "geographic reference \n median income",
-        term == "income_scale" ~ "household income",
-        term == "Male_Head_Education_scale" ~ "male head education",
-        term == "Female_Head_Education_scale" ~ "female head education"
-      )
-  ) 
-
-col <- as.character(tidy_lm2$dot_color)
-names(col) <- as.character(tidy_lm2$dot_color)
-
-calorie_budget_geog <-
-  tidy_lm2 %>% 
-  ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
-  geom_point(aes(color = dot_color), size = 4) +
-  geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
-  scale_color_manual(values = col) +
-  geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.25, 0.25)
-  ) +
-  labs(
-    y = "standardized beta",
-    x = "variable"
-  ) +
-  theme_bw() +
-  theme(
-    text = element_text(size = 17),
-    plot.title = element_text(hjust = 0.5),
-    legend.position = "none"
-  ) +
-  coord_flip()
-
-calorie_budget_geog
-
-ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/calorie_budget_geog.png",
-  calorie_budget_geog,
-  width = 8,
-  height = 6,
-  dpi = 500
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_spend_monthly.png",
+  qh_spend_monthly,
+  width = 6,
+  height = 4,
+  dpi = 750
 )
 ```
