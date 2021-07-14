@@ -8,6 +8,10 @@ output:
     toc_depth: 5
 ---
 
+# Setup
+
+## Load Packages
+
 ```{r, include = FALSE}
 if (!require("pacman")) install.packages("pacman")
 
@@ -24,6 +28,9 @@ pacman::p_load(
 )
 ```
 
+
+## Load Data
+
 ```{r}
 qh_calories_imputed_sc_by_household_monthly <-
   read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
@@ -32,6 +39,12 @@ qh_calories_imputed_sc_by_household_monthly <-
 
 ```
 
+
+# Analysis
+
+## Outcome: % of household calorie budget that goes to QFAHPD healthy categories
+
+### Fit model
 
 ```{r}
 lm1 <-
@@ -57,7 +70,8 @@ lm1 <-
       # (1 + income_demo_ranger_sar_scale|fip_code) +
       # (1 + income_scale | fips_code),
     data = 
-      qh_calories_imputed_sc_by_household_monthly  
+      qh_calories_imputed_sc_by_household_monthly %>% 
+      filter(year %in% c(2004:2016))
   )
 
 summary(lm1)
@@ -66,6 +80,9 @@ lm.beta::lm.beta(lm1)
 
 tidy_lm1 <- tidy(lm1)
 ```
+
+
+### Plot results
 
 ```{r}
 est <- 
@@ -83,7 +100,7 @@ tidy_lm1 <-
 tidy_lm1 <-
   tidy_lm1 %>% 
   filter(
-    term == "med_inc_niel_avg_scale" |
+    term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
     term == "Male_Head_Education_scale" | 
     term == "Female_Head_Education_scale" 
@@ -91,7 +108,7 @@ tidy_lm1 <-
   mutate(
     variable = 
       case_when(
-        term == "med_inc_niel_avg_scale" ~ "demographic reference \n median income",
+        term == "income_demo_ranger_sar_scale" ~ "demographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
@@ -101,7 +118,7 @@ tidy_lm1 <-
 col <- as.character(tidy_lm1$dot_color)
 names(col) <- as.character(tidy_lm1$dot_color)
 
-grocery_spend_demog <-
+qh_calories_monthly <-
   tidy_lm1 %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
@@ -126,16 +143,19 @@ grocery_spend_demog <-
   ) +
   coord_flip()
 
-grocery_spend_demog
+qh_calories_monthly
 
 ggsave(
-  "G:/My Drive/research/projects/niel/nielsen_analysis/relative_status_analysis/plots/grocery_spend_demog.png",
-  grocery_spend_demog,
+  "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/grocery_spend_demog.png",
+  qh_calories_monthly,
   width = 8,
   height = 6,
   dpi = 500
 )
 ```
+
+
+
 ```{r}
 lm2 <-
   lm(
