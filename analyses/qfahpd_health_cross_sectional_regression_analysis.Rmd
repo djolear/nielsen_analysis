@@ -152,8 +152,8 @@ qh_dri_calories_monthly
 ggsave(
   "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_dri_calories_monthly.png",
   qh_dri_calories_monthly,
-  width = 6,
-  height = 4,
+  width = 4,
+  height = 2,
   dpi = 750
 )
 ```
@@ -264,7 +264,7 @@ qh_dri_calories_monthly
 
 ggsave(
   "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_dri_spend_monthly.png",
-  qh_spend_monthly,
+  qh_dri_spend_monthly,
   width = 6,
   height = 4,
   dpi = 750
