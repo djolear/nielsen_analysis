@@ -29,6 +29,7 @@ Daniel O’Leary
             categories](#outcome--of-monthly-household-food-spend-that-goes-to-qfahpd-healthy-categories-1)
               - [Fit model](#fit-model-3)
               - [Plot results](#plot-results-3)
+      - [Regression Table](#regression-table)
 
 # Setup
 
@@ -37,9 +38,10 @@ Daniel O’Leary
 ## Load Data
 
 ``` r
-qh_calories_imputed_sc_by_household_monthly <-
-  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
-  mutate(across(c(month, year), as.factor))
+qhc_isc_mo_sec_tp <-
+  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv") %>% 
+  mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
+  mutate(yes_cal = yes_scale) 
 ```
 
     ## 
@@ -57,20 +59,21 @@ qh_calories_imputed_sc_by_household_monthly <-
     ## )
     ## i Use `spec()` for the full column specifications.
 
-    ## Warning: 10100733 parsing failures.
-    ##     row            col           expected              actual                                                                                                                                                file
-    ## 4746932 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv'
-    ## 4746933 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv'
-    ## 4746934 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv'
-    ## 4746935 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv'
-    ## 4746936 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv'
-    ## ....... .............. .................. ................... ...................................................................................................................................................
+    ## Warning: 6438196 parsing failures.
+    ##     row            col           expected              actual                                                                                                                      file
+    ## 3219284 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv'
+    ## 3219285 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv'
+    ## 3219286 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv'
+    ## 3219287 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv'
+    ## 3219288 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv'
+    ## ....... .............. .................. ................... .........................................................................................................................
     ## See problems(...) for more details.
 
 ``` r
-qh_spend_by_household_monthly <-
-  read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv") %>% 
-  mutate(across(c(month, year), as.factor))
+qhs_isc_mo_sec_tp  <-
+  read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv") %>% 
+  mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
+  mutate(yes_spend = yes_scale) 
 ```
 
     ## 
@@ -88,14 +91,14 @@ qh_spend_by_household_monthly <-
     ## )
     ## i Use `spec()` for the full column specifications.
 
-    ## Warning: 10167706 parsing failures.
-    ##     row            col           expected              actual                                                                                                                 file
-    ## 5000344 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv'
-    ## 5000345 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv'
-    ## 5000346 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv'
-    ## 5000347 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv'
-    ## 5000348 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv'
-    ## ....... .............. .................. ................... ....................................................................................................................
+    ## Warning: 6472163 parsing failures.
+    ##     row            col           expected              actual                                                                                                     file
+    ## 3231540 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv'
+    ## 3231541 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv'
+    ## 3231542 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv'
+    ## 3231543 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv'
+    ## 3231544 dentists_scale 1/0/T/F/TRUE/FALSE 0.04515308219498692 'D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv'
+    ## ....... .............. .................. ................... ........................................................................................................
     ## See problems(...) for more details.
 
 # Analysis
@@ -107,195 +110,122 @@ qh_spend_by_household_monthly <-
 #### Fit model
 
 ``` r
-lm1 <-
+lm_dri_cal <-
   lm(
-    yes_scale ~
+    yes_cal ~
       income_demo_ranger_sar_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + income_demo_ranger_sar_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_calories_imputed_sc_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      qhc_isc_mo_sec_tp  %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
-summary(lm1)
+summary(lm_dri_cal)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = yes_scale ~ income_demo_ranger_sar_scale + income_scale + 
+    ## lm(formula = yes_cal ~ income_demo_ranger_sar_scale + income_scale + 
     ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_calories_imputed_sc_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
+    ##     Male_Head_Age_scale + Female_Head_Age_scale + scale(Male_Head_Employment) + 
+    ##     scale(Female_Head_Employment) + median_home_value_county_scale + 
+    ##     land_area_2010_scale + total_pop_county_scale + physicians_scale + 
+    ##     Race + Marital_Status + household_size_scale + month + year, 
+    ##     data = qhc_isc_mo_sec_tp %>% filter(year %in% c(2004:2016)))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -2.1993 -0.7032 -0.1977  0.4847  5.6187 
+    ## -2.3979 -0.6965 -0.1859  0.4931  5.8441 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)                    -0.0283284  0.0027365  -10.352  < 2e-16 ***
-    ## income_demo_ranger_sar_scale   -0.1313017  0.0006729 -195.131  < 2e-16 ***
-    ## income_scale                    0.0599830  0.0004303  139.402  < 2e-16 ***
-    ## Male_Head_Education_scale       0.1207757  0.0007130  169.393  < 2e-16 ***
-    ## Female_Head_Education_scale     0.0673240  0.0005203  129.403  < 2e-16 ***
-    ## Male_Head_Age_scale             0.0391015  0.0008228   47.523  < 2e-16 ***
-    ## Female_Head_Age_scale           0.0135427  0.0005728   23.643  < 2e-16 ***
-    ## Male_Head_Employment            0.0015758  0.0001579    9.983  < 2e-16 ***
-    ## Female_Head_Employment          0.0027801  0.0001193   23.305  < 2e-16 ***
-    ## median_home_value_county_scale  0.0178170  0.0003878   45.949  < 2e-16 ***
-    ## land_area_2010_scale           -0.0138996  0.0003691  -37.662  < 2e-16 ***
-    ## total_pop_county_scale         -0.0009144  0.0004056   -2.255   0.0242 *  
-    ## Race                            0.0503608  0.0004947  101.803  < 2e-16 ***
-    ## Marital_Status                 -0.0055397  0.0005090  -10.883  < 2e-16 ***
-    ## household_size_scale           -0.0660481  0.0004441 -148.732  < 2e-16 ***
-    ## month2                         -0.0554409  0.0017034  -32.547  < 2e-16 ***
-    ## month3                         -0.0616553  0.0016963  -36.347  < 2e-16 ***
-    ## month4                         -0.0762160  0.0016975  -44.899  < 2e-16 ***
-    ## month5                         -0.1348105  0.0016976  -79.412  < 2e-16 ***
-    ## month6                         -0.1450418  0.0017005  -85.295  < 2e-16 ***
-    ## month7                         -0.1508114  0.0016996  -88.734  < 2e-16 ***
-    ## month8                         -0.1479463  0.0016998  -87.040  < 2e-16 ***
-    ## month9                         -0.1230457  0.0017014  -72.321  < 2e-16 ***
-    ## month10                        -0.1307284  0.0017004  -76.881  < 2e-16 ***
-    ## month11                         0.0301934  0.0017031   17.728  < 2e-16 ***
-    ## month12                        -0.0962020  0.0017065  -56.375  < 2e-16 ***
-    ## year2005                       -0.0572992  0.0025525  -22.448  < 2e-16 ***
-    ## year2006                        0.0201229  0.0025563    7.872 3.49e-15 ***
-    ## year2007                        0.0440370  0.0023698   18.582  < 2e-16 ***
-    ## year2008                        0.0465489  0.0023800   19.558  < 2e-16 ***
-    ## year2009                        0.0490917  0.0023865   20.571  < 2e-16 ***
-    ## year2010                        0.0504579  0.0023877   21.132  < 2e-16 ***
-    ## year2011                        0.0514353  0.0023805   21.607  < 2e-16 ***
-    ## year2012                        0.0331761  0.0023807   13.936  < 2e-16 ***
-    ## year2013                        0.0322551  0.0023778   13.565  < 2e-16 ***
-    ## year2014                        0.0419585  0.0023788   17.639  < 2e-16 ***
-    ## year2015                        0.0510034  0.0023850   21.385  < 2e-16 ***
-    ## year2016                        0.0586198  0.0023805   24.625  < 2e-16 ***
+    ## (Intercept)                     0.1264500  0.0023845   53.030  < 2e-16 ***
+    ## income_demo_ranger_sar_scale   -0.1320937  0.0010337 -127.785  < 2e-16 ***
+    ## income_scale                    0.0493238  0.0004970   99.245  < 2e-16 ***
+    ## Male_Head_Education_scale       0.0656894  0.0004890  134.342  < 2e-16 ***
+    ## Female_Head_Education_scale     0.0509322  0.0004941  103.079  < 2e-16 ***
+    ## Male_Head_Age_scale             0.0202984  0.0008910   22.781  < 2e-16 ***
+    ## Female_Head_Age_scale           0.0245264  0.0009050   27.100  < 2e-16 ***
+    ## scale(Male_Head_Employment)     0.0052026  0.0005155   10.093  < 2e-16 ***
+    ## scale(Female_Head_Employment)   0.0128502  0.0004642   27.685  < 2e-16 ***
+    ## median_home_value_county_scale  0.0091071  0.0005089   17.896  < 2e-16 ***
+    ## land_area_2010_scale           -0.0095954  0.0004573  -20.984  < 2e-16 ***
+    ## total_pop_county_scale         -0.0050549  0.0004988  -10.134  < 2e-16 ***
+    ## physicians_scale                0.0053982  0.0005072   10.643  < 2e-16 ***
+    ## Race2                           0.1271503  0.0016617   76.516  < 2e-16 ***
+    ## Race3                           0.2479565  0.0024987   99.232  < 2e-16 ***
+    ## Race4                           0.0177362  0.0020175    8.791  < 2e-16 ***
+    ## Marital_Status2                -0.1278387  0.0046523  -27.478  < 2e-16 ***
+    ## Marital_Status3                -0.1223626  0.0029134  -42.000  < 2e-16 ***
+    ## Marital_Status4                -0.0974673  0.0030160  -32.317  < 2e-16 ***
+    ## household_size_scale           -0.0519544  0.0004841 -107.312  < 2e-16 ***
+    ## month2                         -0.0602175  0.0020804  -28.946  < 2e-16 ***
+    ## month3                         -0.0666861  0.0020716  -32.190  < 2e-16 ***
+    ## month4                         -0.0809148  0.0020726  -39.040  < 2e-16 ***
+    ## month5                         -0.1512102  0.0020729  -72.948  < 2e-16 ***
+    ## month6                         -0.1674383  0.0020762  -80.646  < 2e-16 ***
+    ## month7                         -0.1711024  0.0020754  -82.442  < 2e-16 ***
+    ## month8                         -0.1669018  0.0020753  -80.425  < 2e-16 ***
+    ## month9                         -0.1335018  0.0020769  -64.279  < 2e-16 ***
+    ## month10                        -0.1425425  0.0020762  -68.654  < 2e-16 ***
+    ## month11                         0.0429696  0.0020796   20.663  < 2e-16 ***
+    ## month12                        -0.1048951  0.0020837  -50.340  < 2e-16 ***
+    ## year2005                       -0.0792839  0.0026927  -29.444  < 2e-16 ***
+    ## year2006                        0.0160319  0.0026473    6.056  1.4e-09 ***
+    ## year2007                        0.0404374  0.0023421   17.265  < 2e-16 ***
+    ## year2008                        0.0418844  0.0023573   17.768  < 2e-16 ***
+    ## year2009                        0.0430519  0.0023706   18.161  < 2e-16 ***
+    ## year2010                        0.0433362  0.0023728   18.264  < 2e-16 ***
+    ## year2011                        0.0430424  0.0023606   18.234  < 2e-16 ***
+    ## year2012                        0.0215612  0.0023697    9.099  < 2e-16 ***
+    ## year2013                        0.0226511  0.0023688    9.562  < 2e-16 ***
+    ## year2014                        0.0372491  0.0023766   15.673  < 2e-16 ***
+    ## year2015                        0.0483863  0.0023931   20.219  < 2e-16 ***
+    ## year2016                        0.0556019  0.0023845   23.318  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.9872 on 8131760 degrees of freedom
-    ##   (221061 observations deleted due to missingness)
-    ## Multiple R-squared:  0.02599,    Adjusted R-squared:  0.02598 
-    ## F-statistic:  5864 on 37 and 8131760 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9828 on 5412427 degrees of freedom
+    ##   (107454 observations deleted due to missingness)
+    ## Multiple R-squared:  0.03431,    Adjusted R-squared:  0.0343 
+    ## F-statistic:  4578 on 42 and 5412427 DF,  p-value: < 2.2e-16
 
 ``` r
-regclass::VIF(lm1)
-```
-
-    ##                                    GVIF Df GVIF^(1/(2*Df))
-    ## income_demo_ranger_sar_scale   3.702402  1        1.924163
-    ## income_scale                   1.532642  1        1.237999
-    ## Male_Head_Education_scale      4.231935  1        2.057167
-    ## Female_Head_Education_scale    2.231456  1        1.493806
-    ## Male_Head_Age_scale            5.639747  1        2.374815
-    ## Female_Head_Age_scale          2.700611  1        1.643353
-    ## Male_Head_Employment           2.255808  1        1.501935
-    ## Female_Head_Employment         1.458850  1        1.207829
-    ## median_home_value_county_scale 1.246158  1        1.116315
-    ## land_area_2010_scale           1.132284  1        1.064088
-    ## total_pop_county_scale         1.347087  1        1.160641
-    ## Race                           1.053514  1        1.026408
-    ## Marital_Status                 2.811228  1        1.676672
-    ## household_size_scale           1.629530  1        1.276531
-    ## month                          1.000035 11        1.000002
-    ## year                           1.144598 12        1.005643
-
-``` r
-lm.beta::lm.beta(lm1)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = yes_scale ~ income_demo_ranger_sar_scale + income_scale + 
-    ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_calories_imputed_sc_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
-    ## 
-    ## Standardized Coefficients::
-    ##                    (Intercept)   income_demo_ranger_sar_scale 
-    ##                   0.0000000000                  -0.1299442928 
-    ##                   income_scale      Male_Head_Education_scale 
-    ##                   0.0597281304                   0.1206020613 
-    ##    Female_Head_Education_scale            Male_Head_Age_scale 
-    ##                   0.0669005542                   0.0390592068 
-    ##          Female_Head_Age_scale           Male_Head_Employment 
-    ##                   0.0134468652                   0.0051892159 
-    ##         Female_Head_Employment median_home_value_county_scale 
-    ##                   0.0097420386                   0.0177523862 
-    ##           land_area_2010_scale         total_pop_county_scale 
-    ##                  -0.0138696964                  -0.0009056233 
-    ##                           Race                 Marital_Status 
-    ##                   0.0361634387                  -0.0063149771 
-    ##           household_size_scale                         month2 
-    ##                  -0.0657092576                  -0.0152792348 
-    ##                         month3                         month4 
-    ##                  -0.0171231930                  -0.0211388919 
-    ##                         month5                         month6 
-    ##                  -0.0373864297                  -0.0400996941 
-    ##                         month7                         month8 
-    ##                  -0.0417342128                  -0.0409341427 
-    ##                         month9                        month10 
-    ##                  -0.0339852939                  -0.0361448529 
-    ##                        month11                        month12 
-    ##                   0.0083239679                  -0.0264266172 
-    ##                       year2005                       year2006 
-    ##                  -0.0130151127                   0.0044747228 
-    ##                       year2007                       year2008 
-    ##                   0.0125513285                   0.0130730609 
-    ##                       year2009                       year2010 
-    ##                   0.0136798909                   0.0140626360 
-    ##                       year2011                       year2012 
-    ##                   0.0145169033                   0.0092495065 
-    ##                       year2013                       year2014 
-    ##                   0.0090304333                   0.0117970837 
-    ##                       year2015                       year2016 
-    ##                   0.0142996097                   0.0166595936
-
-``` r
-tidy_lm1 <- tidy(lm1)
+tidy_lm_dri_cal <- tidy(lm_dri_cal)
 ```
 
 #### Plot results
 
 ``` r
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_dri_cal %>% 
   dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_cal <-
+  tidy_lm_dri_cal %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_cal <-
+  tidy_lm_dri_cal %>% 
   filter(
     term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
@@ -312,11 +242,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_dri_cal$dot_color)
+names(col) <- as.character(tidy_lm_dri_cal$dot_color)
 
 qh_dri_calories_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_dri_cal %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -360,195 +290,122 @@ ggsave(
 #### Fit model
 
 ``` r
-lm1 <-
+lm_dri_spn <-
   lm(
-    yes_scale ~
+    yes_spend ~
       income_demo_ranger_sar_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + income_demo_ranger_sar_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_spend_by_household_monthly %>% 
+      qhs_isc_mo_sec_tp %>% 
       filter(year %in% c(2004:2016))
   )
 
-summary(lm1)
+summary(lm_dri_spn)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = yes_scale ~ income_demo_ranger_sar_scale + income_scale + 
+    ## lm(formula = yes_spend ~ income_demo_ranger_sar_scale + income_scale + 
     ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_spend_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
+    ##     Male_Head_Age_scale + Female_Head_Age_scale + scale(Male_Head_Employment) + 
+    ##     scale(Female_Head_Employment) + median_home_value_county_scale + 
+    ##     land_area_2010_scale + total_pop_county_scale + physicians_scale + 
+    ##     Race + Marital_Status + household_size_scale + month + year, 
+    ##     data = qhs_isc_mo_sec_tp %>% filter(year %in% c(2004:2016)))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -3.0807 -0.6604 -0.0903  0.5514  7.7506 
+    ## -3.3140 -0.6511 -0.0811  0.5564  8.3124 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)                    -0.0537586  0.0022685  -23.698  < 2e-16 ***
-    ## income_demo_ranger_sar_scale   -0.1778094  0.0006493 -273.841  < 2e-16 ***
-    ## income_scale                    0.0745903  0.0004173  178.749  < 2e-16 ***
-    ## Male_Head_Education_scale       0.1852530  0.0006910  268.108  < 2e-16 ***
-    ## Female_Head_Education_scale     0.1109551  0.0005035  220.355  < 2e-16 ***
-    ## Male_Head_Age_scale             0.0368711  0.0007968   46.277  < 2e-16 ***
-    ## Female_Head_Age_scale           0.0258698  0.0005547   46.637  < 2e-16 ***
-    ## Male_Head_Employment           -0.0012661  0.0001534   -8.256  < 2e-16 ***
-    ## Female_Head_Employment          0.0008826  0.0001158    7.624 2.46e-14 ***
-    ## median_home_value_county_scale  0.0695110  0.0003763  184.725  < 2e-16 ***
-    ## land_area_2010_scale           -0.0067125  0.0003585  -18.726  < 2e-16 ***
-    ## total_pop_county_scale         -0.0023705  0.0003941   -6.015 1.80e-09 ***
-    ## Race                            0.0315651  0.0004772   66.140  < 2e-16 ***
-    ## Marital_Status                 -0.0087775  0.0004922  -17.832  < 2e-16 ***
-    ## household_size_scale           -0.0879755  0.0004300 -204.590  < 2e-16 ***
-    ## month2                          0.0026430  0.0016521    1.600    0.110    
-    ## month3                          0.0126760  0.0016455    7.703 1.32e-14 ***
-    ## month4                          0.0114859  0.0016462    6.977 3.01e-12 ***
-    ## month5                         -0.0019935  0.0016463   -1.211    0.226    
-    ## month6                          0.0081841  0.0016486    4.964 6.90e-07 ***
-    ## month7                         -0.0236451  0.0016480  -14.348  < 2e-16 ***
-    ## month8                         -0.0734148  0.0016480  -44.547  < 2e-16 ***
-    ## month9                         -0.0583246  0.0016493  -35.362  < 2e-16 ***
-    ## month10                        -0.0775279  0.0016486  -47.025  < 2e-16 ***
-    ## month11                        -0.0174343  0.0016516  -10.556  < 2e-16 ***
-    ## month12                        -0.1056957  0.0016542  -63.895  < 2e-16 ***
-    ## year2005                       -0.0821932  0.0020732  -39.646  < 2e-16 ***
-    ## year2006                        0.0229663  0.0020759   11.063  < 2e-16 ***
-    ## year2007                        0.0526159  0.0018475   28.479  < 2e-16 ***
-    ## year2008                        0.0554678  0.0018601   29.820  < 2e-16 ***
-    ## year2009                        0.0593894  0.0018681   31.792  < 2e-16 ***
-    ## year2010                        0.0618781  0.0018695   33.100  < 2e-16 ***
-    ## year2011                        0.0638042  0.0018604   34.296  < 2e-16 ***
-    ## year2012                        0.0393556  0.0018606   21.152  < 2e-16 ***
-    ## year2013                        0.0381817  0.0018569   20.562  < 2e-16 ***
-    ## year2014                        0.0514459  0.0018572   27.701  < 2e-16 ***
-    ## year2015                        0.0638835  0.0018635   34.282  < 2e-16 ***
-    ## year2016                        0.0741399  0.0018571   39.923  < 2e-16 ***
+    ## (Intercept)                     0.0714848  0.0023386   30.567  < 2e-16 ***
+    ## income_demo_ranger_sar_scale   -0.1664541  0.0010121 -164.458  < 2e-16 ***
+    ## income_scale                    0.0596990  0.0004868  122.636  < 2e-16 ***
+    ## Male_Head_Education_scale       0.1018722  0.0004791  212.654  < 2e-16 ***
+    ## Female_Head_Education_scale     0.0857702  0.0004841  177.183  < 2e-16 ***
+    ## Male_Head_Age_scale             0.0249447  0.0008723   28.597  < 2e-16 ***
+    ## Female_Head_Age_scale           0.0360813  0.0008860   40.723  < 2e-16 ***
+    ## scale(Male_Head_Employment)    -0.0011020  0.0005050   -2.182  0.02909 *  
+    ## scale(Female_Head_Employment)   0.0075088  0.0004547   16.513  < 2e-16 ***
+    ## median_home_value_county_scale  0.0626317  0.0004986  125.620  < 2e-16 ***
+    ## land_area_2010_scale            0.0012747  0.0004480    2.845  0.00443 ** 
+    ## total_pop_county_scale         -0.0072091  0.0004883  -14.764  < 2e-16 ***
+    ## physicians_scale                0.0273199  0.0004971   54.958  < 2e-16 ***
+    ## Race2                           0.0140777  0.0016235    8.671  < 2e-16 ***
+    ## Race3                           0.2328741  0.0024419   95.367  < 2e-16 ***
+    ## Race4                          -0.0112461  0.0019735   -5.698 1.21e-08 ***
+    ## Marital_Status2                -0.1668692  0.0045520  -36.659  < 2e-16 ***
+    ## Marital_Status3                -0.1438145  0.0028512  -50.439  < 2e-16 ***
+    ## Marital_Status4                -0.1121785  0.0029460  -38.078  < 2e-16 ***
+    ## household_size_scale           -0.0656575  0.0004740 -138.509  < 2e-16 ***
+    ## month2                          0.0018925  0.0020394    0.928  0.35342    
+    ## month3                          0.0117906  0.0020311    5.805 6.43e-09 ***
+    ## month4                          0.0100669  0.0020316    4.955 7.22e-07 ***
+    ## month5                         -0.0084803  0.0020317   -4.174 2.99e-05 ***
+    ## month6                         -0.0048036  0.0020346   -2.361  0.01823 *  
+    ## month7                         -0.0431318  0.0020339  -21.207  < 2e-16 ***
+    ## month8                         -0.0968745  0.0020337  -47.635  < 2e-16 ***
+    ## month9                         -0.0724954  0.0020351  -35.622  < 2e-16 ***
+    ## month10                        -0.0881747  0.0020346  -43.337  < 2e-16 ***
+    ## month11                        -0.0217796  0.0020382  -10.686  < 2e-16 ***
+    ## month12                        -0.1190674  0.0020416  -58.322  < 2e-16 ***
+    ## year2005                       -0.1003740  0.0026409  -38.008  < 2e-16 ***
+    ## year2006                        0.0203731  0.0025964    7.847 4.28e-15 ***
+    ## year2007                        0.0478266  0.0022966   20.825  < 2e-16 ***
+    ## year2008                        0.0492743  0.0023116   21.316  < 2e-16 ***
+    ## year2009                        0.0513020  0.0023247   22.068  < 2e-16 ***
+    ## year2010                        0.0521016  0.0023268   22.392  < 2e-16 ***
+    ## year2011                        0.0518316  0.0023150   22.389  < 2e-16 ***
+    ## year2012                        0.0267654  0.0023232   11.521  < 2e-16 ***
+    ## year2013                        0.0317077  0.0023221   13.655  < 2e-16 ***
+    ## year2014                        0.0495216  0.0023296   21.258  < 2e-16 ***
+    ## year2015                        0.0640392  0.0023448   27.311  < 2e-16 ***
+    ## year2016                        0.0725018  0.0023362   31.034  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.9746 on 8436196 degrees of freedom
-    ##   (191306 observations deleted due to missingness)
-    ## Multiple R-squared:  0.05036,    Adjusted R-squared:  0.05036 
-    ## F-statistic: 1.209e+04 on 37 and 8436196 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9663 on 5450543 degrees of freedom
+    ##   (92416 observations deleted due to missingness)
+    ## Multiple R-squared:  0.06662,    Adjusted R-squared:  0.06661 
+    ## F-statistic:  9263 on 42 and 5450543 DF,  p-value: < 2.2e-16
 
 ``` r
-regclass::VIF(lm1)
-```
-
-    ##                                    GVIF Df GVIF^(1/(2*Df))
-    ## income_demo_ranger_sar_scale   3.684653  1        1.919545
-    ## income_scale                   1.536756  1        1.239660
-    ## Male_Head_Education_scale      4.230132  1        2.056729
-    ## Female_Head_Education_scale    2.225429  1        1.491787
-    ## Male_Head_Age_scale            5.629604  1        2.372679
-    ## Female_Head_Age_scale          2.699329  1        1.642964
-    ## Male_Head_Employment           2.263101  1        1.504361
-    ## Female_Head_Employment         1.461413  1        1.208889
-    ## median_home_value_county_scale 1.245931  1        1.116213
-    ## land_area_2010_scale           1.132021  1        1.063965
-    ## total_pop_county_scale         1.347216  1        1.160696
-    ## Race                           1.054177  1        1.026731
-    ## Marital_Status                 2.809165  1        1.676056
-    ## household_size_scale           1.630544  1        1.276927
-    ## month                          1.000030 11        1.000001
-    ## year                           1.141678 12        1.005536
-
-``` r
-lm.beta::lm.beta(lm1)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = yes_scale ~ income_demo_ranger_sar_scale + income_scale + 
-    ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_spend_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
-    ## 
-    ## Standardized Coefficients::
-    ##                    (Intercept)   income_demo_ranger_sar_scale 
-    ##                   0.0000000000                  -0.1763611092 
-    ##                   income_scale      Male_Head_Education_scale 
-    ##                   0.0743448981                   0.1850088384 
-    ##    Female_Head_Education_scale            Male_Head_Age_scale 
-    ##                   0.1102900284                   0.0368388894 
-    ##          Female_Head_Age_scale           Male_Head_Employment 
-    ##                   0.0257077736                  -0.0041669906 
-    ##         Female_Head_Employment median_home_value_county_scale 
-    ##                   0.0030922159                   0.0691797388 
-    ##           land_area_2010_scale         total_pop_county_scale 
-    ##                  -0.0066848110                  -0.0023424310 
-    ##                           Race                 Marital_Status 
-    ##                   0.0227838049                  -0.0100277002 
-    ##           household_size_scale                         month2 
-    ##                  -0.0876509691                   0.0007282578 
-    ##                         month3                         month4 
-    ##                   0.0035186834                   0.0031856833 
-    ##                         month5                         month6 
-    ##                  -0.0005528872                   0.0022639242 
-    ##                         month7                         month8 
-    ##                  -0.0065454858                  -0.0203214877 
-    ##                         month9                        month10 
-    ##                  -0.0161211177                  -0.0214454384 
-    ##                        month11                        month12 
-    ##                  -0.0048067406                  -0.0290570967 
-    ##                       year2005                       year2006 
-    ##                  -0.0184130207                   0.0050368785 
-    ##                       year2007                       year2008 
-    ##                   0.0148096348                   0.0153814872 
-    ##                       year2009                       year2010 
-    ##                   0.0163385264                   0.0170250671 
-    ##                       year2011                       year2012 
-    ##                   0.0177772159                   0.0108431846 
-    ##                       year2013                       year2014 
-    ##                   0.0105659044                   0.0143029982 
-    ##                       year2015                       year2016 
-    ##                   0.0177297500                   0.0208679529
-
-``` r
-tidy_lm1 <- tidy(lm1)
+tidy_lm_dri_spn <- tidy(lm_dri_spn)
 ```
 
 #### Plot results
 
 ``` r
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_dri_spn %>% 
   dplyr::filter(term == "income_demo_ranger_sar_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_spn <-
+  tidy_lm_dri_spn %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_dri_spn <-
+  tidy_lm_dri_spn %>% 
   filter(
     term == "income_demo_ranger_sar_scale" |
     term == "income_scale" |
@@ -565,11 +422,11 @@ tidy_lm1 <-
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_dri_spn$dot_color)
+names(col) <- as.character(tidy_lm_dri_spn$dot_color)
 
 qh_dri_spend_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_dri_spn %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -615,195 +472,122 @@ ggsave(
 #### Fit model
 
 ``` r
-lm1 <-
+lm_gri_cal <-
   lm(
-    yes_scale ~
+    yes_cal ~
       median_income_county_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + median_income_county_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_calories_imputed_sc_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      qhc_isc_mo_sec_tp %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
-summary(lm1)
+summary(lm_gri_cal)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = yes_scale ~ median_income_county_scale + income_scale + 
+    ## lm(formula = yes_cal ~ median_income_county_scale + income_scale + 
     ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_calories_imputed_sc_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
+    ##     Male_Head_Age_scale + Female_Head_Age_scale + scale(Male_Head_Employment) + 
+    ##     scale(Female_Head_Employment) + median_home_value_county_scale + 
+    ##     land_area_2010_scale + total_pop_county_scale + physicians_scale + 
+    ##     Race + Marital_Status + household_size_scale + month + year, 
+    ##     data = qhc_isc_mo_sec_tp %>% filter(year %in% c(2004:2016)))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -2.1231 -0.7065 -0.1989  0.4869  5.6385 
+    ## -2.3175 -0.6987 -0.1863  0.4946  5.8157 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)                    -0.0547424  0.0027287  -20.062  < 2e-16 ***
-    ## median_income_county_scale     -0.0135904  0.0005007  -27.144  < 2e-16 ***
-    ## income_scale                    0.0567015  0.0004322  131.193  < 2e-16 ***
-    ## Male_Head_Education_scale       0.0923448  0.0006970  132.490  < 2e-16 ***
-    ## Female_Head_Education_scale     0.0413347  0.0005025   82.254  < 2e-16 ***
-    ## Male_Head_Age_scale            -0.0093446  0.0007853  -11.899  < 2e-16 ***
-    ## Female_Head_Age_scale           0.0334538  0.0005627   59.454  < 2e-16 ***
-    ## Male_Head_Employment            0.0056837  0.0001564   36.337  < 2e-16 ***
-    ## Female_Head_Employment          0.0046019  0.0001189   38.700  < 2e-16 ***
-    ## median_home_value_county_scale  0.0301890  0.0005389   56.017  < 2e-16 ***
-    ## land_area_2010_scale           -0.0135871  0.0003683  -36.893  < 2e-16 ***
-    ## total_pop_county_scale         -0.0018834  0.0004114   -4.578  4.7e-06 ***
-    ## Race                            0.0442246  0.0004930   89.699  < 2e-16 ***
-    ## Marital_Status                  0.0245361  0.0004843   50.665  < 2e-16 ***
-    ## household_size_scale           -0.0931185  0.0004199 -221.750  < 2e-16 ***
-    ## month2                         -0.0553623  0.0017034  -32.501  < 2e-16 ***
-    ## month3                         -0.0617051  0.0016962  -36.378  < 2e-16 ***
-    ## month4                         -0.0762283  0.0016975  -44.907  < 2e-16 ***
-    ## month5                         -0.1348267  0.0016976  -79.424  < 2e-16 ***
-    ## month6                         -0.1450706  0.0017004  -85.314  < 2e-16 ***
-    ## month7                         -0.1507741  0.0016996  -88.714  < 2e-16 ***
-    ## month8                         -0.1481312  0.0016997  -87.150  < 2e-16 ***
-    ## month9                         -0.1229634  0.0017014  -72.274  < 2e-16 ***
-    ## month10                        -0.1305992  0.0017004  -76.807  < 2e-16 ***
-    ## month11                         0.0301939  0.0017031   17.729  < 2e-16 ***
-    ## month12                        -0.0959405  0.0017065  -56.222  < 2e-16 ***
-    ## year2005                        0.0001772  0.0025253    0.070    0.944    
-    ## year2006                        0.0005877  0.0025386    0.231    0.817    
-    ## year2007                        0.0028027  0.0023568    1.189    0.234    
-    ## year2008                        0.0034815  0.0023656    1.472    0.141    
-    ## year2009                        0.0028028  0.0023707    1.182    0.237    
-    ## year2010                        0.0016482  0.0023707    0.695    0.487    
-    ## year2011                        0.0016603  0.0023625    0.703    0.482    
-    ## year2012                        0.0027286  0.0023716    1.151    0.250    
-    ## year2013                        0.0019439  0.0023689    0.821    0.412    
-    ## year2014                        0.0019771  0.0023665    0.835    0.403    
-    ## year2015                        0.0017644  0.0023685    0.745    0.456    
-    ## year2016                        0.0020497  0.0023597    0.869    0.385    
+    ## (Intercept)                     0.0826519  0.0023541   35.110   <2e-16 ***
+    ## median_income_county_scale     -0.0125624  0.0006300  -19.941   <2e-16 ***
+    ## income_scale                    0.0441595  0.0004977   88.724   <2e-16 ***
+    ## Male_Head_Education_scale       0.0682261  0.0004887  139.611   <2e-16 ***
+    ## Female_Head_Education_scale     0.0504345  0.0004938  102.138   <2e-16 ***
+    ## Male_Head_Age_scale             0.0234902  0.0008888   26.428   <2e-16 ***
+    ## Female_Head_Age_scale           0.0321779  0.0009009   35.717   <2e-16 ***
+    ## scale(Male_Head_Employment)     0.0215520  0.0004992   43.173   <2e-16 ***
+    ## scale(Female_Head_Employment)   0.0234125  0.0004565   51.285   <2e-16 ***
+    ## median_home_value_county_scale  0.0196853  0.0006956   28.299   <2e-16 ***
+    ## land_area_2010_scale           -0.0095911  0.0004566  -21.006   <2e-16 ***
+    ## total_pop_county_scale         -0.0067485  0.0005080  -13.285   <2e-16 ***
+    ## physicians_scale                0.0065825  0.0005077   12.965   <2e-16 ***
+    ## Race2                           0.1290725  0.0016622   77.653   <2e-16 ***
+    ## Race3                           0.1690771  0.0024234   69.768   <2e-16 ***
+    ## Race4                           0.0483855  0.0019930   24.278   <2e-16 ***
+    ## Marital_Status2                -0.0670710  0.0046248  -14.502   <2e-16 ***
+    ## Marital_Status3                -0.1122839  0.0029104  -38.581   <2e-16 ***
+    ## Marital_Status4                -0.0707900  0.0030002  -23.595   <2e-16 ***
+    ## household_size_scale           -0.0604209  0.0004783 -126.324   <2e-16 ***
+    ## month2                         -0.0601127  0.0020798  -28.903   <2e-16 ***
+    ## month3                         -0.0664170  0.0020710  -32.070   <2e-16 ***
+    ## month4                         -0.0806343  0.0020720  -38.916   <2e-16 ***
+    ## month5                         -0.1510190  0.0020723  -72.877   <2e-16 ***
+    ## month6                         -0.1671609  0.0020756  -80.536   <2e-16 ***
+    ## month7                         -0.1707926  0.0020748  -82.316   <2e-16 ***
+    ## month8                         -0.1667441  0.0020747  -80.372   <2e-16 ***
+    ## month9                         -0.1331805  0.0020763  -64.142   <2e-16 ***
+    ## month10                        -0.1423973  0.0020756  -68.604   <2e-16 ***
+    ## month11                         0.0430158  0.0020790   20.690   <2e-16 ***
+    ## month12                        -0.1047042  0.0020831  -50.263   <2e-16 ***
+    ## year2005                        0.0002065  0.0026095    0.079   0.9369    
+    ## year2006                       -0.0003083  0.0026274   -0.117   0.9066    
+    ## year2007                        0.0043326  0.0023223    1.866   0.0621 .  
+    ## year2008                        0.0048467  0.0023364    2.074   0.0380 *  
+    ## year2009                        0.0036456  0.0023474    1.553   0.1204    
+    ## year2010                        0.0021455  0.0023478    0.914   0.3608    
+    ## year2011                        0.0006718  0.0023336    0.288   0.7734    
+    ## year2012                       -0.0019641  0.0023591   -0.833   0.4051    
+    ## year2013                       -0.0022367  0.0023575   -0.949   0.3427    
+    ## year2014                       -0.0021502  0.0023541   -0.913   0.3610    
+    ## year2015                       -0.0028056  0.0023573   -1.190   0.2340    
+    ## year2016                       -0.0019177  0.0023398   -0.820   0.4124    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.9894 on 8169345 degrees of freedom
-    ##   (183476 observations deleted due to missingness)
-    ## Multiple R-squared:  0.02153,    Adjusted R-squared:  0.02153 
-    ## F-statistic:  4859 on 37 and 8169345 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9842 on 5430874 degrees of freedom
+    ##   (89007 observations deleted due to missingness)
+    ## Multiple R-squared:  0.03149,    Adjusted R-squared:  0.03149 
+    ## F-statistic:  4205 on 42 and 5430874 DF,  p-value: < 2.2e-16
 
 ``` r
-regclass::VIF(lm1)
-```
-
-    ##                                    GVIF Df GVIF^(1/(2*Df))
-    ## median_income_county_scale     2.094364  1        1.447192
-    ## income_scale                   1.549158  1        1.244652
-    ## Male_Head_Education_scale      4.042790  1        2.010669
-    ## Female_Head_Education_scale    2.089271  1        1.445431
-    ## Male_Head_Age_scale            5.136875  1        2.266468
-    ## Female_Head_Age_scale          2.619429  1        1.618465
-    ## Male_Head_Employment           2.214076  1        1.487977
-    ## Female_Head_Employment         1.450752  1        1.204472
-    ## median_home_value_county_scale 2.418895  1        1.555280
-    ## land_area_2010_scale           1.137290  1        1.066438
-    ## total_pop_county_scale         1.411652  1        1.188130
-    ## Race                           1.055947  1        1.027593
-    ## Marital_Status                 2.549819  1        1.596815
-    ## household_size_scale           1.463262  1        1.209654
-    ## month                          1.000035 11        1.000002
-    ## year                           1.006084 12        1.000253
-
-``` r
-lm.beta::lm.beta(lm1)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = yes_scale ~ median_income_county_scale + income_scale + 
-    ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_calories_imputed_sc_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
-    ## 
-    ## Standardized Coefficients::
-    ##                    (Intercept)     median_income_county_scale 
-    ##                   0.000000e+00                  -1.359514e-02 
-    ##                   income_scale      Male_Head_Education_scale 
-    ##                   5.651169e-02                   9.219401e-02 
-    ##    Female_Head_Education_scale            Male_Head_Age_scale 
-    ##                   4.114669e-02                  -9.333526e-03 
-    ##          Female_Head_Age_scale           Male_Head_Employment 
-    ##                   3.330125e-02                   1.871238e-02 
-    ##         Female_Head_Employment median_home_value_county_scale 
-    ##                   1.613197e-02                   3.015137e-02 
-    ##           land_area_2010_scale         total_pop_county_scale 
-    ##                  -1.361630e-02                  -1.882364e-03 
-    ##                           Race                 Marital_Status 
-    ##                   3.189975e-02                   2.799895e-02 
-    ##           household_size_scale                         month2 
-    ##                  -9.283336e-02                  -1.525749e-02 
-    ##                         month3                         month4 
-    ##                  -1.713742e-02                  -2.114250e-02 
-    ##                         month5                         month6 
-    ##                  -3.739158e-02                  -4.010794e-02 
-    ##                         month7                         month8 
-    ##                  -4.172442e-02                  -4.098535e-02 
-    ##                         month9                        month10 
-    ##                  -3.396204e-02                  -3.610991e-02 
-    ##                        month11                        month12 
-    ##                   8.324092e-03                  -2.635439e-02 
-    ##                       year2005                       year2006 
-    ##                   4.046822e-05                   1.322557e-04 
-    ##                       year2007                       year2008 
-    ##                   7.977038e-04                   9.774349e-04 
-    ##                       year2009                       year2010 
-    ##                   7.807097e-04                   4.590776e-04 
-    ##                       year2011                       year2012 
-    ##                   4.684833e-04                   7.599235e-04 
-    ##                       year2013                       year2014 
-    ##                   5.435191e-04                   5.548892e-04 
-    ##                       year2015                       year2016 
-    ##                   4.937288e-04                   5.814271e-04
-
-``` r
-tidy_lm1 <- tidy(lm1)
+tidy_lm_gri_cal <- tidy(lm_gri_cal)
 ```
 
 #### Plot results
 
 ``` r
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_gri_cal %>% 
   dplyr::filter(term == "median_income_county_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_cal <-
+  tidy_lm_gri_cal %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_cal <-
+  tidy_lm_gri_cal %>% 
   filter(
     term == "median_income_county_scale" |
     term == "income_scale" |
@@ -813,18 +597,18 @@ tidy_lm1 <-
   mutate(
     variable = 
       case_when(
-        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "median_income_county_scale" ~ "geographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_gri_cal$dot_color)
+names(col) <- as.character(tidy_lm_gri_cal$dot_color)
 
 qh_gri_calories_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_gri_cal %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -832,10 +616,10 @@ qh_gri_calories_monthly <-
   geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.35, 0.35)
-  ) +
+  # scale_y_continuous(
+  #   breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+  #   limits = c(-0.35, 0.35)
+  # ) +
   labs(
     y = "standardized beta",
     x = "variable"
@@ -868,195 +652,122 @@ ggsave(
 #### Fit model
 
 ``` r
-lm1 <-
+lm_gri_spn <-
   lm(
-    yes_scale ~
+    yes_spend ~
       median_income_county_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment +
-      Female_Head_Employment +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
+      physicians_scale +
       Race +
       Marital_Status +
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + median_income_county_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_spend_by_household_monthly %>% 
-      filter(year %in% c(2004:2016))
+      qhs_isc_mo_sec_tp %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
-summary(lm1)
+summary(lm_gri_spn)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = yes_scale ~ median_income_county_scale + income_scale + 
+    ## lm(formula = yes_spend ~ median_income_county_scale + income_scale + 
     ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_spend_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
+    ##     Male_Head_Age_scale + Female_Head_Age_scale + scale(Male_Head_Employment) + 
+    ##     scale(Female_Head_Employment) + median_home_value_county_scale + 
+    ##     land_area_2010_scale + total_pop_county_scale + physicians_scale + 
+    ##     Race + Marital_Status + household_size_scale + month + year, 
+    ##     data = qhs_isc_mo_sec_tp %>% filter(year %in% c(2004:2016)))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -2.9230 -0.6655 -0.0929  0.5543  7.6066 
+    ## -3.2069 -0.6538 -0.0825  0.5579  8.2815 
     ## 
     ## Coefficients:
     ##                                  Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)                    -0.0997203  0.0022633  -44.059  < 2e-16 ***
-    ## median_income_county_scale      0.0148672  0.0004862   30.580  < 2e-16 ***
-    ## income_scale                    0.0665321  0.0004198  158.484  < 2e-16 ***
-    ## Male_Head_Education_scale       0.1450528  0.0006766  214.397  < 2e-16 ***
-    ## Female_Head_Education_scale     0.0759941  0.0004874  155.910  < 2e-16 ***
-    ## Male_Head_Age_scale            -0.0263953  0.0007622  -34.631  < 2e-16 ***
-    ## Female_Head_Age_scale           0.0526095  0.0005458   96.382  < 2e-16 ***
-    ## Male_Head_Employment            0.0044328  0.0001523   29.115  < 2e-16 ***
-    ## Female_Head_Employment          0.0035013  0.0001156   30.289  < 2e-16 ***
-    ## median_home_value_county_scale  0.0615238  0.0005236  117.497  < 2e-16 ***
-    ## land_area_2010_scale           -0.0045859  0.0003583  -12.797  < 2e-16 ***
-    ## total_pop_county_scale          0.0016941  0.0004003    4.232 2.32e-05 ***
-    ## Race                            0.0255374  0.0004766   53.586  < 2e-16 ***
-    ## Marital_Status                  0.0322357  0.0004694   68.677  < 2e-16 ***
-    ## household_size_scale           -0.1252089  0.0004074 -307.365  < 2e-16 ***
-    ## month2                          0.0024905  0.0016551    1.505   0.1324    
-    ## month3                          0.0124452  0.0016484    7.550 4.36e-14 ***
-    ## month4                          0.0112595  0.0016492    6.827 8.65e-12 ***
-    ## month5                         -0.0022035  0.0016492   -1.336   0.1815    
-    ## month6                          0.0079480  0.0016516    4.812 1.49e-06 ***
-    ## month7                         -0.0239679  0.0016509  -14.518  < 2e-16 ***
-    ## month8                         -0.0737430  0.0016510  -44.666  < 2e-16 ***
-    ## month9                         -0.0585374  0.0016523  -35.428  < 2e-16 ***
-    ## month10                        -0.0776731  0.0016516  -47.030  < 2e-16 ***
-    ## month11                        -0.0173768  0.0016546  -10.502  < 2e-16 ***
-    ## month12                        -0.1056200  0.0016572  -63.734  < 2e-16 ***
-    ## year2005                        0.0004473  0.0020445    0.219   0.8268    
-    ## year2006                        0.0005950  0.0020604    0.289   0.7727    
-    ## year2007                        0.0025734  0.0018380    1.400   0.1615    
-    ## year2008                        0.0032336  0.0018491    1.749   0.0803 .  
-    ## year2009                        0.0025860  0.0018555    1.394   0.1634    
-    ## year2010                        0.0016182  0.0018555    0.872   0.3832    
-    ## year2011                        0.0020064  0.0018453    1.087   0.2769    
-    ## year2012                        0.0035483  0.0018554    1.912   0.0558 .  
-    ## year2013                        0.0028725  0.0018519    1.551   0.1209    
-    ## year2014                        0.0031042  0.0018486    1.679   0.0931 .  
-    ## year2015                        0.0030232  0.0018501    1.634   0.1022    
-    ## year2016                        0.0033530  0.0018389    1.823   0.0683 .  
+    ## (Intercept)                     1.520e-02  2.311e-03    6.578 4.76e-11 ***
+    ## median_income_county_scale      1.602e-02  6.176e-04   25.943  < 2e-16 ***
+    ## income_scale                    5.005e-02  4.879e-04  102.571  < 2e-16 ***
+    ## Male_Head_Education_scale       1.042e-01  4.792e-04  217.557  < 2e-16 ***
+    ## Female_Head_Education_scale     8.553e-02  4.842e-04  176.660  < 2e-16 ***
+    ## Male_Head_Age_scale             2.979e-02  8.709e-04   34.210  < 2e-16 ***
+    ## Female_Head_Age_scale           4.568e-02  8.827e-04   51.754  < 2e-16 ***
+    ## scale(Male_Head_Employment)     1.971e-02  4.895e-04   40.268  < 2e-16 ***
+    ## scale(Female_Head_Employment)   2.097e-02  4.476e-04   46.855  < 2e-16 ***
+    ## median_home_value_county_scale  5.191e-02  6.819e-04   76.128  < 2e-16 ***
+    ## land_area_2010_scale            3.036e-03  4.477e-04    6.781 1.19e-11 ***
+    ## total_pop_county_scale         -3.798e-03  4.977e-04   -7.630 2.35e-14 ***
+    ## physicians_scale                2.741e-02  4.980e-04   55.040  < 2e-16 ***
+    ## Race2                           1.943e-02  1.625e-03   11.952  < 2e-16 ***
+    ## Race3                           1.372e-01  2.370e-03   57.905  < 2e-16 ***
+    ## Race4                           3.095e-02  1.951e-03   15.860  < 2e-16 ***
+    ## Marital_Status2                -8.707e-02  4.529e-03  -19.227  < 2e-16 ***
+    ## Marital_Status3                -1.302e-01  2.851e-03  -45.689  < 2e-16 ***
+    ## Marital_Status4                -7.696e-02  2.933e-03  -26.239  < 2e-16 ***
+    ## household_size_scale           -7.693e-02  4.687e-04 -164.146  < 2e-16 ***
+    ## month2                          1.782e-03  2.040e-03    0.873   0.3826    
+    ## month3                          1.192e-02  2.032e-03    5.865 4.50e-09 ***
+    ## month4                          1.008e-02  2.033e-03    4.958 7.11e-07 ***
+    ## month5                         -8.398e-03  2.033e-03   -4.131 3.61e-05 ***
+    ## month6                         -4.698e-03  2.036e-03   -2.308   0.0210 *  
+    ## month7                         -4.311e-02  2.035e-03  -21.184  < 2e-16 ***
+    ## month8                         -9.683e-02  2.035e-03  -47.588  < 2e-16 ***
+    ## month9                         -7.240e-02  2.036e-03  -35.557  < 2e-16 ***
+    ## month10                        -8.810e-02  2.036e-03  -43.276  < 2e-16 ***
+    ## month11                        -2.170e-02  2.039e-03  -10.640  < 2e-16 ***
+    ## month12                        -1.191e-01  2.043e-03  -58.283  < 2e-16 ***
+    ## year2005                        2.871e-04  2.562e-03    0.112   0.9108    
+    ## year2006                       -1.427e-04  2.579e-03   -0.055   0.9559    
+    ## year2007                        3.721e-03  2.279e-03    1.633   0.1026    
+    ## year2008                        4.225e-03  2.293e-03    1.842   0.0654 .  
+    ## year2009                        3.197e-03  2.304e-03    1.387   0.1653    
+    ## year2010                        1.725e-03  2.304e-03    0.749   0.4540    
+    ## year2011                       -6.096e-05  2.291e-03   -0.027   0.9788    
+    ## year2012                       -1.567e-03  2.315e-03   -0.677   0.4984    
+    ## year2013                        1.697e-03  2.313e-03    0.734   0.4630    
+    ## year2014                        1.210e-03  2.309e-03    0.524   0.6004    
+    ## year2015                        8.718e-04  2.312e-03    0.377   0.7061    
+    ## year2016                        1.441e-03  2.294e-03    0.628   0.5300    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.9787 on 8478130 degrees of freedom
-    ##   (149372 observations deleted due to missingness)
-    ## Multiple R-squared:  0.04211,    Adjusted R-squared:  0.04211 
-    ## F-statistic: 1.007e+04 on 37 and 8478130 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9684 on 5469184 degrees of freedom
+    ##   (73775 observations deleted due to missingness)
+    ## Multiple R-squared:  0.0622, Adjusted R-squared:  0.06219 
+    ## F-statistic:  8637 on 42 and 5469184 DF,  p-value: < 2.2e-16
 
 ``` r
-regclass::VIF(lm1)
-```
-
-    ##                                    GVIF Df GVIF^(1/(2*Df))
-    ## median_income_county_scale     2.090254  1        1.445771
-    ## income_scale                   1.552855  1        1.246136
-    ## Male_Head_Education_scale      4.039577  1        2.009870
-    ## Female_Head_Education_scale    2.085781  1        1.444223
-    ## Male_Head_Age_scale            5.132107  1        2.265415
-    ## Female_Head_Age_scale          2.618532  1        1.618188
-    ## Male_Head_Employment           2.221540  1        1.490483
-    ## Female_Head_Employment         1.453079  1        1.205437
-    ## median_home_value_county_scale 2.415320  1        1.554130
-    ## land_area_2010_scale           1.136936  1        1.066272
-    ## total_pop_county_scale         1.410595  1        1.187685
-    ## Race                           1.056937  1        1.028074
-    ## Marital_Status                 2.550971  1        1.597176
-    ## household_size_scale           1.464250  1        1.210062
-    ## month                          1.000030 11        1.000001
-    ## year                           1.004326 12        1.000180
-
-``` r
-lm.beta::lm.beta(lm1)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = yes_scale ~ median_income_county_scale + income_scale + 
-    ##     Male_Head_Education_scale + Female_Head_Education_scale + 
-    ##     Male_Head_Age_scale + Female_Head_Age_scale + Male_Head_Employment + 
-    ##     Female_Head_Employment + median_home_value_county_scale + 
-    ##     land_area_2010_scale + total_pop_county_scale + Race + Marital_Status + 
-    ##     household_size_scale + month + year, data = qh_spend_by_household_monthly %>% 
-    ##     filter(year %in% c(2004:2016)))
-    ## 
-    ## Standardized Coefficients::
-    ##                    (Intercept)     median_income_county_scale 
-    ##                   0.0000000000                   0.0148608667 
-    ##                   income_scale      Male_Head_Education_scale 
-    ##                   0.0663830525                   0.1448414423 
-    ##    Female_Head_Education_scale            Male_Head_Age_scale 
-    ##                   0.0756857661                  -0.0263707096 
-    ##          Female_Head_Age_scale           Male_Head_Employment 
-    ##                   0.0524244100                   0.0145862909 
-    ##         Female_Head_Employment median_home_value_county_scale 
-    ##                   0.0122727187                   0.0613791879 
-    ##           land_area_2010_scale         total_pop_county_scale 
-    ##                  -0.0045866610                   0.0016894097 
-    ##                           Race                 Marital_Status 
-    ##                   0.0185176598                   0.0368698112 
-    ##           household_size_scale                         month2 
-    ##                  -0.1250168195                   0.0006862831 
-    ##                         month3                         month4 
-    ##                   0.0034548872                   0.0031231074 
-    ##                         month5                         month6 
-    ##                  -0.0006111880                   0.0021987617 
-    ##                         month7                         month8 
-    ##                  -0.0066353761                  -0.0204137915 
-    ##                         month9                        month10 
-    ##                  -0.0161808579                  -0.0214874273 
-    ##                        month11                        month12 
-    ##                  -0.0047912086                  -0.0290377255 
-    ##                       year2005                       year2006 
-    ##                   0.0001007251                   0.0001320680 
-    ##                       year2007                       year2008 
-    ##                   0.0007232490                   0.0008963192 
-    ##                       year2009                       year2010 
-    ##                   0.0007110730                   0.0004449023 
-    ##                       year2011                       year2012 
-    ##                   0.0005588576                   0.0009764844 
-    ##                       year2013                       year2014 
-    ##                   0.0007938001                   0.0008614169 
-    ##                       year2015                       year2016 
-    ##                   0.0008373503                   0.0009418973
-
-``` r
-tidy_lm1 <- tidy(lm1)
+tidy_lm_gri_spn <- tidy(lm_gri_spn)
 ```
 
 #### Plot results
 
 ``` r
 est <- 
-  tidy_lm1 %>% 
+  tidy_lm_gri_spn %>% 
   dplyr::filter(term == "median_income_county_scale") %>% 
   dplyr::select(estimate)
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_spn <-
+  tidy_lm_gri_spn %>% 
   mutate(
     dot_color = ifelse(estimate < 0, "red1", ifelse(estimate > 0, "dodgerblue2", NA)),
     se = std.error
   )
 
-tidy_lm1 <-
-  tidy_lm1 %>% 
+tidy_lm_gri_spn <-
+  tidy_lm_gri_spn %>% 
   filter(
     term == "median_income_county_scale" |
     term == "income_scale" |
@@ -1066,18 +777,18 @@ tidy_lm1 <-
   mutate(
     variable = 
       case_when(
-        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "median_income_county_scale" ~ "geographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
       )
   ) 
 
-col <- as.character(tidy_lm1$dot_color)
-names(col) <- as.character(tidy_lm1$dot_color)
+col <- as.character(tidy_lm_gri_spn$dot_color)
+names(col) <- as.character(tidy_lm_gri_spn$dot_color)
 
 qh_gri_spend_monthly <-
-  tidy_lm1 %>% 
+  tidy_lm_gri_spn %>% 
   ggplot(aes(reorder(as.factor(variable), estimate), estimate)) +
   geom_point(aes(color = dot_color), size = 4) +
   geom_errorbar(aes(ymin = estimate - 2 * se, ymax = estimate + 2 * se), width = 0) + 
@@ -1085,10 +796,10 @@ qh_gri_spend_monthly <-
   geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.35, 0.35)
-  ) +
+  # scale_y_continuous(
+  #   breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+  #   limits = c(-0.35, 0.35)
+  # ) +
   labs(
     y = "standardized beta",
     x = "variable"
@@ -1101,7 +812,7 @@ qh_gri_spend_monthly <-
   ) +
   coord_flip()
 
-qh_gri_calories_monthly
+qh_gri_spend_monthly
 ```
 
 ![](qfahpd_health_cross_sectional_regression_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
@@ -1115,3 +826,2238 @@ ggsave(
   dpi = 750
 )
 ```
+
+## Regression Table
+
+``` r
+stargazer(
+  lm_dri_cal, lm_dri_spn, lm_gri_cal, lm_gri_spn,
+  ci = TRUE,
+  type="html", digits = 2,
+  #out="df_risk_all_bin.doc",
+  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods"),
+  covariate.labels =
+    c(
+      "demographic ref. income",
+      "geographic ref. income",
+      "income",
+      "male education",
+      "female education",
+      "male age",
+      "female age",
+      "male employment",
+      "female employment",
+      "median home value",
+      "county land area",
+      "county population",
+      "black/ african american",
+      "asian",
+      "other",
+      "widowed",
+      "divorced/separated",
+      "single",
+      "household size"
+    ),
+  omit = c("month", "year"),
+  star.char = c("*", "**", "***"),
+  star.cutoffs = c(0.05, 0.01, 0.001),
+  notes = c("* p<0.05; ** p<0.01; *** p<0.001")
+)
+```
+
+<table style="text-align:center">
+
+<tr>
+
+<td colspan="5" style="border-bottom: 1px solid black">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td colspan="4">
+
+<em>Dependent variable:</em>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+</td>
+
+<td colspan="4" style="border-bottom: 1px solid black">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+% of calorie budget for healthy foods
+
+</td>
+
+<td>
+
+% of food spend for healthy foods
+
+</td>
+
+<td>
+
+yes\_cal
+
+</td>
+
+<td>
+
+yes\_spend
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(1)
+
+</td>
+
+<td>
+
+(2)
+
+</td>
+
+<td>
+
+(3)
+
+</td>
+
+<td>
+
+(4)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td colspan="5" style="border-bottom: 1px solid black">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+demographic ref. income
+
+</td>
+
+<td>
+
+\-0.13<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.17<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.13, -0.13)
+
+</td>
+
+<td>
+
+(-0.17, -0.16)
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+geographic ref. income
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+(-0.01, -0.01)
+
+</td>
+
+<td>
+
+(0.01, 0.02)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+income
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.06<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.04<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.05, 0.05)
+
+</td>
+
+<td>
+
+(0.06, 0.06)
+
+</td>
+
+<td>
+
+(0.04, 0.05)
+
+</td>
+
+<td>
+
+(0.05, 0.05)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+male education
+
+</td>
+
+<td>
+
+0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.10<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.10<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.06, 0.07)
+
+</td>
+
+<td>
+
+(0.10, 0.10)
+
+</td>
+
+<td>
+
+(0.07, 0.07)
+
+</td>
+
+<td>
+
+(0.10, 0.11)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+female education
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.09<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.09<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.05, 0.05)
+
+</td>
+
+<td>
+
+(0.08, 0.09)
+
+</td>
+
+<td>
+
+(0.05, 0.05)
+
+</td>
+
+<td>
+
+(0.08, 0.09)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+male age
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.03<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+<td>
+
+(0.02, 0.03)
+
+</td>
+
+<td>
+
+(0.02, 0.03)
+
+</td>
+
+<td>
+
+(0.03, 0.03)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+female age
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.04<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.03<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.02, 0.03)
+
+</td>
+
+<td>
+
+(0.03, 0.04)
+
+</td>
+
+<td>
+
+(0.03, 0.03)
+
+</td>
+
+<td>
+
+(0.04, 0.05)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+male employment
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.001<sup>\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.004, 0.01)
+
+</td>
+
+<td>
+
+(-0.002, -0.0001)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+female employment
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.01, 0.01)
+
+</td>
+
+<td>
+
+(0.01, 0.01)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+median home value
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.06<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.01, 0.01)
+
+</td>
+
+<td>
+
+(0.06, 0.06)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+<td>
+
+(0.05, 0.05)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+county land area
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.001<sup>\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.003<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.01, -0.01)
+
+</td>
+
+<td>
+
+(0.0004, 0.002)
+
+</td>
+
+<td>
+
+(-0.01, -0.01)
+
+</td>
+
+<td>
+
+(0.002, 0.004)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+county population
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.004<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.01, -0.004)
+
+</td>
+
+<td>
+
+(-0.01, -0.01)
+
+</td>
+
+<td>
+
+(-0.01, -0.01)
+
+</td>
+
+<td>
+
+(-0.005, -0.003)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+black/ african american
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.03<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.03<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.004, 0.01)
+
+</td>
+
+<td>
+
+(0.03, 0.03)
+
+</td>
+
+<td>
+
+(0.01, 0.01)
+
+</td>
+
+<td>
+
+(0.03, 0.03)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+asian
+
+</td>
+
+<td>
+
+0.13<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.13<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.12, 0.13)
+
+</td>
+
+<td>
+
+(0.01, 0.02)
+
+</td>
+
+<td>
+
+(0.13, 0.13)
+
+</td>
+
+<td>
+
+(0.02, 0.02)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+other
+
+</td>
+
+<td>
+
+0.25<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.23<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.17<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.14<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.24, 0.25)
+
+</td>
+
+<td>
+
+(0.23, 0.24)
+
+</td>
+
+<td>
+
+(0.16, 0.17)
+
+</td>
+
+<td>
+
+(0.13, 0.14)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+widowed
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.01<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.05<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.03<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.01, 0.02)
+
+</td>
+
+<td>
+
+(-0.02, -0.01)
+
+</td>
+
+<td>
+
+(0.04, 0.05)
+
+</td>
+
+<td>
+
+(0.03, 0.03)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+divorced/separated
+
+</td>
+
+<td>
+
+\-0.13<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.17<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.09<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.14, -0.12)
+
+</td>
+
+<td>
+
+(-0.18, -0.16)
+
+</td>
+
+<td>
+
+(-0.08, -0.06)
+
+</td>
+
+<td>
+
+(-0.10, -0.08)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+single
+
+</td>
+
+<td>
+
+\-0.12<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.14<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.11<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.13<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.13, -0.12)
+
+</td>
+
+<td>
+
+(-0.15, -0.14)
+
+</td>
+
+<td>
+
+(-0.12, -0.11)
+
+</td>
+
+<td>
+
+(-0.14, -0.12)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+household size
+
+</td>
+
+<td>
+
+\-0.10<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.11<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.08<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.10, -0.09)
+
+</td>
+
+<td>
+
+(-0.12, -0.11)
+
+</td>
+
+<td>
+
+(-0.08, -0.06)
+
+</td>
+
+<td>
+
+(-0.08, -0.07)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+household\_size\_scale
+
+</td>
+
+<td>
+
+\-0.05<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.06<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+\-0.08<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(-0.05, -0.05)
+
+</td>
+
+<td>
+
+(-0.07, -0.06)
+
+</td>
+
+<td>
+
+(-0.06, -0.06)
+
+</td>
+
+<td>
+
+(-0.08, -0.08)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Constant
+
+</td>
+
+<td>
+
+0.13<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.07<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.08<sup>\*\*\*</sup>
+
+</td>
+
+<td>
+
+0.02<sup>\*\*\*</sup>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+(0.12, 0.13)
+
+</td>
+
+<td>
+
+(0.07, 0.08)
+
+</td>
+
+<td>
+
+(0.08, 0.09)
+
+</td>
+
+<td>
+
+(0.01, 0.02)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+<td>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td colspan="5" style="border-bottom: 1px solid black">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Observations
+
+</td>
+
+<td>
+
+5,412,470
+
+</td>
+
+<td>
+
+5,450,586
+
+</td>
+
+<td>
+
+5,430,917
+
+</td>
+
+<td>
+
+5,469,227
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+R<sup>2</sup>
+
+</td>
+
+<td>
+
+0.03
+
+</td>
+
+<td>
+
+0.07
+
+</td>
+
+<td>
+
+0.03
+
+</td>
+
+<td>
+
+0.06
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Adjusted R<sup>2</sup>
+
+</td>
+
+<td>
+
+0.03
+
+</td>
+
+<td>
+
+0.07
+
+</td>
+
+<td>
+
+0.03
+
+</td>
+
+<td>
+
+0.06
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+Residual Std. Error
+
+</td>
+
+<td>
+
+0.98 (df = 5412427)
+
+</td>
+
+<td>
+
+0.97 (df = 5450543)
+
+</td>
+
+<td>
+
+0.98 (df = 5430874)
+
+</td>
+
+<td>
+
+0.97 (df = 5469184)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+F Statistic
+
+</td>
+
+<td>
+
+4,578.32<sup>\*\*\*</sup> (df = 42; 5412427)
+
+</td>
+
+<td>
+
+9,262.72<sup>\*\*\*</sup> (df = 42; 5450543)
+
+</td>
+
+<td>
+
+4,204.85<sup>\*\*\*</sup> (df = 42; 5430874)
+
+</td>
+
+<td>
+
+8,636.90<sup>\*\*\*</sup> (df = 42; 5469184)
+
+</td>
+
+</tr>
+
+<tr>
+
+<td colspan="5" style="border-bottom: 1px solid black">
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+<em>Note:</em>
+
+</td>
+
+<td colspan="4" style="text-align:right">
+
+<sup>*</sup>p\<0.05; <sup>**</sup>p\<0.01; <sup>***</sup>p\<0.001
+
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left">
+
+</td>
+
+<td colspan="4" style="text-align:right">
+
+  - p\<0.05; \*\* p\<0.01; \*\*\* p\<0.001
+    </td>
+    </tr>
+    </table>

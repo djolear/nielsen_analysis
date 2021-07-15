@@ -32,13 +32,13 @@ pacman::p_load(
 ## Load Data
 
 ```{r}
-qh_calories_imputed_sc_by_household_monthly <-
-  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qh_calories_imputed_sc_by_household_monthly.csv") %>% 
+qhc_isc_mo_sec_tp <-
+  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_monthly/combined/qhc_isc_mo_sec_tp.csv") %>% 
   mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
   mutate(yes_cal = yes_scale) 
 
-qh_spend_by_household_monthly <-
-  read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qh_spend_by_household_monthly.csv") %>% 
+qhs_isc_mo_sec_tp  <-
+  read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv") %>% 
   mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
   mutate(yes_spend = yes_scale) 
 ```
@@ -55,8 +55,8 @@ qh_spend_by_household_monthly <-
 ```{r}
 lm_dri_cal <-
   lm(
-    scale(yes_scale) ~
-      scale(income_demo_ranger_sar_scale) +
+    yes_cal ~
+      income_demo_ranger_sar_scale +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
@@ -68,20 +68,17 @@ lm_dri_cal <-
       land_area_2010_scale +
       total_pop_county_scale +
       physicians_scale +
-      as.factor(Race) +
-      as.factor(Marital_Status) +
+      Race +
+      Marital_Status +
       household_size_scale +
-      as.factor(month) + 
-      as.factor(year),
+      month + 
+      year,
     data = 
       qhc_isc_mo_sec_tp  %>% 
       filter(year %in% c(2004:2016)) 
   )
 
 summary(lm_dri_cal)
-regclass::VIF(lm_dri_cal)
-lm.beta::lm.beta(lm_dri_cal)
-
 tidy_lm_dri_cal <- tidy(lm_dri_cal)
 ```
 
@@ -173,8 +170,8 @@ lm_dri_spn <-
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment_scale +
-      Female_Head_Employment_scale +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
@@ -184,19 +181,12 @@ lm_dri_spn <-
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + income_demo_ranger_sar_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_spend_by_household_monthly %>% 
-      filter(year %in% c(2004:2016)) %>% 
-      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
+      qhs_isc_mo_sec_tp %>% 
+      filter(year %in% c(2004:2016))
   )
 
 summary(lm_dri_spn)
-regclass::VIF(lm_dri_spn)
-lm.beta::lm.beta(lm_dri_spn)
-
 tidy_lm_dri_spn <- tidy(lm_dri_spn)
 ```
 
@@ -290,8 +280,8 @@ lm_gri_cal <-
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment_scale +
-      Female_Head_Employment_scale +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
@@ -301,19 +291,12 @@ lm_gri_cal <-
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + median_income_county_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_calories_imputed_sc_by_household_monthly %>% 
-      filter(year %in% c(2004:2016)) %>% 
-      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
+      qhc_isc_mo_sec_tp %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
 summary(lm_gri_cal)
-regclass::VIF(lm_gri_cal)
-lm.beta::lm.beta(lm_gri_cal)
-
 tidy_lm_gri_cal <- tidy(lm_gri_cal)
 ```
 
@@ -344,7 +327,7 @@ tidy_lm_gri_cal <-
   mutate(
     variable = 
       case_when(
-        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "median_income_county_scale" ~ "geographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
@@ -363,10 +346,10 @@ qh_gri_calories_monthly <-
   geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.35, 0.35)
-  ) +
+  # scale_y_continuous(
+  #   breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+  #   limits = c(-0.35, 0.35)
+  # ) +
   labs(
     y = "standardized beta",
     x = "variable"
@@ -405,8 +388,8 @@ lm_gri_spn <-
       Female_Head_Education_scale +
       Male_Head_Age_scale + 
       Female_Head_Age_scale +
-      Male_Head_Employment_scale +
-      Female_Head_Employment_scale +
+      scale(Male_Head_Employment) +
+      scale(Female_Head_Employment) +
       median_home_value_county_scale +
       land_area_2010_scale +
       total_pop_county_scale +
@@ -416,19 +399,12 @@ lm_gri_spn <-
       household_size_scale +
       month + 
       year,
-      # (1|quarter) +
-      # (1 + median_income_county_scale|fip_code) +
-      # (1 + income_scale | fips_code),
     data = 
-      qh_spend_by_household_monthly %>% 
-      filter(year %in% c(2004:2016)) %>% 
-      filter(Male_Head_Education != 0 & Female_Head_Education != 0)
+      qhs_isc_mo_sec_tp %>% 
+      filter(year %in% c(2004:2016)) 
   )
 
 summary(lm_gri_spn)
-regclass::VIF(lm_gri_spn)
-lm.beta::lm.beta(lm_gri_spn)
-
 tidy_lm_gri_spn <- tidy(lm_gri_spn)
 ```
 
@@ -459,7 +435,7 @@ tidy_lm_gri_spn <-
   mutate(
     variable = 
       case_when(
-        term == "median_income_county_scale" ~ "demographic reference \n median income",
+        term == "median_income_county_scale" ~ "geographic reference \n median income",
         term == "income_scale" ~ "household income",
         term == "Male_Head_Education_scale" ~ "male head education",
         term == "Female_Head_Education_scale" ~ "female head education"
@@ -478,10 +454,10 @@ qh_gri_spend_monthly <-
   geom_hline(yintercept = -abs(est$estimate), linetype = "dashed", color = "red") +
   geom_hline(yintercept = 0, linetype = "dashed") +
   geom_hline(yintercept = abs(est$estimate), linetype = "dashed", color = "red") +
-  scale_y_continuous(
-    breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
-    limits = c(-0.35, 0.35)
-  ) +
+  # scale_y_continuous(
+  #   breaks = c( -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3),
+  #   limits = c(-0.35, 0.35)
+  # ) +
   labs(
     y = "standardized beta",
     x = "variable"
@@ -494,7 +470,7 @@ qh_gri_spend_monthly <-
   ) +
   coord_flip()
 
-qh_gri_calories_monthly
+qh_gri_spend_monthly
 
 ggsave(
   "G:/My Drive/research/projects/niel/nielsen_relative_income/plots/qh_gri_spend_monthly.png",
@@ -505,13 +481,16 @@ ggsave(
 )
 ```
 
-```{r}
+
+## Regression Table
+
+```{r, results = 'asis'}
 stargazer(
   lm_dri_cal, lm_dri_spn, lm_gri_cal, lm_gri_spn,
   ci = TRUE,
   type="html", digits = 2,
   #out="df_risk_all_bin.doc",
-  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods"),
+  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods", "% of calorie budget for healthy foods", "% of food spend for healthy foods"),
   covariate.labels =
     c(
       "demographic ref. income",
@@ -526,6 +505,7 @@ stargazer(
       "median home value",
       "county land area",
       "county population",
+      "healthcare access",
       "black/ african american",
       "asian",
       "other",
