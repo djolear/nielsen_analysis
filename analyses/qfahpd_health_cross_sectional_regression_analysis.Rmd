@@ -37,6 +37,11 @@ qhc_isc_mo_sec_tp <-
   mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
   mutate(yes_cal = yes_scale) 
 
+qhc_isc_qr_sec_tp <-
+  read_csv("D:/data/nielsen/calories_extracts/qfahpd_health_calories_imputed_sc_by_household_quarterly/combined/qhc_isc_qr_sec_tp.csv") %>% 
+  mutate(across(c(quarter, year, Race, Marital_Status), as.factor)) %>% 
+  mutate(yes_cal = yes_scale) 
+
 qhs_isc_mo_sec_tp  <-
   read_csv("D:/data/nielsen/spend_extracts/qfahpd_health_spend_by_household_monthly/combined/qhs_isc_mo_sec_tp.csv") %>% 
   mutate(across(c(month, year, Race, Marital_Status), as.factor)) %>% 
@@ -56,11 +61,11 @@ qhs_isc_mo_sec_tp  <-
 lm_dri_cal <-
   lm(
     yes_cal ~
-      income_demo_ranger_sar_scale +
+      income_demo_ranger_sar_scale2 +
       income_scale +
       Male_Head_Education_scale +
       Female_Head_Education_scale +
-      Male_Head_Age_scale + 
+      # Male_Head_Age_scale + 
       Female_Head_Age_scale +
       scale(Male_Head_Employment) +
       scale(Female_Head_Employment) +
@@ -71,14 +76,15 @@ lm_dri_cal <-
       Race +
       Marital_Status +
       household_size_scale +
-      month + 
+      quarter + 
       year,
     data = 
-      qhc_isc_mo_sec_tp  %>% 
+      qhc_isc_qr_sec_tp  %>% 
       filter(year %in% c(2004:2016)) 
   )
 
 summary(lm_dri_cal)
+lm.beta::lm.beta(lm_dri_cal)
 tidy_lm_dri_cal <- tidy(lm_dri_cal)
 ```
 

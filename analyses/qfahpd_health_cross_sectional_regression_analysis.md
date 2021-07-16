@@ -835,7 +835,7 @@ stargazer(
   ci = TRUE,
   type="html", digits = 2,
   #out="df_risk_all_bin.doc",
-  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods"),
+  dep.var.labels = c("% of calorie budget for healthy foods", "% of food spend for healthy foods", "% of calorie budget for healthy foods", "% of food spend for healthy foods"),
   covariate.labels =
     c(
       "demographic ref. income",
@@ -850,6 +850,7 @@ stargazer(
       "median home value",
       "county land area",
       "county population",
+      "healthcare access",
       "black/ african american",
       "asian",
       "other",
@@ -921,13 +922,13 @@ stargazer(
 
 <td>
 
-yes\_cal
+% of calorie budget for healthy foods
 
 </td>
 
 <td>
 
-yes\_spend
+% of food spend for healthy foods
 
 </td>
 
@@ -2041,7 +2042,7 @@ county population
 
 <td style="text-align:left">
 
-black/ african american
+healthcare access
 
 </td>
 
@@ -2131,7 +2132,7 @@ black/ african american
 
 <td style="text-align:left">
 
-asian
+black/ african american
 
 </td>
 
@@ -2221,7 +2222,7 @@ asian
 
 <td style="text-align:left">
 
-other
+asian
 
 </td>
 
@@ -2311,7 +2312,7 @@ other
 
 <td style="text-align:left">
 
-widowed
+other
 
 </td>
 
@@ -2401,7 +2402,7 @@ widowed
 
 <td style="text-align:left">
 
-divorced/separated
+widowed
 
 </td>
 
@@ -2491,7 +2492,7 @@ divorced/separated
 
 <td style="text-align:left">
 
-single
+divorced/separated
 
 </td>
 
@@ -2581,7 +2582,7 @@ single
 
 <td style="text-align:left">
 
-household size
+single
 
 </td>
 
@@ -2671,7 +2672,7 @@ household size
 
 <td style="text-align:left">
 
-household\_size\_scale
+household size
 
 </td>
 
