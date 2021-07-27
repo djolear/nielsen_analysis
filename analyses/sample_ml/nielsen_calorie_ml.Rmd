@@ -1,0 +1,336 @@
+---
+title: "Nielsen Analysis"
+author: "Daniel O'Leary"
+date: "4/05/2021"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    number_sections: true
+    theme: lumen
+---
+
+
+# Background
+
+Unhealthy eating and eating-related diseases are major public health issues in the United States and around the world.
+
+In this analysis, we will use several machine learning models to predict the healthfulness of a household's calorie consumption.
+
+The data we use in this analysis come from several sources. The primary data source is the NielsenIQ HomeScan Consumer Panel Dataset. The Consumer Panel Data comprise a nationally representative panel of households that continually provide information about their purchases in a longitudinal study in which panelists stay on as long as they continue to meet NielsenIQ's criteria. NielsenIQ consumer panelists use in-home scanners to record all of their purchases (from any outlet) intended for personal, in-home use. Consumers provide information about their households and what products they buy.
+
+The outcome we will try to predict is the healthfulness of a household's calorie consumption. In order to create this outcome, we used to additional sources of data. First, we used data from Label Insights that provides UPC-level nutrition label data. For our purposes, we were interested in the number of calories in each food product purchased by each household. We join this data to the NielsenIQ data using UPC's. In addition, we use crosswalk from the United States Department of Agriculture that matches each UPC to one of 52 food categories in the Quarterly Food-at-Home Price Database. We then classify each of these food categories as healthy or not using guidelines provided by Volpe, Okrent, & Leibtag (2013). We then calculate the healthfulness of a household's calorie consumption by calculating the percentage of all calories that come from healthy food categories.
+
+Predicting this outcome might be useful for stakeholders who want to determine where they might direct efforts to improve diet.
+
+# Setup
+
+## Load packages
+
+```{r, include = FALSE}
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(
+  tidyverse, 
+  tidymodels,
+  haven,
+  GGally,
+  caret,
+  ranger,
+  glmnet,
+  randomforest,
+  gbm,
+  xgboost
+)
+```
+
+
+## Load data
+
+```{r, include = FALSE}
+source("G:/My Drive/research/projects/niel/code_archive/small_dataset_selection.R")
+```
+
+
+# Preliminaries
+
+## Glimpse of the data
+
+First, let's take a look at the data.
+
+```{r}
+data %>% 
+  glimpse()
+```
+
+Let's take a look at the distribution of each variable. At the moment, I'm not really worried about relationships between variables in part because we will take steps to deal with multicollinearity later in this analysis. It's also kind of tough to visualize an 18 by 18 grid in R.
+
+
+## Various distributions
+
+```{r}
+data %>% 
+  mutate(across(everything(), as.numeric)) %>% 
+  pivot_longer(
+    cols = everything()
+  ) %>% 
+  ggplot(aes(value)) +
+  geom_histogram() +
+  facet_wrap(~ name, scales = "free")
+```
+
+Marital Status and Race are factor variables, so we won't worry about them for now.
+
+It looks like it might be worth applying a log transform to land area, median home value, median monthly housing cost, and total population of the county.
+
+Income is already on a scale that applies a kind of transform.
+
+Fortunately, the distribution of our outcome looks relatively normal.
+
+
+# Random Forest using the tidymodels package
+
+## Split data into training and test set
+
+```{r}
+set.seed(1234)
+
+# Split data
+data_split <- initial_split(data, prop = 0.75)
+
+# Create training and test datasets
+training_data <- training(data_split)
+testing_data  <- testing(data_split)
+```
+
+
+## Create out cross-validation folds
+
+```{r}
+set.seed(1234)
+folds <- vfold_cv(training_data, v = 10)
+folds
+```
+
+
+## Specify the type of model to run
+
+Here we will try a random forest and we will use the ranger package which is much faster than randomForest. Note that we can and will parallelize the training of this model.
+
+```{r}
+cores <- parallel::detectCores() - 2
+
+rf_mod <- 
+  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
+  set_engine("ranger", num.threads = cores) %>% 
+  set_mode("regression")
+```
+
+
+## Specify a model recipe
+
+Next we will specify a model recipe which will include our model formula and a will also pre-processing all of our data, including a step that runs PCA on certain predictors.
+
+```{r}
+rf_recipe <- 
+  recipe(yes_scale ~ ., data = training_data) %>% 
+  step_dummy(all_nominal()) %>% 
+  step_log(land_area_2010, total_pop_county, contains("median")) %>% 
+  step_center(all_predictors()) %>% 
+  step_scale(all_predictors()) %>% 
+  step_pca(contains("county"), contains("Education"), contains("Age"), contains("Employment"), threshold = .75) %>% 
+  step_nzv(all_predictors())
+```
+
+
+### Check out some of what this recipe does
+
+```{r}
+rf_data_trained <-
+  prep(
+    rf_recipe,
+    training_data,
+    verbose = TRUE
+  )
+
+rf_data_trained
+
+rf_data_trained %>% 
+  juice()
+```
+
+
+## Specify workflow
+
+Next we will create a workflow which is basically just an object that combines our pre-processing and modeling.
+
+```{r}
+rf_workflow <- 
+  workflow() %>% 
+  add_model(rf_mod) %>% 
+  add_recipe(rf_recipe)
+```
+
+
+## Tune hyperparameters
+
+Next, we will use cross-validation to identify the hyperparameters that give us the best model fit. 
+
+```{r}
+rf_res <- 
+  rf_workflow %>% 
+  tune_grid(
+    folds,
+    grid = 25,
+    control = control_grid(save_pred = TRUE),
+    metrics = metric_set(rsq)
+  )
+```
+
+
+## Best set of hyperparameters
+
+```{r}
+rf_res %>% 
+  collect_metrics() %>% 
+  arrange(desc(mean))
+```
+
+
+```{r}
+autoplot(rf_res)
+```
+
+
+```{r}
+rf_best <- 
+  rf_res %>% 
+  select_best(metric = "rsq")
+
+rf_best
+```
+
+
+# Final Random Forest Model
+
+```{r}
+final_mod <- 
+  rand_forest(mtry = 1, min_n = 12, trees = 1000) %>% 
+  set_engine("ranger", num.threads = cores, importance = "impurity") %>% 
+  set_mode("regression")
+
+final_mod_workflow <-
+  rf_workflow %>% 
+  update_model(final_mod)
+
+final_fit <-
+  final_mod_workflow %>% 
+  last_fit(data_split)
+
+final_fit %>% 
+  collect_metrics()
+```
+
+```{r}
+final_fit %>% 
+  pluck(".workflow", 1) %>%   
+  pull_workflow_fit() %>% 
+  vip(num_features = 20)
+```
+
+
+# Elastic-Net using the tidymodels packages
+
+## Specify the type of model to run and the model recipe
+
+```{r}
+elnet_mod <- 
+  linear_reg(penalty = tune(), mixture = tune()) %>% 
+  set_engine("glmnet") %>% 
+  set_mode("regression")
+
+elnet_recipe <- 
+  recipe(yes_scale ~ ., data = training_data) %>% 
+  step_dummy(all_nominal()) %>% 
+  step_log(land_area_2010, total_pop_county, contains("median")) %>% 
+  step_center(all_predictors()) %>% 
+  step_scale(all_predictors()) %>% 
+  step_pca(contains("county"), contains("Education"), contains("Age"), contains("Employment"), threshold = .75) %>% 
+  step_nzv(all_predictors())
+```
+
+
+## Create workflow object
+
+```{r}
+elnet_workflow <- 
+  workflow() %>% 
+  add_model(elnet_mod) %>% 
+  add_recipe(elnet_recipe)
+```
+
+
+## Tune hyperparameters
+
+```{r}
+mixture_param <- parameters(penalty(), mixture())
+regular_grid <- grid_regular(mixture_param, levels = c(5, 5))
+
+# mixture = alpha
+elnet_res <- 
+  elnet_workflow %>% 
+  tune_grid(
+    folds,
+    grid = regular_grid,
+    control = control_grid(save_pred = TRUE),
+    metrics = metric_set(rsq)
+  )
+
+```
+
+
+## Best set of hyperparameters
+
+```{r}
+elnet_res %>% 
+  collect_metrics() %>% 
+  arrange(desc(mean))
+```
+
+
+```{r}
+elnet_best <- 
+  elnet_res %>% 
+  select_best(metric = "rsq")
+
+elnet_best
+```
+
+## Final Elastic Net Model
+
+```{r}
+final_mod <- 
+  linear_reg(penalty = 0.003162278, mixture = 0.5) %>% 
+  set_engine("glmnet") %>% 
+  set_mode("regression")
+
+final_mod_workflow <-
+  elnet_workflow %>% 
+  update_model(final_mod)
+
+final_fit <-
+  final_mod_workflow %>% 
+  last_fit(data_split)
+
+final_fit %>% 
+  collect_metrics()
+```
+
+```{r}
+final_fit %>% 
+  pluck(".workflow", 1) %>%   
+  pull_workflow_fit() %>% 
+  vip(num_features = 20)
+```
+
