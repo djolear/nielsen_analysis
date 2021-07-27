@@ -123,25 +123,19 @@ gbm_model <-
 get_best_result(gbm_model)
 
 
-###  ###
+###  XGBOOST ###
 
-# note to start nrounds from 200, as smaller learning rates result in errors so
-# big with lower starting points that they'll mess the scales
-tune_grid <- expand.grid(
-  nrounds = seq(from = 200, to = 400, by = 50),
-  eta = c(0.025, 0.05, 0.1, 0.3),
-  max_depth = c(2, 3, 4, 5, 6),
-  gamma = 0,
-  colsample_bytree = 1,
-  min_child_weight = 1,
-  subsample = 1
-)
+# tune_grid <- expand.grid(
+#   nrounds = seq(from = 200, to = 400, by = 50),
+#   eta = c(0.025, 0.05, 0.1, 0.3),
+#   max_depth = c(2, 3, 4, 5, 6)
+# )
 
 xgb_tune <- caret::train(
   yes_scale ~ .,
   data = training_data,
   trControl = training_control,
-  tuneGrid = tune_grid,
+  # tuneGrid = tune_grid,
   method = "xgbTree",
   verbose = TRUE
 )

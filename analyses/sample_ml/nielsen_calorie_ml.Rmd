@@ -28,7 +28,7 @@ Predicting this outcome might be useful for stakeholders who want to determine w
 
 ## Load packages
 
-```{r, include = FALSE}
+```{r}
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(
@@ -39,7 +39,7 @@ pacman::p_load(
   caret,
   ranger,
   glmnet,
-  randomforest,
+  randomForest,
   gbm,
   xgboost,
   vip
@@ -49,7 +49,7 @@ pacman::p_load(
 
 ## Load data
 
-```{r, include = FALSE}
+```{r}
 source("G:/My Drive/research/projects/niel/code_archive/small_dataset_selection.R")
 ```
 
@@ -65,10 +65,12 @@ data %>%
   glimpse()
 ```
 
-Let's take a look at the distribution of each variable. At the moment, I'm not really worried about relationships between variables in part because we will take steps to deal with multicollinearity later in this analysis. It's also kind of tough to visualize an 18 by 18 grid in R.
+Note that the full dataset we usually use for this analysis has over 2 million observations and is run on a computing cluster, but we've downsized it to around 20,000 observations for this analysis.
 
 
 ## Various distributions
+
+Let's take a look at the distribution of each variable. At the moment, I'm not really worried about relationships between variables in part because we will take steps to deal with multicollinearity later in this analysis. It's also kind of tough to visualize an 18 by 18 grid in R.
 
 ```{r}
 data %>% 
@@ -120,7 +122,7 @@ folds
 Here we will try a random forest and we will use the ranger package which is much faster than randomForest. Note that we can and will parallelize the training of this model.
 
 ```{r}
-cores <- parallel::detectCores() - 2
+cores <- parallel::detectCores() - 6
 
 rf_mod <- 
   rand_forest(mtry = tune(), min_n = tune(), trees = 1000) %>% 
@@ -131,7 +133,7 @@ rf_mod <-
 
 ## Specify a model recipe
 
-Next we will specify a model recipe which will include our model formula and a will also pre-processing all of our data, including a step that runs PCA on certain predictors.
+Next we will specify a model recipe which will include our model formula and will also pre-process all of our data, including a step that runs PCA on certain predictors.
 
 ```{r}
 rf_recipe <- 
@@ -160,6 +162,8 @@ rf_data_trained
 rf_data_trained %>% 
   juice()
 ```
+
+The PCA reduce the number of variables from 19 to 13.
 
 
 ## Specify workflow
@@ -257,7 +261,6 @@ elnet_recipe <-
   step_log(land_area_2010, total_pop_county, contains("median")) %>% 
   step_center(all_predictors()) %>% 
   step_scale(all_predictors()) %>% 
-  step_pca(contains("county"), contains("Education"), contains("Age"), contains("Employment"), threshold = .75) %>% 
   step_nzv(all_predictors())
 ```
 
@@ -299,6 +302,15 @@ elnet_res %>%
   arrange(desc(mean))
 ```
 
+```{r}
+# elnet_res %>% 
+#   collect_metrics() %>% 
+#   ggplot(aes(penalty, mean)) +
+#   geom_point() +
+#   facet_wrap(~ mixture, scales = "free")
+```
+
+
 
 ```{r}
 elnet_best <- 
@@ -335,3 +347,7 @@ final_fit %>%
   vip(num_features = 20)
 ```
 
+
+# Comments
+
+Looks like random forest wins the day, but both models are honestly not very good at predicting this outcome. May want to rethink the predictors we include.
