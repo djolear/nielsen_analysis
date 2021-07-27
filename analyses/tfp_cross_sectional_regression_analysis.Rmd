@@ -51,10 +51,31 @@ models %>%
     key,
     income_demo_ranger_sar_scale
   ) %>% 
-  ggplot(aes(fct_reorder(key, income_demo_ranger_sar_scale), income_demo_ranger_sar_scale)) +
+  ggplot(aes(fct_reorder(key, -income_demo_ranger_sar_scale), income_demo_ranger_sar_scale, fill = key)) +
   geom_col() + 
   #geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.1) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+  labs(
+    x = "thrifty food plan category",
+    y = "standardized beta"
+  ) +
+  coord_flip()
+```
+
+```{r}
+models %>% 
+  dplyr::select(
+    key,
+    income_scale
+  ) %>% 
+  ggplot(aes(fct_reorder(key, -income_scale), income_scale, fill = key)) +
+  geom_col() + 
+  #geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.1) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) + 
+  labs(
+    x = "thrifty food plan category",
+    y = "standardized beta"
+  ) +
   coord_flip()
 ```
 
