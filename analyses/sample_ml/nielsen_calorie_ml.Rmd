@@ -41,7 +41,8 @@ pacman::p_load(
   glmnet,
   randomforest,
   gbm,
-  xgboost
+  xgboost,
+  vip
 )
 ```
 
